@@ -19,7 +19,7 @@ module.exports = {
 
       const hash = await bcrypt.hash( password , 10 ); //make more strong !
 
-      const token = jwt.sign({name , email} , SECRET_KEY , {expiresIn : "2h"});
+      const TOKEN = jwt.sign({email , name } , SECRET_KEY , {expiresIn : "2h"});
 
       await User.create({
         email,
@@ -31,11 +31,11 @@ module.exports = {
         login : false,
       });
 
-      res.cookie("token",token,{maxAge : 1000 * 60 * 60 * 2});
+      res.cookie("token",TOKEN,{maxAge : 1000 * 60 * 60 * 2});
 
       res.json({
         message : "User registered Successfully!",
-        token
+        token : TOKEN
       })
     } catch (error) {
       res.status(500).json({
@@ -43,5 +43,38 @@ module.exports = {
         status : 500
       })
     }
+  },
+  userLogin : async (req,res) => {
+    try {
+
+      const token = req.cookies.token
+      if(token){
+        jwt.verify(token,SECRET_KEY,(err,data)=>{
+          if(err)return res.status(406).json({message : "token invalid!",status : 406});
+          if(data)return res.status(200).json({message : "direct login success!",status : 200 , token});
+        })
+      }
+
+      const { email , password } = req.body ; 
+      
+      if(!email.trim() || !password.trim() )return res.status(406).json({message : "invalid format",status :406});
+
+      const user = await User.findOne({email});
+      if(!user)return res.status(404).json({message : "User Not Found!",status : 404});
+
+      const isValidPass = await bcrypt.compare(password,user.password);
+      if(!isValidPass)return res.status(403).json({message : "Invalid Password!",status : 403});
+
+      const TOKEN = jwt.sign({ email,name : user.name },SECRET_KEY , {expiresIn : "2h"});
+      res.cookie("token",TOKEN,{maxAge : 1000 * 60 * 60 * 2});
+
+      res.status(200).json({message : "User login successfull!",token : TOKEN , status : 200})
+
+    } catch (error) {
+
+      res.status(500).json({message : error.message , status : 500});
+
+    }
+
   }
 }

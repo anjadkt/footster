@@ -22,7 +22,7 @@ const productRouter = require('./src/router/products.route.js')
 app.use("/products",productRouter)
 
 const userRouter = require('./src/router/user.route.js');
-app.use('/api/register',userRouter);
+app.use('/api',userRouter);
 
 
 
