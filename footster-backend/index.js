@@ -3,6 +3,7 @@ const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 
 const {MONGO_URL , PORT , FRONT_URL} = process.env ;
 
@@ -13,13 +14,15 @@ app.use(cors({
 }));
 
 app.use(express.json());
+app.use(cookieParser());
 
 
 //routes
 const productRouter = require('./src/router/products.route.js')
 app.use("/products",productRouter)
 
-
+const userRouter = require('./src/router/user.route.js');
+app.use('/api/register',userRouter);
 
 
 
