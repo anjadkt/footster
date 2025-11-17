@@ -259,8 +259,8 @@
       "category": "casuals",
       "rating": 50,
       "name": "Atlas Runner",
-      "color": "3",
-      "price": "2499"
+      "color": 3,
+      "price": 2499
     },
     {
       "id": 2,
