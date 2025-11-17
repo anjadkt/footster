@@ -1,7 +1,7 @@
 const Products = require('../model/products.model.js');
 module.exports = {
-  getProducts : async (req,res)=>{
-    if(req.query){
+  getAllProducts : async (req,res)=>{
+    if(Object.keys(req.query).length > 0){
       const {_page , _limit} = req.query ;
       
       const limit = Number(_limit);
@@ -20,6 +20,11 @@ module.exports = {
       const products = await Products.find();
       res.json(products);
     }
-     
+  },
+  getOneProduct : async (req,res)=>{
+    const id = req.params.id ;
+    const product = await Products.find({_id : id});
+    if(product.length>0)return res.status(200).json(product)
+    else return res.status(404).json({message : "Product not found!",status : 404});
   }
 }
