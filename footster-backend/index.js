@@ -2,10 +2,14 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
-const cors = require('cors');
-const cookieParser = require('cookie-parser');
+
 
 const {MONGO_URL , PORT , FRONT_URL} = process.env ;
+
+//middleware modules
+const cors = require('cors');
+const cookieParser = require('cookie-parser');
+const verifyUser = require('./src/middleware/verifyToken.js');
 
 //middlewares
 app.use(cors({
@@ -24,7 +28,8 @@ app.use("/products",productRouter)
 const userRouter = require('./src/router/user.route.js');
 app.use('/api',userRouter);
 
-
+const cartRouter = require('./src/router/cart.route.js');
+app.use('/cart',verifyUser,cartRouter);
 
 
 mongoose.connect(MONGO_URL)

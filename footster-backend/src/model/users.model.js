@@ -6,10 +6,31 @@ const userSchema = new mongoose.Schema({
     trim : true,
     require : true
   },
-  cart : Array,
+  cart : [
+    {
+      type : mongoose.Schema.Types.ObjectId,
+      ref : "Product"
+    }
+  ],
   favorite : Array,
   orders : Array,
-  address : Object,
+  address : {
+    name : String,
+    number : {
+      type : Number,
+      maxlength : 10,
+      minlength : 10
+    },
+    pincode : {
+      type : Number ,
+      maxlength : 6,
+      minlength : 6
+    },
+    city : String,
+    adres : String,
+    state : String,
+    country : String
+  },
   role : String,
   email : {
     type : String,

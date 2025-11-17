@@ -25,8 +25,7 @@ module.exports = {
         email,
         name,
         password : hash,
-        cart : [],
-        favorite : [],
+        address : {name},
         role : "user",
         login : false,
       });
