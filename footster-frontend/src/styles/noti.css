@@ -1,0 +1,54 @@
+.noti-container-div{
+  margin-top: 100px;
+}
+
+.noti-container-div>h1{
+  margin-left: 50px;
+  color: rgb(67, 67, 67);
+  font-weight: 500;
+  font-size: 28px;
+}
+
+.all-noti-container-div{
+  padding: 20px 100px;
+}
+
+.each-notification{
+  border: 1px solid black;
+  margin-bottom: 20px;
+  padding: 10px 20px;
+  padding-right: 50px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  font-family: Lato ,Arial, Helvetica, sans-serif;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  &:hover{
+    background-color: rgba(232, 232, 232, 0.616);
+    color: black;
+  }
+}
+
+.each-notification h3{
+  color: rgb(46, 44, 44);
+}
+
+.each-notification p{
+  color: rgb(150, 150, 150);
+}
+
+.each-notification:hover{
+  
+}
+
+.no-noti{
+  color: rgba(203, 203, 203, 0.71);
+  font-size: 30px;
+  font-weight: 500;
+  margin-top: 150px;
+  margin-left: 400px;
+}

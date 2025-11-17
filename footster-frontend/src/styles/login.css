@@ -1,0 +1,253 @@
+
+.main-container{
+  display: flex;
+  justify-content: space-around;
+}
+
+.login-img{
+  height: 600px;
+  position: absolute;
+  top: 0;
+  right: 15%;
+}
+
+
+.form-container{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: absolute;
+  top: 50px;
+  right: 50%;
+  padding: 20px 30px 30px 30px;
+  background-color: rgb(246,248,252);
+  z-index: 10;
+  /* background-image: linear-gradient(to right , white,rgba(255, 255, 255, 0.326)); */
+  border-radius: 20px;
+  box-shadow: 0px 0px 5px rgb(206, 205, 205);
+}
+
+.login-form{
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+}
+
+.welcome-div{
+  text-align: center;
+  margin-bottom: 26px;
+}
+
+.welcome-div h2{
+  margin-bottom: 10px;
+  font-size: 26px;
+}
+
+.welcome-div p{
+  font-size: 14px;
+  color: rgb(143, 142, 142);
+}
+
+.login-form label{
+  font-weight: 500;
+  font-size: 14px;
+  margin-bottom: 4px;
+  color: rgb(93, 92, 92);
+}
+
+.login-form input {
+  width: 100%;
+  padding: 8px 0 8px 5px;
+  border: none;
+  border-radius: 5px;
+  margin-bottom: 2px;
+
+  &:focus{
+    outline: 1px solid rgb(59, 58, 58);
+  }
+}
+
+.error{
+  height: 10px;
+  width: 100%;
+  font-size: 14px;
+  font-weight: 400;
+  color: rgb(255, 20, 20);
+  margin-bottom: 10px;
+}
+
+.forgot-div{
+  font-size: 14px;
+  font-weight: 500;
+  width: 100%;
+  text-align: end;
+  margin-top: -8px;
+  margin-bottom: 20px;
+  color: gray;
+  cursor: pointer;
+  transition: all 0.2s ease-in;
+  &:hover{
+    color: black;
+  }
+}
+
+.submit-btn{
+  background-color: rgb(17,93,252);
+  color: white;
+  font-weight: bold;
+  padding: 5px 0px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  &:hover{
+    background-color: rgb(7, 83, 247);
+  }
+}
+
+.sign-up{
+  margin-top: 10px;
+  font-weight: 400;
+  font-size: 14px;
+  width: 100%;
+  text-align: center;
+}
+
+/* reg.css - FootSter compact brand design */
+
+.reg-main-container {
+  display: flex;
+  margin-top: 20px;
+  justify-content: center;
+  align-items: center;
+  min-height: 90vh; /* smaller height */
+  background: #f9f9f9; /* light background */
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  padding: 10px;
+}
+
+.reg-container {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  width: 100%;
+  max-width: 320px;
+  padding: 20px;
+}
+
+.reg-welcome-div {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.reg-welcome-div h2 {
+  color: #222;
+  margin-bottom: 4px;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.reg-welcome-div p {
+  color: #555;
+  font-size: 0.85rem;
+}
+
+.reg-form label {
+  display: block;
+  font-weight: 600;
+  margin: 6px 0 3px;
+  color: #333;
+  font-size: 0.8rem;
+}
+
+.reg-form input[type="text"],
+.reg-form input[type="email"],
+.reg-form input[type="password"] {
+  width: 90%;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+  transition: all 0.2s ease;
+  font-size: 0.85rem;
+}
+
+.reg-form input:focus {
+  border-color: #f1c40f;
+  box-shadow: 0 0 0 2px rgba(241, 196, 15, 0.2);
+}
+
+.error {
+  color: #e74c3c;
+  font-size: 0.75rem;
+  margin-top: 2px;
+  min-height: 14px;
+}
+
+.submit-btn {
+  margin-top: 12px;
+  width: 100%;
+  background: #f1c40f; /* yellow brand color */
+  border: none;
+  padding: 10px;
+  border-radius: 6px;
+  color: #000;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.submit-btn:hover {
+  background: #d4ac0d;
+}
+
+.login-page-nav {
+  text-align: center;
+  margin-top: 12px;
+  font-size: 0.8rem;
+  color: #555;
+}
+
+.login-page-nav a {
+  color: #000;
+  font-weight: 600;
+  text-decoration: none;
+  margin-left: 3px;
+}
+
+.login-page-nav a:hover {
+  color: #f1c40f;
+}
+
+.forgot-container{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: absolute;
+  top: 95px;
+  right: 40%;
+  padding: 20px 30px;
+  background-color: rgb(246, 248, 252);
+  z-index: 10;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgb(133, 131, 131);
+}
+
+.error2{
+  color: #e74c3c;
+  font-size: 12px;
+  margin-top: 2px;
+  margin-bottom: 5px;
+  height: 12px;
+}
+
+
+.cancel-btn{
+  width: 100%;
+  padding: 5px 0;
+  border: 1px solid black;
+  border-radius: 5px;
+  margin-top: 5px;
+  cursor: pointer;
+  font-weight: 500;
+}

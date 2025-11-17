@@ -1,0 +1,140 @@
+.order-success-container{
+  border: 1px solid rgb(190, 188, 188);
+  position: absolute;
+  top: 20px;
+  padding: 10px 30px ;
+  border-radius: 10px;
+  left: 380px;
+}
+
+.order-success-container>div{
+  margin-bottom: 25px;
+}
+
+.order-success-container h3{
+  margin-left: -10px;
+}
+
+.order-success-img{
+  height: 100px;
+}
+
+.order-img-success{
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.order-success-summary>div{
+  margin-top: 5px;
+}
+
+.c1{
+  display: flex;
+  align-items: start;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+
+.amount-total {
+  display: flex;
+  justify-content: space-between;
+}
+
+.amount-total h3{
+  font-size: 20px;
+  color:rgb(225,113,29);
+}
+
+.back-to-home-btn{
+  padding: 10px 20px;
+  color: rgb(83, 81, 81);
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 5px;
+  border: 1px solid transparent;
+  background-color: rgb(239,215,0);
+  cursor: pointer;
+  transition: all 0.3s ease-in;
+  margin-right: 50px;
+  &:hover{
+    background-color: rgb(247, 224, 23);
+    box-shadow: 0px 0px 5px black;
+  }
+}
+
+.confirm-your-order{
+  position: absolute;
+  background-color:rgba(0, 0, 0, 0.461);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: -200px;
+  z-index: 50;
+}
+
+.confirm-message-div{
+  background-color: white;
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  padding: 20px 20px;
+  border-radius: 10px;
+}
+
+.confirm-message-div>h2{
+  font-size: 24px;
+  color: #008C6B;
+  margin-bottom: 10px;
+}
+
+.confirm-message-div>p{
+  font-weight: 500;
+  color: rgb(80, 79, 79);
+  font-size: 12px;
+  margin-bottom: 5px;
+}
+.confirm-message-img{
+  height: 100px;
+}
+
+.cancel{
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  color: rgb(97, 95, 95);
+  transition: all 0.3s ease;
+  &:hover{
+    color:  black;
+  }
+}
+
+.confirm{
+  background-color: #008C6B;
+  border: 1px solid black;
+  font-weight: bold;
+  padding: 8px 26px;
+  margin-left: 10px;
+  margin-top: 10px;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  &:hover{
+    box-shadow: 0px 0px 2px black;
+  }
+}
+
+.confirm-details-msg{
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 2px;
+  font-weight: 500;
+  font-size: 14px;
+  color: rgb(92, 91, 91);
+  margin: 5px 0;
+}

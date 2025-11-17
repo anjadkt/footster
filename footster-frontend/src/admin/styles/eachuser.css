@@ -1,0 +1,201 @@
+.all-user-info-container-div {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 2rem;
+  margin-left: 260px; /* leaves space for sidebar */
+  background: #f9fafb;
+  min-height: 100vh;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ========== USER INFO CARD ========== */
+.user-info-container-div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  padding: 20px 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  max-width: 600px;
+}
+
+.message-user form{
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  border: 1px solid rgb(198, 198, 198);
+  padding: 10px 20px;
+  border-radius: 5px;
+}
+
+.message-user label{
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.message-user input{
+  padding: 5px;
+}
+
+.message-user textarea {
+  padding: 5px;
+}
+
+.msg-submit{
+  background-color: transparent;
+  border: 1px solid black;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 400;
+  transition: all 0.4s ease;
+  &:hover{
+    background-color: #111827;
+    color: white;
+  }
+
+  &:active{
+    background-color: white;
+    color: black;
+  }
+}
+.user-info-container-div h1 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 0.5rem;
+}
+
+.block-user {
+  display: inline-block;
+  padding: 8px 1.5rem;
+  background: #dc2626;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.block-user:hover {
+  background: #b91c1c;
+  transform: scale(1.05);
+}
+
+.user-info-container-div p {
+  font-size: 1rem;
+  color: #4b5563;
+  margin: 0.3rem 0;
+}
+
+/* ========== ORDERS SECTION ========== */
+.user-orders-container-div {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Each order wrapper */
+.user-admin-orders {
+  background: #efefef;
+  margin-top: 30px;
+  padding: 1.2rem;
+  border-radius: 12px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.user-admin-orders-details {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  padding: 0.8rem 1rem;
+  background: #f3f4f6;
+  border-radius: 8px;
+  font-weight: 500;
+  color: #374151;
+  text-align: center;
+}
+
+.user-admin-shpping-details{
+  height: 30px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  padding: 0.8rem 1rem;
+  background: #d9d9d9;
+  border-radius: 8px;
+  font-weight: 500;
+  color: #374151;
+  text-align: center;
+}
+
+.user-admin-shpping-details div{
+  margin: 0 10px;
+  padding: 5px 0;
+  border-radius: 4px;
+  cursor: pointer;
+  &:hover{
+    border: 1px solid black;
+  }
+}
+
+.product-admin-order-details {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 10px 0px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.admin-products{
+  width: 150px;
+}
+
+.product-admin-order-details:last-child {
+  border-bottom: none;
+}
+
+/* Product image */
+.img-div {
+  width: 200px;
+  padding: 20px 0;
+  flex-shrink: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  text-align: center;
+}
+
+.img-div img {
+  height: 70px;
+  object-fit: contain;
+}
+
+/* Product details */
+.product-admin-order-details div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.95rem;
+  color: #374151;
+}
+
+.product-admin-order-details div div:first-child {
+  font-weight: 600;
+  color: #111827;
+}
+
+.user-status{
+  background-color: gainsboro;
+  padding: 0px 8px;
+  border-radius: 5px;
+  color: black;
+  font-weight: 500;
+  background-color: rgb(226, 226, 43);
+}

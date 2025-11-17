@@ -1,0 +1,94 @@
+/* ========== MAIN CONTAINER ========== */
+.dashboard-all-container {
+  margin-left: 260px; /* leave space for sidebar */
+  padding:2rem;
+  background: #f9fafb;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #111827;
+}
+
+/* ========== HEADER ========== */
+.dashboard-all-container h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.dashboard-all-container hr {
+  border: none;
+  height: 2px;
+  background: #e5e7eb;
+  margin-bottom: 2rem;
+}
+
+/* ========== DASHBOARD DETAILS ========== */
+.dashboard-details-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* ========== STATS CARDS CONTAINER ========== */
+.dashboard-cus-or-pro-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+
+/* ========== INDIVIDUAL CARD ========== */
+.dashboard-cus-or-pro-container > div {
+  background: #fff;
+  border-radius: 14px;
+  padding: 1.5rem;
+  text-align: center;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+  transition: all 0.25s ease-in-out;
+  cursor: pointer;
+}
+
+.dashboard-cus-or-pro-container > div:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+}
+
+/* Icon inside card */
+.dashboard-cus-or-pro-container img {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 0.8rem;
+  filter: brightness(0) invert(0.5);
+}
+
+/* Card label */
+.dashboard-cus-or-pro-container div div {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #6b7280;
+  margin-bottom: 0.4rem;
+}
+
+/* Card numbers */
+.dashboard-cus-or-pro-container h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.dashboard-all-chart-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 450px;
+  margin-left: 260px; 
+  padding: 2rem;
+  background: #f9fafb;
+  color: #111827;
+  cursor: pointer;
+}
+
+.dashboard-all-chart-container>h2{
+  margin-bottom: 10px;
+  color: gray;
+}
+

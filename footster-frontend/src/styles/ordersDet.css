@@ -1,0 +1,103 @@
+.order-summary-all-container{
+  margin-top: 100px;
+}
+
+.ordered-details-container{
+  border: 1px solid rgba(173, 173, 173, 0.731);
+  display: flex;
+  flex-direction: column;
+  margin: 20px 200px ;
+  border-radius: 10px;
+}
+
+.ordered-discription-div{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 30px;
+  margin-bottom: 30px;
+  background-color: rgb(213, 217, 217);
+  border-radius: 10px 10px 0 0;
+}
+
+.ordered-discription-div div{
+  font-size: 14px;
+}
+
+.order-stats{
+  background-color: green;
+  padding: 2px 10px;
+  border-radius: 5px;
+  font-size: 8px;
+  color: white;
+  margin-top: 5px;
+  font-weight: 500;
+}
+
+.ordered-discription-div span{
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.ordered-item-img{
+  width: 180px;
+  background-color: rgb(219, 218, 218);
+  padding: 15px 20px;
+  border-radius: 5px;
+}
+
+.ordered-item-img>img{
+  height: 80px;
+}
+
+.ordered-items-container{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 80px;
+}
+
+.ordered-items-container>div{
+  display: flex;
+  gap: 30px;
+}
+
+.ordered-item-details{
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ordered-item-details button{
+  padding: 8px 24px;
+  font-weight: 500;
+  background-color: rgb(255, 216, 20);
+  border: 1px solid rgb(255, 216, 20);
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  &:hover{
+    box-shadow: 0px 0px 5px black;
+  }
+}
+
+.track-package{
+  background-color: white;
+  padding: 8px 30px;
+  font-size: 14px;
+  border: 1px solid black;
+  border-radius: 5px;
+  box-shadow: 0px 0px 5px rgb(94, 93, 93);
+  cursor: pointer;
+}
+
+.your-orders{
+  margin-left: 200px;
+}
+
+.no-orders{
+  text-align: center;
+  margin-top: 150px;
+  color: rgba(171, 170, 170, 0.685);
+  font-weight: 500;
+}
