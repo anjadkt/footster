@@ -7,6 +7,7 @@ module.exports = (req,res,next)=>{
   if(token){
     jwt.verify(token,SECRET_KEY,(err,data)=>{
       if(err)return res.status(401).json({message : "token invalid!",status : 401});
+      req.user = data ;
       if(data)return next();
     })
   }else{

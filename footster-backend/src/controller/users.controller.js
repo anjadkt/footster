@@ -19,9 +19,7 @@ module.exports = {
 
       const hash = await bcrypt.hash( password , 10 ); //make more strong !
 
-      const TOKEN = jwt.sign({email , name } , SECRET_KEY , {expiresIn : "2h"});
-
-      await User.create({
+      const user = await User.create({
         email,
         name,
         password : hash,
@@ -29,6 +27,8 @@ module.exports = {
         role : "user",
         login : false,
       });
+
+      const TOKEN = jwt.sign({email , name , id : user._id } , SECRET_KEY , {expiresIn : "2h"});
 
       res.cookie("token",TOKEN,{maxAge : 1000 * 60 * 60 * 2});
 
@@ -64,7 +64,7 @@ module.exports = {
       const isValidPass = await bcrypt.compare(password,user.password);
       if(!isValidPass)return res.status(403).json({message : "Invalid Password!",status : 403});
 
-      const TOKEN = jwt.sign({ email,name : user.name },SECRET_KEY , {expiresIn : "2h"});
+      const TOKEN = jwt.sign({ email , name : user.name , id : user._id },SECRET_KEY , {expiresIn : "2h"});
       res.cookie("token",TOKEN,{maxAge : 1000 * 60 * 60 * 2});
 
       res.status(200).json({message : "User login successfull!",token : TOKEN , status : 200})
