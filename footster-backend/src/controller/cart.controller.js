@@ -66,5 +66,40 @@ module.exports = {
     } catch (error) {
       res.status(500).json({message : error.message , status : 500})
     }
+  },
+
+  incOrDec : async (req,res)=>{
+    try { 
+      const {id} = req.body
+      let product = {}
+      if(req.url === "/inc"){
+       product = await User.findOneAndUpdate({_id : req.user.id , "cart.product": id},{$inc : {
+        "cart.$.quantity" : 1
+       } });
+      }
+      if(req.url === "/dec"){
+       product = await User
+       .findOneAndUpdate({_id : req.user.id , "cart.product": id , "cart.quantity" : {$gt : 1}},{$inc :{
+        "cart.$.quantity" : -1
+       } });
+      }
+
+      if(!product){
+        res.status(404).json({
+          message : "Product not found!",
+          status : 404
+        })
+        return ;
+      }
+      res.status(200).json({
+        message : "quanitity updated!",
+        status : 200
+      })
+    } catch (error) {
+      res.status(500).json({
+        message : error.message,
+        status : 500
+      })
+    }
   }
 }
