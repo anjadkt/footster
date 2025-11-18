@@ -31,5 +31,18 @@ module.exports = {
         status :500
       })
     }
+  },
+  getCart : async (req,res)=>{
+    try {
+      const {cart} = await User.findOne({_id : req.user.id}).populate("cart.product")
+      
+      res.json({
+        cart,
+        message : "cart fetch success!",
+        status : 200
+      })
+    } catch (error) {
+      res.status(500).json({message : error.message , status : 500})
+    }
   }
 }
