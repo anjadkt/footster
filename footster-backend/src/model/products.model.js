@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 
 const productSchema = new mongoose.Schema({
-  id : Number,
   isFav : Boolean,
   reviews : Array,
   img : String,
@@ -9,7 +8,6 @@ const productSchema = new mongoose.Schema({
   category : String,
   rating : Number,
   name : String,
-  color : Number,
   price : Number
 },{
   collection : "products"
