@@ -31,7 +31,8 @@ app.use('/api',userRouter);
 const cartRouter = require('./src/router/cart.route.js');
 app.use('/cart',verifyUser,cartRouter);
 
-
+const wishRouter = require('./src/router/wish.route.js');
+app.use('/wishlist',verifyUser,wishRouter);
 
 mongoose.connect(MONGO_URL)
 .then(()=>{

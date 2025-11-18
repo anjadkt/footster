@@ -18,7 +18,14 @@ const userSchema = new mongoose.Schema({
       }
     }
   ],
-  favorite : Array,
+  favorite : [
+    {
+      product : {
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "Product"
+      }
+    }
+  ],
   orders : Array,
   address : {
     name : String,
