@@ -23,7 +23,7 @@ module.exports = {
         email,
         name,
         password : hash,
-        address : {name},
+        address : {},
         role : "user",
         login : false,
       });

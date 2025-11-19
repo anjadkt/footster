@@ -26,13 +26,17 @@ const productRouter = require('./src/router/products.route.js')
 app.use("/products",productRouter)
 
 const userRouter = require('./src/router/user.route.js');
-app.use('/api',userRouter);
+app.use('/user',userRouter);
 
 const cartRouter = require('./src/router/cart.route.js');
 app.use('/cart',verifyUser,cartRouter);
 
 const wishRouter = require('./src/router/wish.route.js');
 app.use('/wishlist',verifyUser,wishRouter);
+
+const addressRouter = require('./src/router/address.route.js');
+app.use('/address',verifyUser,addressRouter);
+
 
 mongoose.connect(MONGO_URL)
 .then(()=>{
