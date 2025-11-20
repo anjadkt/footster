@@ -78,7 +78,11 @@ module.exports = {
   },
   userLogout : async(req,res)=>{
     try{
-      
+      res.clearCookie('token');
+      res.status(200).json({
+        message : "Logout Successfull",
+        status : 200
+      });
     }catch(error){
       res.status(500).json({message : error.message , status :500});
     }
