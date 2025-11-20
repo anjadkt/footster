@@ -9,7 +9,7 @@ const {MONGO_URL , PORT , FRONT_URL} = process.env ;
 //middleware modules
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-const verifyUser = require('./src/middleware/verifyToken.js');
+const verifyToken = require('./src/middleware/verifyToken.js');
 
 //middlewares
 app.use(cors({
@@ -29,16 +29,19 @@ const userRouter = require('./src/router/user.route.js');
 app.use('/user',userRouter);
 
 const cartRouter = require('./src/router/cart.route.js');
-app.use('/cart',verifyUser,cartRouter);
+app.use('/cart',verifyToken,cartRouter);
 
 const wishRouter = require('./src/router/wish.route.js');
-app.use('/wishlist',verifyUser,wishRouter);
+app.use('/wishlist',verifyToken,wishRouter);
 
 const addressRouter = require('./src/router/address.route.js');
-app.use('/address',verifyUser,addressRouter);
+app.use('/address',verifyToken,addressRouter);
 
 const ordersRouter = require('./src/router/orders.route.js');
-app.use('/user/orders',verifyUser,ordersRouter);
+app.use('/user/orders',verifyToken,ordersRouter);
+
+const adminRouter = require('./src/router/admin/admin.route.js');
+app.use('/admin',verifyToken,adminRouter);
 
 
 mongoose.connect(MONGO_URL)
