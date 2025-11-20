@@ -37,6 +37,8 @@ app.use('/wishlist',verifyUser,wishRouter);
 const addressRouter = require('./src/router/address.route.js');
 app.use('/address',verifyUser,addressRouter);
 
+const ordersRouter = require('./src/router/orders.route.js');
+app.use('user/orders',verifyUser,ordersRouter);
 
 mongoose.connect(MONGO_URL)
 .then(()=>{
