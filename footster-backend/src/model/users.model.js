@@ -26,7 +26,12 @@ const userSchema = new mongoose.Schema({
       }
     }
   ],
-  orders : Array,
+  orders : [
+    {
+      type : mongoose.Schema.Types.ObjectId ,
+      ref : "Order"
+    }
+  ],
   address : {
     name : String,
     number : {

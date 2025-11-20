@@ -1,4 +1,5 @@
 const Orders = require('../model/orders.model.js');
+const User = require('../model/users.model.js');
 module.exports = {
   addUserOrders : async (req,res)=>{
     try {
@@ -12,8 +13,10 @@ module.exports = {
         items,
         to : address
       });
-      console.log(order);
       await order.save();
+
+      await User.findOneAndUpdate({_id : id},{$push : {"orders" : order._id}});
+      
       res.status(200).json({
         message : "Order successfull!",
         status :200,

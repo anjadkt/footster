@@ -41,7 +41,6 @@ const ordersRouter = require('./src/router/orders.route.js');
 app.use('/user/orders',verifyUser,ordersRouter);
 
 
-
 mongoose.connect(MONGO_URL)
 .then(()=>{
   console.log('Mongo DB Connected !')

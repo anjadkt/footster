@@ -75,5 +75,12 @@ module.exports = {
 
     }
 
+  },
+  userLogout : async(req,res)=>{
+    try{
+      
+    }catch(error){
+      res.status(500).json({message : error.message , status :500});
+    }
   }
 }
