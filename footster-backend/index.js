@@ -11,6 +11,7 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const verifyToken = require('./src/middleware/verifyToken.js');
 const verifyUser = require('./src/middleware/verifyUser.js');
+const isBlocked = require('./src/middleware/isBlockedUser.js');
 
 //middlewares
 app.use(cors({
@@ -24,22 +25,22 @@ app.use(cookieParser());
 
 //routes
 const productRouter = require('./src/router/products.route.js')
-app.use("/products",productRouter)
+app.use("/products",isBlocked,productRouter)
 
 const userRouter = require('./src/router/user.route.js');
 app.use('/user',userRouter);
 
 const cartRouter = require('./src/router/cart.route.js');
-app.use('/cart',verifyToken,cartRouter);
+app.use('/cart',verifyToken,isBlocked,cartRouter);
 
 const wishRouter = require('./src/router/wish.route.js');
-app.use('/wishlist',verifyToken,wishRouter);
+app.use('/wishlist',verifyToken,isBlocked,wishRouter);
 
 const addressRouter = require('./src/router/address.route.js');
-app.use('/address',verifyToken,addressRouter);
+app.use('/address',verifyToken,isBlocked,addressRouter);
 
 const ordersRouter = require('./src/router/orders.route.js');
-app.use('/user/orders',verifyToken,ordersRouter);
+app.use('/user/orders',verifyToken,isBlocked,ordersRouter);
 
 //admin routes
 

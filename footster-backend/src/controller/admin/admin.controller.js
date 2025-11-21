@@ -71,5 +71,16 @@ module.exports = {
       res.status(500).json({message : error.message , status : 500});
 
     }
+  },
+  adminLogout : async (req,res)=>{
+    try{
+      res.clearCookie('Admin_token');
+      res.status(200).json({
+        message : "Admin Logout Successfull",
+        status : 200
+      });
+    }catch(error){
+      res.status(500).json({message : error.message , status :500});
+    }
   }
 }

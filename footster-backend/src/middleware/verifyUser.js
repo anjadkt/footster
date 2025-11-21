@@ -1,7 +1,6 @@
 module.exports = (req,res,next)=>{
   try {
     const {role} = req.user ;
-    console.log(role);
     if( role !== "admin")return res.status(401).json({message : "Unauthorized Route!",status : 401});
     next();
   } catch (error) {

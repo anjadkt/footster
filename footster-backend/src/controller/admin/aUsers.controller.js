@@ -58,5 +58,23 @@ module.exports = {
     }catch(error){
       res.status(500).json({message : error.message , status : 500});
     }
+  },
+  blockUser : async (req,res)=>{
+    try {
+      const {id} = req.params ;
+      //const user = await User.updateOne({_id : id},{status : "Blocked"});
+      const user = await User.findOne({_id : id});
+      if(!user) return res.status(404).json({message : "User Not Found!",status :404});
+      
+      user.status = user.status === "Active" ? "Blocked" : "Active"
+      await user.save();
+
+      res.status(200).json({
+        message : `User ${user.status}!`,
+        status : 200
+      })
+    } catch (error) {
+      res.status(500).json({message : error.message , status : 500})
+    }
   }
 }

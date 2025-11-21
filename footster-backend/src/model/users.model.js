@@ -6,6 +6,10 @@ const userSchema = new mongoose.Schema({
     trim : true,
     require : true
   },
+  status :{
+    type : "String",
+    default : "Active"
+  },
   cart : [
     {
       product : {
