@@ -8,4 +8,4 @@ router.post('/login',adminController.adminLogin);
 router.get('/login',adminController.adminLogin);
 
 
-module.exports = router
+module.exports = router ;

@@ -26,13 +26,13 @@ module.exports = {
         login : false,
       });
 
-      const TOKEN = jwt.sign({email , name , id : admin._id } , SECRET_KEY , {expiresIn : "2h"});
+      const TOKEN = jwt.sign({email , name , id : admin._id , role : "admin" } , SECRET_KEY , {expiresIn : "2h"});
 
-      res.cookie("token",TOKEN,{maxAge : 1000 * 60 * 60 * 2});
+      res.cookie("Admin_token",TOKEN,{maxAge : 1000 * 60 * 60 * 2});
 
       res.json({
         message : "Admin registered Successfully!",
-        token : TOKEN
+        Admin_token : TOKEN
       })
     } catch (error) {
       res.status(500).json({
@@ -43,11 +43,11 @@ module.exports = {
   },
   adminLogin : async (req,res) => {
     try {
-      const token = req.cookies.token
-      if(token){
-        jwt.verify(token,SECRET_KEY,(err,data)=>{
+      const Admin_token = req.cookies.Admin_token
+      if(Admin_token){
+        jwt.verify(Admin_token,SECRET_KEY,(err,data)=>{
           if(err)return res.status(406).json({message : "token invalid!",status : 406});
-          if(data)return res.status(200).json({message : "direct login success!",status : 200 , token});
+          if(data)return res.status(200).json({message : "direct login success!",status : 200 , Admin_token});
         })
       }
 
@@ -61,10 +61,10 @@ module.exports = {
       const isValidPass = await bcrypt.compare(password,admin.password);
       if(!isValidPass)return res.status(403).json({message : "Invalid Password!",status : 403});
 
-      const TOKEN = jwt.sign({ email , name : admin.name , id : admin._id },SECRET_KEY , {expiresIn : "2h"});
-      res.cookie("token",TOKEN,{maxAge : 1000 * 60 * 60 * 2});
+      const TOKEN = jwt.sign({ email , name : admin.name , id : admin._id , role : "admin" },SECRET_KEY , {expiresIn : "2h"});
+      res.cookie("Admin_token",TOKEN,{maxAge : 1000 * 60 * 60 * 2});
 
-      res.status(200).json({message : "Admin login successfull!",token : TOKEN , status : 200})
+      res.status(200).json({message : "Admin login successfull!",Admin_token : TOKEN , status : 200})
 
     } catch (error) {
 
