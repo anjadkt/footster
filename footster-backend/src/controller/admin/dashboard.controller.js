@@ -8,14 +8,11 @@ module.exports = {
       const totalUsers = await User.countDocuments();
       const totalOrders = await Order.countDocuments();
       const totalProducts = await Product.countDocuments();
-      const totalRevenue = await Order.aggregate({
-        $project : {
-          price : 1,
-          totalPrice : {
-            $sum : "price"
-          }
-        }
-      });
+      const orders = await await Order.find()
+      const totalRevenue = orders.reduce((acc,ord)=>{
+        return acc + ord.paymentDetails.total
+      },0);
+      
       console.log(totalRevenue);
 
       res.status(200).json({

@@ -49,6 +49,9 @@ app.use('/admin',adminRouter);
 const adminOrderRouter = require('./src/router/admin/aOrders.route.js');
 app.use('/admin/order',verifyToken,verifyUser,adminOrderRouter);
 
+const dashBoardRouter =require('./src/router/admin/dashboard.route.js');
+app.use('/admin/dashboard',verifyToken,verifyUser,dashBoardRouter);
+
 
 mongoose.connect(MONGO_URL)
 .then(()=>{
