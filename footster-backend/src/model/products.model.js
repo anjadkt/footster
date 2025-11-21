@@ -3,12 +3,23 @@ const mongoose = require('mongoose');
 const productSchema = new mongoose.Schema({
   isFav : Boolean,
   reviews : Array,
-  img : String,
-  quantity : Number,
-  category : String,
+  img : {
+    type : String,
+    require : true
+  },
+  category : {
+    type : String,
+    require : true
+  },
   rating : Number,
-  name : String,
-  price : Number
+  name : {
+    type : String,
+    require: true
+  },
+  price : {
+    type : Number ,
+    require : true
+  }
 },{
   collection : "products"
 });
