@@ -8,12 +8,7 @@ const orderSchema = new mongoose.Schema({
   date : Date,
   status : String,
   paymentDetails : Object,
-  items :[
-    {
-      type : mongoose.Schema.Types.ObjectId,
-      ref : "Product"
-    }
-  ],
+  items :Array,
   to : Object
 });
 

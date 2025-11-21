@@ -43,7 +43,8 @@ module.exports = {
           $project :{
             password : 0,
             cart : 0,
-            favorite :0
+            favorite :0,
+            orders :0
           }
         }
       ])
