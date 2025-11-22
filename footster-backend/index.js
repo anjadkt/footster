@@ -59,6 +59,13 @@ app.use('/admin/products',verifyToken,verifyUser,adminProductRouter);
 const adminUserRouter = require('./src/router/admin/aUsers.route.js');
 app.use('/admin/users',verifyToken,verifyUser,adminUserRouter);
 
+app.use((req, res, next) => {
+  const error = new Error(`Route not found - ${req.originalUrl}`);
+  error.status = 404;
+  next(error);
+});
+
+app.use(require('./src/middleware/errorhandle.js'));
 
 mongoose.connect(MONGO_URL)
 .then(()=>{
