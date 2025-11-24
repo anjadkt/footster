@@ -7,6 +7,7 @@ router.post('/register',userRoute.userRegister);
 
 router.post('/login',userRoute.userLogin);
 router.get('/login',userRoute.userLogin);
+
 router.get('/all',allUserRoute.getAllUsers);
 
 router.get('/logout',userRoute.userLogout);

@@ -16,7 +16,7 @@ const isBlocked = require('./src/middleware/isBlockedUser.js');
 //middlewares
 app.use(cors({
   origin : FRONT_URL,
-  Credential : true
+  credentials : true
 }));
 
 app.use(express.json());

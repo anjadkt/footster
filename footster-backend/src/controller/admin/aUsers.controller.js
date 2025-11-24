@@ -14,19 +14,14 @@ module.exports = {
           },
           {
             $project :{
-              password : 0,
-              cart : 0,
-              favorite :0
+              email : 1,
+              status : 1
             }
           }
         ]);
 
-        res.status(200).json({
-          user : user || [],
-          message : "fetch all users success!",
-          status :200
-        });
-        return 
+        res.status(200).json(user || []);
+        return ;
       }
 
       const users = await User.aggregate([

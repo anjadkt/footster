@@ -21,10 +21,9 @@ export function Register(){
     const email = inputElem.current.email.value;
     const password = inputElem.current.password.value;
     let isError = true;
-    console.log(email)
 
     try{
-      const {data} = await axios.get(`https://footster-app.onrender.com/users?email=${email}`);
+      const {data} = await axios.get(`http://localhost:3001/user/all?email=${email}`);
       if(data.length>0){
         setAlready("User already Exist");
         return ;
@@ -43,28 +42,22 @@ export function Register(){
       }
     }
     if(isError){
-      axios.post('https://footster-app.onrender.com/users',{
-        role : "user",
-        id : Date.now(),
-        login : false,
-        name,
-        email,
-        status : 'active',
-        password,
-        cart :[],
-        noti :[
-          {
-            title : `Hello ${name}❤`,
-            dis : `Welcome ${name} to the world of footwear, we hope you are happy to continue with us..`
-          }
-        ],
-        saved:[],
-        favorite:[],
-        address : null,
-        orders : []
-      });
-      toast.success("Registered")
-      setTimeout(()=>{navigate('/login')},1000);
+      try{
+        const {data} = await axios.post('http://localhost:3001/user/register',{
+          name,
+          email,
+          password
+        },{
+          withCredentials : true 
+        });
+
+        if(data.status === 200){
+          toast.success("Registered")
+          setTimeout(()=>{navigate('/login')},1000);
+        }
+      }catch(error){
+        console.log(error.message);
+      }
     }
   }
   return (
@@ -155,41 +148,67 @@ export default function Login (){
 
   async function checkUser (e){
     e.preventDefault();
-    const admin = await axios.get('https://footster-app.onrender.com/admin');
-    const adminData = admin.data[0];
+    // const admin = await axios.get('https://footster-app.onrender.com/admin');
+    // const adminData = admin.data[0];
 
-      if(adminData.email === inputElem.current.email.value && adminData.password === inputElem.current.password.value ){
-        localStorage.setItem('user',JSON.stringify({...adminData,login : true,password : null , email:null}));
-        toast.success('Welcome Admin');
-       setTimeout(()=>{navigate('/dashboard')},1000);
-        return;
-      }
+    //   if(adminData.email === inputElem.current.email.value && adminData.password === inputElem.current.password.value ){
+    //     localStorage.setItem('user',JSON.stringify({...adminData,login : true,password : null , email:null}));
+    //     toast.success('Welcome Admin');
+    //    setTimeout(()=>{navigate('/dashboard')},1000);
+    //     return;
+    //   }
     
-    const obj = {}
     try{
-      const res = await axios.get(`https://footster-app.onrender.com/users?email=${inputElem.current.email.value}`);
-      const data = res.data[0] || [] ;
+      // const res = await axios.get(`http://localhost:3001/user/all?email=${inputElem.current.email.value}`);
+      // const data = res.data[0] || [] ;
 
-      if(data.status == "blocked"){
-         toast.warning('Account Blocked!')
-        return;
-      }
-      if(data.length === 0){
-        obj.email = "User not found"
-      }
-      if(data.password !== inputElem.current.password.value){
-        obj.password = "Password incorrect!"
-      }
+      // if(data.status == "blocked"){
+      //    toast.warning('Account Blocked!')
+      //   return;
+      // }
+      // if(data.length === 0){
+      //   obj.email = "User not found"
+      // }
       
-      setErr(obj);
+      // setErr(obj);
 
-      if(Object.keys(obj)?.length === 0){
-        localStorage.setItem('user',JSON.stringify({...data,login : true,password : null , email:null}));
+      const {data} = await axios.post("http://localhost:3001/user/login",{
+        email : inputElem.current.email.value ,
+        password : inputElem.current.password.value
+      },{
+        withCredentials : true
+      });
+
+      if(data.status === 200){
         toast.success(`Welcome ${data.name}`)
         setTimeout(()=>{navigate('/')},1000);
       }
-    }catch(err){
-      console.log(err.message);
+
+
+      // if(Object.keys(obj)?.length === 0){
+      //   localStorage.setItem('user',JSON.stringify({...data,login : true,password : null , email:null}));
+      //   toast.success(`Welcome ${data.name}`)
+      //   setTimeout(()=>{navigate('/')},1000);
+      // }
+    }catch(error){
+
+      const obj = {}
+
+      switch(error.status){
+        case 406 :
+          obj.email = "Enter Email!"
+          obj.password = "Enter Password"
+          break ;
+        case 404 :
+          obj.email = "User not Found!"
+          break ;
+        case 403 :
+          obj.password = "Wrong Password!"
+          break ;
+        default :
+          break ;
+      }
+      setErr(obj);
     }
   }
 

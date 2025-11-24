@@ -10,10 +10,10 @@ export default function Header (){
   const [userdrop,setUserdrop] = useState(false);
   const [search,setSearch] = useState(false);
   const [products,setProducts] = useState();
-  const {cart,login,name} = JSON.parse(localStorage.getItem('user')) || {
-    login : false,
-    cart :[]
-  }
+  // const {cart,login,name} = JSON.parse(localStorage.getItem('user')) || {
+  //   login : false,
+  //   cart :[]
+  // }
   const navigate = useNavigate();
 
  async function listProducts(txt){

@@ -28,13 +28,13 @@ module.exports = {
         login : false,
       });
 
-      const TOKEN = jwt.sign({email , name , id : user._id , role : "user" } , SECRET_KEY , {expiresIn : "2h"});
+      // const TOKEN = jwt.sign({email , name , id : user._id , role : "user" } , SECRET_KEY , {expiresIn : "2h"});
 
-      res.cookie("token",TOKEN,{maxAge : 1000 * 60 * 60 * 2});
+      // res.cookie("token",TOKEN,{maxAge : 1000 * 60 * 60 * 2});
 
-      res.json({
+      res.status(200).json({
         message : "User registered Successfully!",
-        token : TOKEN
+        status : 200
       })
     } catch (error) {
       res.status(500).json({
@@ -46,13 +46,13 @@ module.exports = {
   userLogin : async (req,res) => {
     try {
 
-      const token = req.cookies.token
-      if(token){
-        jwt.verify(token,SECRET_KEY,(err,data)=>{
-          if(err)return res.status(406).json({message : "token invalid!",status : 406});
-          if(data)return res.status(200).json({message : "direct login success!",status : 200 , token});
-        })
-      }
+      // const token = req.cookies.token
+      // if(token){
+      //   jwt.verify(token,SECRET_KEY,(err,data)=>{
+      //     if(err)return res.status(406).json({message : "token invalid!",status : 406});
+      //     if(data)return res.status(200).json({message : "direct login success!",status : 200 , token});
+      //   })
+      // }
 
       const { email , password } = req.body ; 
       
@@ -67,7 +67,7 @@ module.exports = {
       const TOKEN = jwt.sign({ email , name : user.name , id : user._id , role : "user" },SECRET_KEY , {expiresIn : "2h"});
       res.cookie("token",TOKEN,{maxAge : 1000 * 60 * 60 * 2});
 
-      res.status(200).json({message : "User login successfull!",token : TOKEN , status : 200})
+      res.status(200).json({message : "User login successfull!",token : TOKEN , status : 200 , name : user.name})
 
     } catch (error) {
 
