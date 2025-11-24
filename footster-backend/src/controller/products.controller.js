@@ -1,6 +1,15 @@
 const Products = require('../model/products.model.js');
 module.exports = {
   getAllProducts : async (req,res)=>{
+    if(req.query.category){
+      try{
+        const {category} = req.query ;
+        const products = await Products.find({category});
+        return res.status(200).json(products);
+      }catch(error){
+        res.status(500).json({message : error.message , status : 500 });
+      }
+    }
     if(Object.keys(req.query).length > 0){
       const {_page , _limit} = req.query ;
       
