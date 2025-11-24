@@ -25,7 +25,7 @@ app.use(cookieParser());
 
 //routes
 const productRouter = require('./src/router/products.route.js')
-app.use("/products",isBlocked,productRouter)
+app.use("/products",productRouter)
 
 const userRouter = require('./src/router/user.route.js');
 app.use('/user',userRouter);

@@ -22,9 +22,13 @@ module.exports = {
     }
   },
   getOneProduct : async (req,res)=>{
-    const id = req.params.id ;
-    const product = await Products.find({_id : id});
-    if(product.length>0)return res.status(200).json(product)
-    else return res.status(404).json({message : "Product not found!",status : 404});
+    try{
+      const id = req.params.id ;
+      const product = await Products.find({_id : id});
+      if(product.length>0)return res.status(200).json(product)
+      else return res.status(404).json({message : "Product not found!",status : 404});
+    }catch(error){
+      res.status(500).json({message : error.message , status : 500});
+    }
   }
 }
