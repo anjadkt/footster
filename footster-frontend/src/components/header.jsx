@@ -71,7 +71,7 @@ export default function Header (){
         
           <div className='cart-div' onClick={() => navigate(login ? '/cart' : '/login')}>
             <img className='icons' src="/icons/cart.png" alt="" />
-            <div className='cart-count-div'>{cartCount}</div>
+            <div className='cart-count-div'>{cartCount || 0}</div>
           </div> 
         
         <div className='user-container-div' onClick={()=> login ? setUserdrop(!userdrop) : navigate('/login') }>

@@ -18,6 +18,7 @@ module.exports = {
               status : 1,
               name : 1,
               login : 1,
+              role : 1,
               cartCount : {$size : "$cart"}
             }
           }
