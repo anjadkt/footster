@@ -4,7 +4,7 @@ const {Types} = require('mongoose')
 module.exports = {
   getAllUsers : async (req,res)=>{
     try {
-      const email = req.query.email ;
+      const email = req.query.email || req.user.email ;
       if(email){
         const user = await User.aggregate([
           {
@@ -15,7 +15,10 @@ module.exports = {
           {
             $project :{
               email : 1,
-              status : 1
+              status : 1,
+              name : 1,
+              login : 1,
+              cartCount : {$size : "$cart"}
             }
           }
         ]);

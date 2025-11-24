@@ -8,17 +8,30 @@ import Product from './product';
 export default function Header (){
   const [drop,setDrop] = useState(false);
   const [userdrop,setUserdrop] = useState(false);
+
   const [search,setSearch] = useState(false);
+
   const [products,setProducts] = useState();
-  // const {cart,login,name} = JSON.parse(localStorage.getItem('user')) || {
-  //   login : false,
-  //   cart :[]
-  // }
+
+  const [userDetails , setUserDetails] = useState({});
+  const {cartCount,login,name} = userDetails ;
+  
+  useEffect(()=>{
+    async function fetchUser() {
+      try{
+        const {data : userDetails} = await axios.get('http://localhost:3001/user/details',{withCredentials : true});
+        setUserDetails(userDetails[0]);
+      }catch(error){
+        console.log(error.message);
+      }
+    }
+    fetchUser();
+  },[])
   const navigate = useNavigate();
 
  async function listProducts(txt){
     const text = txt.value.toLowerCase();
-    const {data} = await axios.get('https://footster-app.onrender.com/products');
+    const {data} = await axios.get('http://localhost:3001/products');
     setProducts(data.filter(v=>{
       const name = v.name.toLowerCase();
       return name.includes(text);
@@ -56,9 +69,9 @@ export default function Header (){
           {search && <button onClick={()=>setSearch(!search)} className='search-close'>X</button>}
          </div>
         
-          <div className='cart-div' onClick={ ()=> login ? navigate('/cart') : navigate('/login')}>
+          <div className='cart-div' onClick={() => navigate(login ? '/cart' : '/login')}>
             <img className='icons' src="/icons/cart.png" alt="" />
-            <div className='cart-count-div'>{cart.length}</div>
+            <div className='cart-count-div'>{cartCount}</div>
           </div> 
         
         <div className='user-container-div' onClick={()=> login ? setUserdrop(!userdrop) : navigate('/login') }>

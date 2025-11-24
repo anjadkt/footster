@@ -67,6 +67,9 @@ module.exports = {
       const TOKEN = jwt.sign({ email , name : user.name , id : user._id , role : "user" },SECRET_KEY , {expiresIn : "2h"});
       res.cookie("token",TOKEN,{maxAge : 1000 * 60 * 60 * 2});
 
+      user.login = true ;
+      await user.save();
+
       res.status(200).json({message : "User login successfull!",token : TOKEN , status : 200 , name : user.name})
 
     } catch (error) {
@@ -78,6 +81,12 @@ module.exports = {
   },
   userLogout : async(req,res)=>{
     try{
+      
+      const id = req.user.id
+      const user = await User.findOne({_id : id});
+      user.login = false ;
+      await user.save();
+
       res.clearCookie('token');
       res.status(200).json({
         message : "Logout Successfull",
