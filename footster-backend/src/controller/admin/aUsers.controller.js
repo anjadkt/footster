@@ -4,6 +4,31 @@ const {Types} = require('mongoose')
 module.exports = {
   getAllUsers : async (req,res)=>{
     try {
+      const email = req.query.email ;
+      if(email){
+        const user = await User.aggregate([
+          {
+            $match : {
+              "email" : email
+            }
+          },
+          {
+            $project :{
+              password : 0,
+              cart : 0,
+              favorite :0
+            }
+          }
+        ]);
+
+        res.status(200).json({
+          user : user || [],
+          message : "fetch all users success!",
+          status :200
+        });
+        return 
+      }
+
       const users = await User.aggregate([
         {
           $project :{
