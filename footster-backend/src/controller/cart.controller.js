@@ -8,7 +8,7 @@ module.exports = {
       const exist = user.cart.find( p => p.product.toString() === productId);
 
       if(exist){
-        exist.quantity += quantity;
+        exist.quantity += Number(quantity) || 1 ;
       }else{
         user.cart.push({
           product : productId,
@@ -35,10 +35,11 @@ module.exports = {
 
   getCart : async (req,res)=>{
     try {
-      const {cart} = await User.findOne({_id : req.user.id}).populate("cart.product");
+      const {cart,name} = await User.findOne({_id : req.user.id}).populate("cart.product");
       
       res.json({
         cart,
+        name,
         message : "cart fetch success!",
         status : 200
       })
@@ -50,17 +51,14 @@ module.exports = {
   removeItem : async (req,res)=>{
     try {
       const {id} = req.body ;
+      const details = await User.updateOne({_id : req.user.id},{$pull : {cart : {product : id}}});
 
-      const user = await User.findOne({_id : req.user.id});
-      const updatedCart = user.cart.filter(p => p.product.toString() !== id);
-      
-      user.cart = updatedCart ;
-      await user.save();
+      if(!details.modifiedCount)return res.status(404).json({message : "Product Not Found!",status :404});
 
       res.status(200).json({
         message : "Product Removed !",
         status : 200,
-        cart : updatedCart 
+        details
       });
 
     } catch (error) {
@@ -83,6 +81,8 @@ module.exports = {
         "cart.$.quantity" : -1
        } });
       }
+
+      console.log(product);
 
       if(!product){
         res.status(404).json({

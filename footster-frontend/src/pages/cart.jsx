@@ -3,68 +3,15 @@ import '../styles/home.css'
 import '../styles/cart.css'
 import CartItem from '../components/cartItems'
 import { useEffect, useReducer, useState } from 'react';
+import axios from 'axios'
 
 export default function Cart(){
-  const userObject = JSON.parse(localStorage.getItem('user'));
-  const {cart,name} = userObject;
+  const [cart , setCart] = useState([]);
+  const [name,setName] = useState("");
+  const [price,setTotal] = useState(calcPrice);
   const navigate = useNavigate();
 
-  const [price,setTotal] = useState(calcPrice);
-
-  const [userObj,dispatch] = useReducer(updateCart,userObject);
-
-  function updateCart(userObj,action){
-    const newObj = {...userObj,cart : [...userObj.cart]}
-    switch (action.type){
-
-      case "add":
-        newObj.saved = newObj.saved.toSpliced(action.index,1);
-        newObj.cart.push(action.data);
-        return newObj ;
-
-      case "remove":
-        newObj.cart = newObj.cart.filter((_,i)=> action.index !== i);
-        return newObj;
-
-      case "sremove":
-        newObj.saved = newObj.saved.toSpliced(action.index,1);
-        return newObj;
-
-      case "inc" :
-        newObj.cart = newObj.cart.toSpliced(action.index,1,
-          {...action.data,quantity : action.data.quantity + 1});
-        return newObj;
-
-      case "dec" :
-        newObj.cart = newObj.cart.toSpliced(action.index,1,
-          {...action.data,quantity : Math.max(action.data.quantity-1,1)});
-        return newObj;
-
-      case "save":
-        let save = [...newObj.saved];
-        const existIndex = save.findIndex(product => product.id == action.data.id);
-
-        if (existIndex !== -1) {
-          // Replace with a new object instead of mutating
-          save[existIndex] = {
-            ...save[existIndex],
-            quantity: save[existIndex].quantity + action.data.quantity
-          };
-        } else {
-          save.push(action.data);
-        }
-
-        newObj.cart = newObj.cart.toSpliced(action.index, 1);
-        newObj.saved = save;
-       return newObj;
-
-      default :
-       return newObj ;
-    }
-  }
-
   function calcPrice (){
-    const {cart} = JSON.parse(localStorage.getItem('user'));
     const priceObj = {
       items : 0,
       shipping : 0,
@@ -73,8 +20,9 @@ export default function Cart(){
       total : 0 
     }
     cart.forEach(v =>{
-      priceObj.items += v.price * v.quantity ;
+      priceObj.items += v.product.price * v.quantity ;
     });
+
     priceObj.beforTax = priceObj.shipping + priceObj.items;
     priceObj.tax = Math.round(priceObj.items * 0.1) ;
     priceObj.total = priceObj.beforTax + priceObj.tax ;
@@ -82,9 +30,80 @@ export default function Cart(){
   }
 
   useEffect(()=>{
-    localStorage.setItem("user",JSON.stringify(userObj));
+    async function fetchCart() {
+      try{
+        const {data} = await axios.get('http://localhost:3001/cart',{withCredentials : true});
+        setCart(data.cart);
+        setName(data.name);
+      }catch(error){
+        console.log(error.message);
+      }
+    }
+    fetchCart();
+  },[]);
+
+  useEffect(()=>{
     setTotal(calcPrice);
-  },[userObj]);
+  },[cart])
+
+  // const userObject = JSON.parse(localStorage.getItem('user'));
+  // const {cart,name} = userObject;
+
+  // const [userObj,dispatch] = useReducer(updateCart,userObject);
+
+  // function updateCart(userObj,action){
+  //   const newObj = {...userObj,cart : [...userObj.cart]}
+  //   switch (action.type){
+
+  //     case "add":
+  //       newObj.saved = newObj.saved.toSpliced(action.index,1);
+  //       newObj.cart.push(action.data);
+  //       return newObj ;
+
+  //     case "remove":
+  //       newObj.cart = newObj.cart.filter((_,i)=> action.index !== i);
+  //       return newObj;
+
+  //     case "sremove":
+  //       newObj.saved = newObj.saved.toSpliced(action.index,1);
+  //       return newObj;
+
+  //     case "inc" :
+  //       newObj.cart = newObj.cart.toSpliced(action.index,1,
+  //         {...action.data,quantity : action.data.quantity + 1});
+  //       return newObj;
+
+  //     case "dec" :
+  //       newObj.cart = newObj.cart.toSpliced(action.index,1,
+  //         {...action.data,quantity : Math.max(action.data.quantity-1,1)});
+  //       return newObj;
+
+  //     case "save":
+  //       let save = [...newObj.saved];
+  //       const existIndex = save.findIndex(product => product.id == action.data.id);
+
+  //       if (existIndex !== -1) {
+  //         // Replace with a new object instead of mutating
+  //         save[existIndex] = {
+  //           ...save[existIndex],
+  //           quantity: save[existIndex].quantity + action.data.quantity
+  //         };
+  //       } else {
+  //         save.push(action.data);
+  //       }
+
+  //       newObj.cart = newObj.cart.toSpliced(action.index, 1);
+  //       newObj.saved = save;
+  //      return newObj;
+
+  //     default :
+  //      return newObj ;
+  //   }
+  // }
+
+  // useEffect(()=>{
+  //   localStorage.setItem("user",JSON.stringify(userObj));
+  // },[userObj]);
 
   return (
     <>
@@ -109,15 +128,15 @@ export default function Cart(){
               <h2 className='empty-cart'>(Cart is empty)</h2>
             ):(
               cart.map((v,i)=>(
-                <CartItem dispatch={dispatch} index={i} key={i} data={v}/>
+                <CartItem key={i} data={v}/>
               ))
             )
           }
 
           <hr />
 
-          <h2 className='order-saved'>Saved for Later </h2>
-          <div className="cart-items">
+          {/* <h2 className='order-saved'>Saved for Later </h2> */}
+          {/* <div className="cart-items">
             {
               userObj.saved.length == 0 ? (
                 <h2 className='empty-cart'>(Nothing Saved)</h2>
@@ -164,7 +183,7 @@ export default function Cart(){
 
               )
             }
-      </div>
+          </div> */}
         </div>
 
         <div className='cart-order-summary'>

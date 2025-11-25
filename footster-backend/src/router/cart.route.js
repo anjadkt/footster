@@ -4,7 +4,7 @@ const cartRouter = require('../controller/cart.controller.js');
 
 router.get('/',cartRouter.getCart);
 router.post('/',cartRouter.addToCart);
-router.delete('/',cartRouter.removeItem);
+router.put('/',cartRouter.removeItem);
 router.post('/inc',cartRouter.incOrDec);
 router.post('/dec',cartRouter.incOrDec)
 

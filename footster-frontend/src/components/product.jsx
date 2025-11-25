@@ -2,61 +2,84 @@
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useReducer, useRef, useState } from 'react'
 import '../styles/home.css' 
+import axios from "axios"
 import{toast,ToastContainer} from 'react-toastify'
 
 export default function Product ({data}){
-  const [fav,setFav] = useState(()=>{
-      const {favorite} = JSON.parse(localStorage.getItem('user')) || {favorite : []}
-      const product = favorite.filter(d => d.id === data.id);
-      return product[0]?.isFav || false
-    });
+  // const [fav,setFav] = useState(()=>{
+  //     const {favorite} = JSON.parse(localStorage.getItem('user')) || {favorite : []}
+  //     const product = favorite.filter(d => d.id === data.id);
+  //     return product[0]?.isFav || false
+  //   });
+  
+  const navigate = useNavigate();
   
   const Elem = useRef({
     select :null
   })
-  const navigate = useNavigate();
-  const [userObj,setUserObj] = useState(JSON.parse(localStorage.getItem('user')) || {login : false});
+  //const [userObj,setUserObj] = useState(JSON.parse(localStorage.getItem('user')) || {login : false});
 
-  function addToCart() {
-  if (!userObj.login) {
-    navigate('/login');
-    return;
-  }
+  async function addToCart() {
+    try{
+      const {data : userObj} = await axios.get('http://localhost:3001/user/details',{withCredentials : true});
 
-  const updatedUser = JSON.parse(localStorage.getItem('user'));
+      if (!userObj[0].login) {
+        navigate('/login');
+        return;
+      }
 
-  const exist = updatedUser.cart.find(product => product.id === data.id);
-  const qnt = Number(Elem.current.select.value);
+      const qnt = Number(Elem.current.select.value);
 
-  if (exist) {
-    exist.quantity += qnt;
-  } else {
-    const newProduct = { ...data, quantity: qnt };
-    updatedUser.cart.push(newProduct);
-  }
+      const {data : addCart} = await axios.post(`http://localhost:3001/cart`,{
+        id : data._id,
+        quantity : qnt || 1
+      },{withCredentials : true});
 
-  toast.success("Added to Cart")
-  localStorage.setItem('user', JSON.stringify(updatedUser));
-  Elem.current.select.value = 1;
-  }
-
-  function setFavorite(){
-    if (!userObj.login) {
-      navigate('/login');
-      return;
+      toast.success("Added to Cart");
+      Elem.current.select.value = 1;
+    }catch(error){
+      console.log(error.message);
     }
-    const updatedUser = JSON.parse(localStorage.getItem('user'));
-    let {favorite} = updatedUser ;
 
-    if(!fav){
-      favorite.push({...data , isFav : true});
-    }else{
-      favorite = favorite.filter(d => d.id !== data.id);
+    //const updatedUser = JSON.parse(localStorage.getItem('user'));
+    //const exist = updatedUser.cart.find(product => product.id === data.id);
+
+    // if (exist) {
+    //   exist.quantity += qnt;
+    // } else {
+    //   const newProduct = { ...data, quantity: qnt };
+    //   updatedUser.cart.push(newProduct);
+    // }
+
+    
+    //localStorage.setItem('user', JSON.stringify(updatedUser));
+  }
+
+  async function setFavorite(){
+    try{
+      const {data : userObj} = await axios.get('http://localhost:3001/user/details',{withCredentials : true});
+
+      if (!userObj.login) {
+        navigate('/login');
+        return;
+      }
+
+    }catch(error){
+      console.log(error.message)
     }
-    localStorage.setItem('user',JSON.stringify(
-      {...updatedUser,favorite:[...favorite]}
-    ))
-    setFav(!fav)
+    
+    // const updatedUser = JSON.parse(localStorage.getItem('user'));
+    // let {favorite} = updatedUser ;
+
+    // if(!fav){
+    //   favorite.push({...data , isFav : true});
+    // }else{
+    //   favorite = favorite.filter(d => d.id !== data.id);
+    // }
+    // localStorage.setItem('user',JSON.stringify(
+    //   {...updatedUser,favorite:[...favorite]}
+    // ))
+    // setFav(!fav)
 
   }
  
@@ -70,19 +93,19 @@ export default function Product ({data}){
       <div className='product-dis'>
         <div>
           <h4>{data.name}</h4 >
-          <p>{data.color} Colors</p>
+          <p>{data.category}</p>
         </div>
         <div onClick={setFavorite}>
           {
-            fav ? <img src="./icons/favorite.png" alt="favorite" /> : <img src="./icons/favorite3.png" alt="favorite" /> 
+            data.isFav ? <img src="./icons/favorite.png" alt="favorite" /> : <img src="./icons/favorite3.png" alt="favorite" /> 
           }
         </div>
         
       </div>
-      <div onClick={()=>navigate(`/product/${data.id}`)} className='product-img-div'>
+      <div onClick={()=>navigate(`/product/${data._id}`)} className='product-img-div'>
         <img className='product' src={data.img} alt="img" />
       </div>
-      <div onClick={()=>navigate(`/product/${data.id}`)} className='product-rating-div'>
+      <div onClick={()=>navigate(`/product/${data._id}`)} className='product-rating-div'>
         <div>
           <img src={`./ratings/rating-${data.rating}.png`} alt="img" />
         </div>
