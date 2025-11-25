@@ -59,10 +59,16 @@ export default function Product ({data}){
     try{
       const {data : userObj} = await axios.get('http://localhost:3001/user/details',{withCredentials : true});
 
-      if (!userObj.login) {
+      if (!userObj[0].login) {
         navigate('/login');
         return;
       }
+
+      const {data : wishlistUpdate} = await axios.post('http://localhost:3001/wishlist',{
+        id : data._id
+      },{withCredentials : true});
+
+      toast.success(wishlistUpdate.favorite ? "Added to Wishlist": "Removed from Wishlist")
 
     }catch(error){
       console.log(error.message)

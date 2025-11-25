@@ -16,12 +16,20 @@ module.exports = {
     }
 
   },
-  addFav : async (req,res)=>{
+  addOrDltFav : async (req,res)=>{
     try {
       const {id} = req.body ;
 
       const exist = await User.findOne({_id : req.user.id , "favorite" : id});
-      if(exist)return res.status(409).json({message : "Product already in wishlist!",status : 409});
+      if(exist){
+        await User.updateOne({_id : req.user.id},{$pull : {favorite : id }});
+        res.status(200).json({
+          message : "Product removed from wishList",
+          status : 200,
+          favorite : false
+        });
+        return ;
+      }
 
       const {favorite} = await User.findByIdAndUpdate(req.user.id,{$push : {
         favorite : id
@@ -29,7 +37,8 @@ module.exports = {
 
       res.status(200).json({
         message : "product added to wishlist!",
-        status : 200
+        status : 200,
+        favorite : true
       });
 
     } catch (error) {
