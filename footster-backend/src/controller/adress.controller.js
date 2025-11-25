@@ -27,5 +27,30 @@ module.exports = {
     } catch (error) {
       res.status(500).json({message : error.message , status :500});
     }
+  },
+  getAddress : async (req,res)=>{
+    try {
+      const id = req.user.id ;
+      const user = await User.findOne({_id : id});
+
+      if (!user) {
+        return res.status(404).json({ message: "User not found", status: 404 });
+      }
+      
+      if(user.address){
+        return res.status(200).json({
+          address : user.address,
+          message : "address available!",
+          status : 200
+        })
+      }else{
+        return res.status(404).json({
+          message : "address not found!",
+          status : 200
+        });
+      }
+    } catch (error) {
+      res.status(500).json({message : error.message , status : 500});
+    }
   }
 }

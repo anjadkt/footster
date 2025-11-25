@@ -1,9 +1,11 @@
 import { useEffect, useState,useRef } from 'react'
 import '../styles/order.css'
 import { Link, useNavigate } from 'react-router-dom';
+import axios from "axios"
 
 export default function OrderSummary (){
-  const [userObj,setUserObj] = useState(JSON.parse(localStorage.getItem('user')));
+  //const [userObj,setUserObj] = useState(JSON.parse(localStorage.getItem('user')));
+  const [cart,setCart] = useState([]);
   const [confirm,setConfirm] = useState(false);
   const [price,setPrice] = useState({
     items : 0,
@@ -13,6 +15,8 @@ export default function OrderSummary (){
     discount : 0,
     total : 0
   });
+  const [address , setAddress] = useState(null);
+
   const navigate = useNavigate();
 
   const Elems = useRef({
@@ -27,56 +31,82 @@ export default function OrderSummary (){
   })
 
   useEffect(()=>{
-    setPrice(pre => {
-      const newPrice = {...price}
-      userObj.cart.forEach(v=>{
-        newPrice.items += v.price ;
-      });
-      newPrice.tax = Math.round(newPrice.items * 0.1) ;
-      newPrice.handle = 27;
-      newPrice.platform = Number(userObj.cart.length * 2);
-      const total = newPrice.items + newPrice.handle + newPrice.platform + newPrice.tax ;
-      newPrice.total = Math.round(total/100) * 100 ;
-      newPrice.discount = total - newPrice.total ;
-      return newPrice;
-    });
+    async function fetchCart() {
+      try{
+        const {data : cartObj} = await axios.get("http://localhost:3001/cart",{withCredentials : true});
+        setCart(cartObj.cart);
 
-    if(userObj.address){
-      Elems.current.name.value = userObj.address.name ;
-      Elems.current.number.value = userObj.address.number ;
-      Elems.current.pincode.value = userObj.address.pincode ;
-      Elems.current.city.value = userObj.address.city ;
-      Elems.current.adres.value = userObj.address.adres ;
-      Elems.current.state.value = userObj.address.state ;
-      Elems.current.country.value = userObj.address.country ;
+        const {data} = await axios.get("http://localhost:3001/address",{withCredentials : true});
+
+        if(data.address){
+          Elems.current.name.value = data.address.name ;
+          Elems.current.number.value = data.address.number ;
+          Elems.current.pincode.value = data.address.pincode ;
+          Elems.current.city.value = data.address.city ;
+          Elems.current.adres.value = data.address.adres ;
+          Elems.current.state.value = data.address.state ;
+          Elems.current.country.value = data.address.country ;
+        }
+        setAddress(data.address)
+
+      }catch(error){
+        console.log(error.message);
+      }
     }
+    fetchCart();
+
   },[]);
 
-  function setAdress (e){
-    e.preventDefault();
-    const addrObj = {
-      name : Elems.current.name.value,
-      number : Number(Elems.current.number.value),
-      pincode : Number(Elems.current.pincode.value),
-      city : Elems.current.city.value,
-      adres : Elems.current.adres.value,
-      state : Elems.current.state.value,
-      country : Elems.current.country.value,
-      method : Elems.current.method.value,
-      total : price.total 
-    }
-    setUserObj(pre =>{
-      const userObj = {...pre , address : addrObj}
-      return userObj ;
-    })
-  }
+  useEffect(() => {
+  setPrice(() => {
+    let items = 0;
 
-  function setOrder(){
-    const dateCon = new Date()
+    cart.forEach(v => {
+      items += v.product.price;
+    });
+
+    const tax = Math.round(items * 0.1);
+    const handle = 27;
+    const platform = cart.length * 2;
+    
+    const rawTotal = items + tax + handle + platform;
+    const total = Math.round(rawTotal / 100) * 100;
+    const discount = total - rawTotal;
+
+    return {
+      items,
+      tax,
+      handle,
+      platform,
+      discount,
+      total
+    };
+  });
+}, [cart]);
+
+  async function setAdress (e){
+    e.preventDefault();
+
+    try{
+      const addrObj = {
+        name : Elems.current.name.value,
+        number : Number(Elems.current.number.value),
+        pincode : Number(Elems.current.pincode.value),
+        city : Elems.current.city.value,
+        adres : Elems.current.adres.value,
+        state : Elems.current.state.value,
+        country : Elems.current.country.value,
+      }
+      await axios.post('http://localhost:3001/address',addrObj,{withCredentials : true});
+
+    }catch(error){
+      console.log(error.message);
+    }
+   }
+
+   function setOrder(){
+    
     const orderObj= {
-      orderId : Date.now(),
-      date : dateCon.toLocaleString(),
-      status : "Placed",
       type : Elems.current.method.value ,
       total : price.total,
       cart :[...userObj.cart],
@@ -87,19 +117,19 @@ export default function OrderSummary (){
         adres : Elems.current.adres.value
       }
     }
-    setUserObj(pre =>{
-      const newUser = {...pre,cart:[],noti :[...pre.noti,{
-        title : "Order Placed",
-        dis : `Your order ${orderObj.orderId} is Placed successfully..`
-      }] ,orders :[...pre.orders,orderObj]}
-      return newUser
-    })
-    navigate('/confirm');
-  }
+  //   setUserObj(pre =>{
+  //     const newUser = {...pre,cart:[],noti :[...pre.noti,{
+  //       title : "Order Placed",
+  //       dis : `Your order ${orderObj.orderId} is Placed successfully..`
+  //     }] ,orders :[...pre.orders,orderObj]}
+  //     return newUser
+  //   })
+     navigate('/confirm');
+   }
 
-  useEffect(()=>{
-    localStorage.setItem("user",JSON.stringify(userObj));
-  },[userObj])
+  // useEffect(()=>{
+  //   localStorage.setItem("user",JSON.stringify(userObj));
+  // },[userObj])
 
 
   return (
@@ -120,15 +150,15 @@ export default function OrderSummary (){
         <div>
           <div className='order-summary-product-div'>
             {
-              userObj.cart.map((v,i)=>(
+              cart.map((v,i)=>(
                 <div key={i} className='order-summary-product'>
                   <div>
-                    <img className='order-summary-img' src={v.img} alt="order-details" />
+                    <img className='order-summary-img' src={v.product.img} alt="order-details" />
                   </div>
                   <div className='details'>
-                    <div>Colors : {v.color}</div>
+                    <div>Category : {v.product.category}</div>
                     <div>Quantity : {v.quantity}</div>
-                    <div>Price : {v.price}</div>
+                    <div>Price : {v.product.price}</div>
                   </div>
                 </div>
               ))
@@ -168,7 +198,7 @@ export default function OrderSummary (){
         <div className='cart-order-summary'>
           <h3>TOTAL PRICE</h3>
           <div>
-            <div>Items ({userObj.cart.length}) :</div>
+            <div>Items ({cart.length}) :</div>
             <div>&#8377;{price.items}</div>
           </div>
            <div>
