@@ -19,15 +19,15 @@ export default function Dropdown(){
 
 export function UserDrop(){
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem('user'));
-  async function postJson(){
-    const userObj = JSON.parse(localStorage.getItem('user'));
-    const {data}  = await axios.get(` https://footster-app.onrender.com/users?id=${userObj.id}`);
-    const updateUser = {...userObj,email : data[0].email,password : data[0].password,login : false}
-    axios.put(`https://footster-app.onrender.com/users/${userObj.id}`,updateUser);
-    localStorage.clear();
-    navigate('/');
-  }
+  // const user = JSON.parse(localStorage.getItem('user'));
+  // async function postJson(){
+  //   const userObj = JSON.parse(localStorage.getItem('user'));
+  //   const {data}  = await axios.get(` https://footster-app.onrender.com/users?id=${userObj.id}`);
+  //   const updateUser = {...userObj,email : data[0].email,password : data[0].password,login : false}
+  //   axios.put(`https://footster-app.onrender.com/users/${userObj.id}`,updateUser);
+  //   localStorage.clear();
+  //   navigate('/');
+  // }
   return(
     <>
      <div className="user-drop-div">
@@ -44,11 +44,11 @@ export function UserDrop(){
         Wishlist
         </div>
        <div className='noti-cover-div' onClick={()=>navigate('/notifications')}>
-        <div className='noti-count'>{user.noti.length}</div>
+        <div className='noti-count'>{0}</div>
         <img  src="/icons/notification.png" alt="" />
         Notifications
         </div>
-       <div onClick={postJson}>
+       <div>
         <img  src="/icons/login.png" alt="" />
         Logout
         </div>
