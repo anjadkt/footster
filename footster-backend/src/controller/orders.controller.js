@@ -6,22 +6,22 @@ module.exports = {
   addUserOrders : async (req,res)=>{
     try {
       const {id} = req.user ;
-      const {paymentDetails,items,address} = req.body ;
-      const newItems = []
+      const {paymentDetails,items,to} = req.body ;
+      // const newItems = []
 
-      for(let id of items){
-        const product = await Product.findOne({_id : id});
-        if(!product) throw new Error(`Product not found: ${id}`);
-        newItems.push(product);
-      }
+      // for(let id of items){
+      //   const product = await Product.findOne({_id : id});
+      //   if(!product) throw new Error(`Product not found: ${id}`);
+      //   newItems.push(product);
+      // }
 
       const order = Orders({
         userId : id,
-        date : new Date(),
+        date : new Date().toLocaleString(),
         status : "Placed",
         paymentDetails,
-        items : newItems,
-        to : address
+        items,
+        to
       });
       await order.save();
 
@@ -34,6 +34,20 @@ module.exports = {
       })
     } catch (error) {
       res.status(500).json({message : error.message,status : 500});
+    }
+  },
+  getAOrder : async (req,res)=>{
+    try{
+      const {id} = req.params
+      const order = await Orders.findOne({_id : id}) ;
+      if(!order) return res.status(404).json({message : "Order Not Found!",status : 404});
+      res.status(200).json({
+        order,
+        status : 200,
+        message : "Order Found!"
+      })
+    }catch(error){
+      res.status(500).json({message : error.message , status :500})
     }
   }
 }

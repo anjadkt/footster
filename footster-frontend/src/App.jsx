@@ -37,7 +37,7 @@ function App() {
       <Route path={'/cart'} element ={<ProtectedRoute><Cart/></ProtectedRoute>} />
       <Route path={'/wishlist'} element ={<ProtectedRoute><Wishlist/></ProtectedRoute>} />
       <Route path={'/orderSummary'} element ={<ProtectedRoute><OrderSummary/></ProtectedRoute>} />
-      <Route path={'/confirm'} element={<ProtectedRoute><OrderSec/></ProtectedRoute>} />
+      <Route path={'/confirm/:id'} element={<ProtectedRoute><OrderSec/></ProtectedRoute>} />
       <Route path={'/orders'} element ={<ProtectedRoute><Orders/></ProtectedRoute>} />
       <Route path={'/notifications'} element ={<ProtectedRoute><Notification/></ProtectedRoute>} />
        {/* <Route path={'/profile'} element ={<ProtectedRoute><Profile/></ProtectedRoute>} /> */}

@@ -101,5 +101,16 @@ module.exports = {
         status : 500
       })
     }
+  },
+  clearCart : async (req,res)=>{
+    try {
+      const id = req.user.id
+      const updation =  await User.updateOne({_id : id},{$set : {cart : []}});
+      if(!updation.modifiedCount)return res.json({message : "Cart Not Cleared!"});
+
+      res.status(200).json({message : "Cart cleared!",status : 200})
+    } catch (error) {
+      res.status(500).json({message : error.message , status : 500});
+    }
   }
 }

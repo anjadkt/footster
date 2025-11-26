@@ -95,7 +95,7 @@ export default function OrderSummary (){
         city : Elems.current.city.value,
         adres : Elems.current.adres.value,
         state : Elems.current.state.value,
-        country : Elems.current.country.value,
+        country : Elems.current.country.value
       }
       await axios.post('http://localhost:3001/address',addrObj,{withCredentials : true});
 
@@ -104,18 +104,36 @@ export default function OrderSummary (){
     }
    }
 
-   function setOrder(){
-    
+  async function setOrder(){
+    const newCart = []
+    for(let v of cart){
+      newCart.push({
+        ...v.product,
+        quantity : v.quantity
+      });
+    }
     const orderObj= {
-      type : Elems.current.method.value ,
-      total : price.total,
-      cart :[...userObj.cart],
+      paymentDetails : {
+        paymentType : Elems.current.method.value ,
+        total : price.total
+      },
+      items :newCart,
       to : {
         name : Elems.current.name.value,
         number : Number(Elems.current.number.value),
         pincode : Number(Elems.current.pincode.value),
-        adres : Elems.current.adres.value
+        city : Elems.current.city.value,
+        adres : Elems.current.adres.value,
+        state : Elems.current.state.value,
+        country : Elems.current.country.value
       }
+    }
+    try{
+     const {data} = await axios.post("http://localhost:3001/user/orders",orderObj,{withCredentials : true});
+      navigate(`/confirm/${data.orderId}`);
+
+    }catch(error){
+      console.log(error.message);
     }
   //   setUserObj(pre =>{
   //     const newUser = {...pre,cart:[],noti :[...pre.noti,{
@@ -124,7 +142,6 @@ export default function OrderSummary (){
   //     }] ,orders :[...pre.orders,orderObj]}
   //     return newUser
   //   })
-     navigate('/confirm');
    }
 
   // useEffect(()=>{

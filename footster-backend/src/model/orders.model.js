@@ -5,10 +5,16 @@ const orderSchema = new mongoose.Schema({
     type : mongoose.Schema.Types.ObjectId,
     ref : "User"
   },
-  date : Date,
+  date : String,
   status : String,
-  paymentDetails : Object,
-  items :Array,
+  paymentDetails : {
+    paymentType : String,
+    total : Number
+  },
+  items: [{
+    type: Object,
+    required: true
+  }],
   to : Object
 });
 
