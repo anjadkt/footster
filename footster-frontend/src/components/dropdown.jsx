@@ -28,6 +28,16 @@ export function UserDrop(){
   //   localStorage.clear();
   //   navigate('/');
   // }
+
+  async function logoutUser() {
+    try {
+      const {data}= await axios.get('http://localhost:3001/user/logout',{withCredentials : true});
+      console.log(data);
+      if(data.status === 200)navigate('/')
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
   return(
     <>
      <div className="user-drop-div">
@@ -48,8 +58,8 @@ export function UserDrop(){
         <img  src="/icons/notification.png" alt="" />
         Notifications
         </div>
-       <div>
-        <img  src="/icons/login.png" alt="" />
+       <div onClick={logoutUser}>
+        <img src="/icons/login.png" alt="" />
         Logout
         </div>
      </div>

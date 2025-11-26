@@ -84,6 +84,7 @@ module.exports = {
       
       const id = req.user.id
       const user = await User.findOne({_id : id});
+      if(!user)return res.status(404).json({message : "User Not Found!",status : 404});
       user.login = false ;
       await user.save();
 
