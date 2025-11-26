@@ -64,13 +64,13 @@ module.exports = {
       const isValidPass = await bcrypt.compare(password,user.password);
       if(!isValidPass)return res.status(403).json({message : "Invalid Password!",status : 403});
 
-      const TOKEN = jwt.sign({ email , name : user.name , id : user._id , role : "user" },SECRET_KEY , {expiresIn : "2h"});
-      res.cookie("token",TOKEN,{maxAge : 1000 * 60 * 60 * 2});
+      const TOKEN = jwt.sign({ email , name : user.name , id : user._id , role : user.role },SECRET_KEY , {expiresIn : "2h"});
+      res.cookie((user.role === "admin"? "Admin_token" : "token"),TOKEN,{maxAge : 1000 * 60 * 60 * 2});
 
       user.login = true ;
       await user.save();
 
-      res.status(200).json({message : "User login successfull!",token : TOKEN , status : 200 , name : user.name})
+      res.status(200).json({message : "User login successfull!",token : TOKEN , status : 200 , name : user.name,role : user.role})
 
     } catch (error) {
 
@@ -88,7 +88,7 @@ module.exports = {
       user.login = false ;
       await user.save();
 
-      res.clearCookie('token');
+      res.clearCookie((user.role === "admin" ? "Admin_token" : 'token'));
       res.status(200).json({
         message : "Logout Successfull",
         status : 200

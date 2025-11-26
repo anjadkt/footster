@@ -179,9 +179,16 @@ export default function Login (){
         withCredentials : true
       });
 
-      if(data.status === 200){
-        toast.success(`Welcome ${data.name}`)
-        setTimeout(()=>{navigate('/')},1000);
+      if(data.role === "admin"){
+        if(data.status === 200){
+          toast.success(`Welcome ${data.name}`)
+          setTimeout(()=>{navigate('/dashboard')},1000);
+        }
+      }else{
+        if(data.status === 200){
+          toast.success(`Welcome ${data.name}`)
+          setTimeout(()=>{navigate('/')},1000);
+        }
       }
 
 
