@@ -12,13 +12,13 @@ export default function OrderItems ({orderDetails}){
      <div className="ordered-details-container">
        <div className="ordered-discription-div">
         <div><span>Order Placed : <br/> </span>{orderDetails.date}</div>
-        <div><span>Total Paid : <br/></span> {orderDetails.total}</div>
-        <div><span>Order ID : <br /> </span>{orderDetails.orderId}</div>
+        <div><span>Total Paid : <br/></span> {orderDetails.paymentDetails?.total}</div>
+        <div><span>Order ID : <br /> </span>{orderDetails._id}</div>
         <div><span>status : <br /> </span><div className='order-stats'>{orderDetails.status}</div></div>
        </div>
        <div className="ordered-items-div">
         {
-          orderDetails.cart.map((v,i)=>(
+          orderDetails.items.map((v,i)=>(
             <div className="ordered-items-container" key={i}>
               <div>
                 <div className="ordered-item-img">
