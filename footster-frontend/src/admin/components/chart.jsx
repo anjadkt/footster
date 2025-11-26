@@ -9,7 +9,7 @@ export default function DoughnutChart({details}) {
     datasets: [
       {
         label: "Count ",
-        data: [details.userCount, details.orders, details.products],
+        data: [details.totalUsers, details.totalOrders, details.totalProducts],
         backgroundColor: [
           "rgba(19, 152, 240, 0.6)",
           "rgba(57, 243, 243, 0.6)",

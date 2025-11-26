@@ -5,7 +5,7 @@ const Product = require('../../model/products.model.js');
 module.exports = {
   calcDashboard : async (req,res)=>{
     try{
-      const totalUsers = await User.countDocuments();
+      const totalUsers = await User.countDocuments({role : "user"});
       const totalOrders = await Order.countDocuments();
       const totalProducts = await Product.countDocuments();
       const orders = await await Order.find()
@@ -13,8 +13,6 @@ module.exports = {
         return acc + ord.paymentDetails.total
       },0);
       
-      console.log(totalRevenue);
-
       res.status(200).json({
         totalOrders,
         totalProducts,
