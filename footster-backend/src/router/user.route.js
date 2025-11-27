@@ -13,7 +13,7 @@ router.get('/login',userRoute.userLogin);
 
 router.get('/all',allUserRoute.getAllUsers);
 
-router.get('/details',verifyToken,allUserRoute.getAllUsers);
+router.get('/details',verifyToken,allUserRoute.getUserDetails);
 
 router.get('/logout',verifyToken,userRoute.userLogout);
 

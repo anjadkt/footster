@@ -9,12 +9,16 @@ export default function Users (){
   const [users,setUsers] = useState([]);
   const navigate = useNavigate();
   async function  fetchData() {
-    const {data} = await axios.get('https://footster-app.onrender.com/users');
-    data.shift();
-    setUsers(data);
+    try{
+      const {data} = await axios.get('http://localhost:3001/admin/users/all',{withCredentials : true});
+      setUsers(data.users);
+    }catch(error){
+      console.log(error.message);
+    }
   }
 
   function searchUser(s){
+    if(!s)return fetchData();
     const search = s.toLowerCase();
     const searched = users.filter((v)=> v.name.toLowerCase().includes(search));
     setUsers(searched);
@@ -36,11 +40,11 @@ export default function Users (){
           {
             users && users.map((v,i)=>(
               <div onClick={()=>navigate(`/users/${v.id}`)} className="user-info" key={i}>
-                <p>ID : {v.id}</p>
+                <p>ID : {v._id}</p>
                 <p>Role : {v.role}</p>
                 <h3>{v.name}</h3> 
                 <p>{v.email}</p>
-                <p>status : <span style={{backgroundColor : v.status == "active"? "#78eda5ff":"red"}}>{v.status}</span></p>
+                <p>status : <span style={{backgroundColor : v.status == "Active"? "#78eda5ff":"red"}}>{v.status}</span></p>
               </div>
             ))
           }

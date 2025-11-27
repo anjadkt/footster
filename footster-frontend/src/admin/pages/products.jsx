@@ -63,6 +63,7 @@ export default function AllProducts (){
   }
 
   function searchProducts (s){
+  if(!s)return setData();
    const search = s.toLowerCase();
    const searched = products.filter((v)=> {
     const n = v.name.toLowerCase();
