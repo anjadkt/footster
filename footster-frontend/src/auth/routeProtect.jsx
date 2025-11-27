@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import axios from "axios";
+import Spinner from "../components/spinner";
 
 export default function ProtectedRoute({ children, role }) {
   const [user, setUser] = useState(null);
@@ -24,7 +25,7 @@ export default function ProtectedRoute({ children, role }) {
   }, []);
 
   // ⏳ While checking auth
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <Spinner />;
 
   // ❌ Not logged in
   if (!user || !user.login) return <Navigate to="/login" />;

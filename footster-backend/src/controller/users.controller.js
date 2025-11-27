@@ -61,8 +61,10 @@ module.exports = {
       const user = await User.findOne({email});
       if(!user)return res.status(404).json({message : "User Not Found!",status : 404});
 
+      if(user.status === "Blocked")return res.status(403).json({message : "User is Blocked",status : 403});
+
       const isValidPass = await bcrypt.compare(password,user.password);
-      if(!isValidPass)return res.status(403).json({message : "Invalid Password!",status : 403});
+      if(!isValidPass)return res.status(401).json({message : "Invalid Password!",status : 401});
 
       const TOKEN = jwt.sign({ email , name : user.name , id : user._id , role : user.role },SECRET_KEY , {expiresIn : "2h"});
       res.cookie((user.role === "admin"? "Admin_token" : "token"),TOKEN,{maxAge : 1000 * 60 * 60 * 2});

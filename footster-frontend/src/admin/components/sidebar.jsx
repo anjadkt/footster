@@ -1,8 +1,18 @@
 import '../styles/sidebar.css'
 import {useNavigate} from 'react-router-dom'
+import axios from "axios"
 
 export default function SideBar (){
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+
+  async function logoutAdmin() {
+    try {
+      const {data}= await axios.get('http://localhost:3001/admin/logout',{withCredentials : true});
+      if(data.status === 200)navigate('/login')
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
   return(
     <>
      <div className="side-bar-container-div">
@@ -32,10 +42,7 @@ export default function SideBar (){
           </div>
         </div>
       </div>
-      <div onClick={()=> {
-        localStorage.clear();
-        navigate('/login');
-      }} className='logout-btn'>
+      <div onClick={logoutAdmin} className='logout-btn'>
         <div>Logout</div>
       </div>
      </div>

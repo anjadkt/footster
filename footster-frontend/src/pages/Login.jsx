@@ -209,9 +209,13 @@ export default function Login (){
         case 404 :
           obj.email = "User not Found!"
           break ;
-        case 403 :
+        case 401 :
           obj.password = "Wrong Password!"
           break ;
+        case 403 : 
+          obj.password = "Account Blocked!"
+          toast.warning('Account Blocked!');
+          break;
         default :
           break ;
       }

@@ -2,7 +2,6 @@ const express = require('express');
 const userRoute = require('../controller/users.controller.js');
 const allUserRoute = require('../controller/admin/aUsers.controller.js');
 const verifyToken = require('../middleware/verifyToken.js');
-const { verify } = require('jsonwebtoken');
 
 const router = express.Router();
 

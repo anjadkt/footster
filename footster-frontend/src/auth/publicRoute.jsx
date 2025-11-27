@@ -1,8 +1,31 @@
-import { Children, use } from "react";
 import { Navigate } from "react-router-dom";
+import { useState , useEffect } from "react";
+import axios from "axios"
+import Spinner from "../components/spinner.jsx"
 
 export default function PublicRoute ({children}){
- const user = JSON.parse(localStorage.getItem('user')) || null;
+ const [user, setUser] = useState(null);
+   const [loading, setLoading] = useState(true);
+ 
+   useEffect(() => {
+    async function userFetch() {
+      try {
+        const { data: userDetails } = await axios.get(
+          "http://localhost:3001/user/details",
+          { withCredentials: true }
+        );
+        setUser(userDetails[0]);
+      } catch (error) {
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    }
+    userFetch();
+  }, []);
+
+  if (loading) return <Spinner/>;
+  
  if(user && user.role === "user" &&  user.login){
   return <Navigate to={'/'} replace />
  }
