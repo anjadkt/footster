@@ -11,53 +11,55 @@ export default function AllProducts (){
   let product = {}
   const inputElem = useRef({
     name : null,
-    color : null,
+    category : null,
     price : null,
     add : null
 
   })
 
   async function setData(){
-    const {data} = await axios.get(' https://footster-app.onrender.com/products');
+    const {data} = await axios.get('http://localhost:3001/admin/products/all',{withCredentials : true});
     setProducts(data);
   }
 
   function addProduct(e){
     if(inputElem.current.add.value == "Update Product"){
-      axios.put(`https://footster-app.onrender.com/products/${product.id}`,{
+      axios.put(`http://localhost:3001/admin/products/update`,{
         ...product,
         name: e.target[1].value ,
-        color: e.target[2].value,
-        price: e.target[3].value
-      })
+        category: e.target[2].value,
+        price: e.target[3].value,
+        id : product._id
+      },{withCredentials : true})
       return;
     }
-    const {lastId} = products.pop();
-    axios.post('https://footster-app.onrender.com/products',{
-      id: lastId+1,
-      isFav: false,
-      quantity: 1,
-      rating: 0,
+    //const {lastId} = products.pop();
+    axios.post('http://localhost:3001/admin/products/add',{
+      // id: lastId+1,
+      // isFav: false,
+      // quantity: 1,
+      // rating: 0,
       name: e.target[1].value ,
-      color: e.target[2].value,
+      category: e.target[2].value,
       price: e.target[3].value,
       img
-    })
+    },{withCredentials : true})
     setData();
   }
 
   function removeProduct(id){
-    axios.delete(`https://footster-app.onrender.com/products/${id}`);
+    axios.put('http://localhost:3001/admin/products/remove',{id},{withCredentials : true});
     setData();
   }
 
   async function editProduct(id){
-    const {data} = await axios.get(`https://footster-app.onrender.com/products/${id}`);
-    inputElem.current.name.value = data.name
-    inputElem.current.color.value = data.color
-    inputElem.current.price.value = data.price
+    const {data} = await axios.get(`http://localhost:3001/admin/products/${id}`,{withCredentials : true});
+    console.log(data[0]);
+    inputElem.current.name.value = data[0].name
+    inputElem.current.category.value = data[0].category
+    inputElem.current.price.value = data[0].price
     inputElem.current.add.value = "Update Product"
-    product = data;
+    product = data[0];
   }
 
   function searchProducts (s){
@@ -106,7 +108,7 @@ export default function AllProducts (){
         </label> 
         <label className="inputsss">
           <input ref={e => inputElem.current.name = e} required type="text" placeholder="Products Name" />
-          <input ref={e => inputElem.current.color = e} required type="number" placeholder="Colors" />
+          <input ref={e => inputElem.current.category = e} required type="text" placeholder="category" />
           <input ref={e => inputElem.current.price = e} required type="number" placeholder="Price" />
           <input ref={e=> inputElem.current.add = e} type="submit" value='Add Product' />
         </label>
@@ -126,13 +128,13 @@ export default function AllProducts (){
           {
             products && products.map((v,i)=>(
               <tr key={i}>
-                <td>{v.id}</td>
+                <td>{i+1}</td>
                 <td className="img" ><img  src={v.img} alt="None"  /></td>
                 <td>{v.name}</td>
                 <td>{v.price}</td>
                 <td>
-                  <button onClick={()=>removeProduct(v.id)}>Remove</button>
-                  <button onClick={()=>editProduct(v.id)}>Edit</button>
+                  <button onClick={()=>removeProduct(v._id)}>Remove</button>
+                  <button onClick={()=>editProduct(v._id)}>Edit</button>
                 </td>
               </tr>
             ))

@@ -5,7 +5,6 @@ const jwt = require('jsonwebtoken');
 module.exports = (req,res,next)=>{
   try{
     const token = req.cookies.token || req.cookies.Admin_token ;
-    console.log(req.cookies)
     if(token){
       jwt.verify(token,SECRET_KEY,(err,data)=>{
         if(err)return res.status(401).json({message : "token invalid!",status : 401});

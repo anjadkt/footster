@@ -62,5 +62,16 @@ module.exports = {
     } catch (error) {
       res.status(500).json({message : error.message , status : 500});
     }
+  },
+  getOneProduct : async (req,res)=>{
+    try {
+       const {id} = req.params ;
+       const product = await Product.findOne({_id : id});
+       if(!product)res.status(404).json({message : "Product not found!",status :404});
+
+       res.status(200).json(product)
+    } catch (error) {
+      res.status(500).json({message : error.message , status : 500});
+    }
   }
 }
