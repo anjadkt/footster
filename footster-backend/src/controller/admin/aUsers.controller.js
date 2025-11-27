@@ -1,4 +1,5 @@
 const User = require('../../model/users.model.js');
+const Order = require('../../model/orders.model.js');
 const {Types} = require('mongoose')
 
 module.exports = {
@@ -109,6 +110,7 @@ module.exports = {
   blockUser : async (req,res)=>{
     try {
       const {id} = req.params ;
+      console.log(id)
       //const user = await User.updateOne({_id : id},{status : "Blocked"});
       const user = await User.findOne({_id : id});
       if(!user) return res.status(404).json({message : "User Not Found!",status :404});
@@ -121,7 +123,22 @@ module.exports = {
         status : 200
       })
     } catch (error) {
-      res.status(500).json({message : error.message , status : 500})
+      res.status(500).json({message : error.message , status : 500});
+    }
+  },
+  changeOrderStatus : async (req,res)=>{
+    try{
+      const {id,status} = req.body ;
+      const order = await Order.findOneAndUpdate({_id : id},{status});
+      if(!order || !order.modifiedCount)return res.status(404).json({message : "Order Not Found!",status :404});
+
+      res.status(200).json({
+        message : `Order modified to ${status} !`,
+        order,
+        status : 200
+      });
+    }catch(error){
+      res.status(500).json({message : error.message , status : 500});
     }
   }
 }

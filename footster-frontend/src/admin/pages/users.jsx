@@ -39,7 +39,7 @@ export default function Users (){
         <div className="alluser-admin-container-div">
           {
             users && users.map((v,i)=>(
-              <div onClick={()=>navigate(`/users/${v.id}`)} className="user-info" key={i}>
+              <div onClick={()=>navigate(`/users/${v._id}`)} className="user-info" key={i}>
                 <p>ID : {v._id}</p>
                 <p>Role : {v.role}</p>
                 <h3>{v.name}</h3> 
