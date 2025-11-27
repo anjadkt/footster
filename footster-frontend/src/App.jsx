@@ -48,7 +48,7 @@ function App() {
       <Route path={'/users/:id'} element ={<ProtectedRoute role="admin"><EachUser/></ProtectedRoute>} />
       <Route path={'/adminOrders'} element ={<ProtectedRoute role="admin"><AdminOrders/></ProtectedRoute>} />
     </Routes>
-    <ToastContainer autoClose={1500} />
+    <ToastContainer position="top-right" autoClose={1500} />
     
     </>
   )

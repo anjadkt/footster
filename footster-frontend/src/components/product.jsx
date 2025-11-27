@@ -11,6 +11,20 @@ export default function Product ({data}){
   //     const product = favorite.filter(d => d.id === data.id);
   //     return product[0]?.isFav || false
   //   });
+
+  const [fav,setFav] = useState();
+
+  useEffect(()=>{
+    async function fetchFav() {
+      try{
+        const {data : favoriteData} = await axios.get('http://localhost:3001/wishlist/favorite',{withCredentials : true});
+        setFav(favoriteData.favorite.includes(data._id));
+      }catch(error){
+        console.log(error.message);
+      }
+    }
+    fetchFav();
+  })
   
   const navigate = useNavigate();
   
@@ -101,9 +115,9 @@ export default function Product ({data}){
           <h4>{data.name}</h4 >
           <p>{data.category}</p>
         </div>
-        <div onClick={setFavorite}>
+        <div onClick={()=>{setFav(!fav); setFavorite()}}>
           {
-            data.isFav ? <img src="./icons/favorite.png" alt="favorite" /> : <img src="./icons/favorite3.png" alt="favorite" /> 
+            fav ? <img src="/icons/favorite.png" alt="favorite" /> : <img src="/icons/favorite3.png" alt="favorite" /> 
           }
         </div>
         
@@ -136,7 +150,6 @@ export default function Product ({data}){
        <button onClick={addToCart}>Add to Cart</button>
        <p><span>&#8377;</span>{data.price}</p>
       </div>
-      <ToastContainer autoClose={1000} />
      </div>
     </>
   )

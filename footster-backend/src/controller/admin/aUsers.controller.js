@@ -60,7 +60,6 @@ module.exports = {
           }
         }
       ]);
-      conosle.log(users);
       res.status(200).json({
         users,
         message : "fetch all users success!",

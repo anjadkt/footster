@@ -1,4 +1,5 @@
 const Products = require('../model/products.model.js');
+const User = require('../model/users.model.js');
 module.exports = {
   getAllProducts : async (req,res)=>{
     if(req.query.category){

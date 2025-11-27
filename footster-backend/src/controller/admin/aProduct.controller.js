@@ -4,7 +4,6 @@ module.exports = {
   addProduct : async (req,res)=>{
     try {
       const { img , category ,name , price } = req.body ;
-      console.log(req.body);
       if(!img) img = ""
       if(!category || !name || !price)return res.status(400).json({message : "incomplete form!",status:400});
 

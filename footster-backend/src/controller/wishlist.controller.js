@@ -61,5 +61,19 @@ module.exports = {
       res.status(500).json({message : error.message , status : 500});
     }
 
+  },
+  getFavProducts : async (req,res)=>{
+    try{
+      const id = req.user.id;
+      const user = await User.findOne({_id : id});
+      res.status(200).json({
+        favorite : user.favorite,
+        message : "User Favorite List",
+        status : 200
+      })
+      
+    }catch(error){
+      res.status(500).json({message : error.message , status : 500});
+    }
   }
 }
