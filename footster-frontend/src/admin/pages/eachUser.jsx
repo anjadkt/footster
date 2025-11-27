@@ -21,7 +21,7 @@ export default function EachUser(){
    }
   }
 
-  function setOrder(orderStatus,id){
+  async function setOrder(orderStatus,id){
     // const orders = user.orders.toSpliced(i,1,{
     //   ...user.orders[i],
     //   status : orderStatus
@@ -32,7 +32,7 @@ export default function EachUser(){
     //   dis :`hello ${user.name}, your order ${user.orders[i].orderId} has been ${orderStatus} successfully`
     // });
     try{
-      axios.put('http://localhost:3001/admin/users/updateStatus',{
+      await axios.put('http://localhost:3001/admin/users/updateStatus',{
         id,
         status : orderStatus
       },{withCredentials : true});

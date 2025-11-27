@@ -1,35 +1,35 @@
 import axios from "axios";
 import SideBar from "../components/sidebar";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import '../styles/allorders.css'
 
 export default function AdminOrders(){
-  const [allUser,setAlluser] = useState([]);
+  const [allorders,setAllOrders] = useState([]);
+  const navigate = useNavigate();
 
   async function fetchData(){
-    const {data} = await axios.get('https://footster-app.onrender.com/users');
-    data.shift();
-    setAlluser(data);
+    try{
+      const {data} = await axios.get('http://localhost:3001/admin/order/all',{withCredentials : true});
+      setAllOrders(data.orders);
+    }catch(error){
+      console.log(error.message);
+    }
   }
   useEffect(()=>{
     fetchData();
   },[])
 
-  function setOrder(orderStatus,i,user){
-    const orders = user.orders.toSpliced(i,1,{
-      ...user.orders[i],
-      status : orderStatus
-    });
-    const noti = [...user.noti];
-    noti.push({
-      title : `Order ${orderStatus}`,
-      dis :`hello ${user.name}, your order ${user.orders[i].orderId} has been ${orderStatus} successfully`
-    });
-    axios.put(`https://footster-app.onrender.com/users/${user.id}`,{
-      ...user,
-      orders,
-      noti
-    });
+  async function setOrder(orderStatus,id){
+    
+    try{
+      await axios.put('http://localhost:3001/admin/users/updateStatus',{
+        id,
+        status : orderStatus
+      },{withCredentials : true});
+    }catch(error){
+      console.log(error.message);
+    }
     fetchData();
   }
 
@@ -57,8 +57,8 @@ export default function AdminOrders(){
         </div>
       </div>
       <hr />
-      {
-        allUser && allUser.map((user,i)=>(
+      {/* {
+        allorders && allorders.map((user,i)=>(
           <div className="user-orders-container-div">
         {
           user.orders && user.orders.map((v,i)=>(
@@ -96,7 +96,46 @@ export default function AdminOrders(){
         }
       </div>
         ))
-      }
+      } */}
+      <div className="user-orders-container-div">
+        {
+          allorders && allorders?.map((v,i)=>(
+            <div key={i} className="user-admin-orders">
+              <div className="user-admin-orders-details">
+                <div>order ID :<br/>{v._id.slice(0,8)+"...."}</div>
+                <div>Date : <br/>{v.date}</div>
+                <div>Total Price : <br/>{v.paymentDetails?.total}</div>
+                <div>Type : <br/>{v.paymentDetails?.paymentType}</div>
+                <div>Status : <br/>Order {v.status}</div>
+              </div>
+              <div className="user-admin-orders-details">
+                <div onClick={()=>navigate(`/users/${v.userId}`)} className="user-id-btn">User ID : ${v.userId}</div> 
+              </div>
+              <div className="user-admin-orders">
+                {
+                  v.items.map((d,i)=>(
+                    <div key={i} className="product-admin-order-details">
+                      <div className="img-div"><img  src={d.img} alt="name" /></div>
+                      <div className="admin-products">
+                        <div>{d.name}</div>
+                        <div>Price : {d.price}</div>
+                        <div>Quantity :{d.quantity}</div>
+                        <div>Category : {d.category}</div>
+                      </div>
+                    </div>
+                  ))
+                }
+              </div>
+              <div className="user-admin-shpping-details">
+                <div onClick={()=>setOrder("Placed",v._id)} style={{backgroundColor : v.status == "Placed" ? "green":"none"}}>Placed</div>
+                <div style={{backgroundColor : v.status == "Shipped" ? "green":"none"}} onClick={()=>setOrder("Shipped",v._id)}>Shipped</div>
+                <div style={{backgroundColor : v.status == "Reached" ? "green":"none"}} onClick={()=>setOrder("Reached",v._id)}>Reached</div>
+                <div style={{backgroundColor : v.status == "Delivered" ? "green":"none"}} onClick={()=>setOrder("Delivered",v._id)}>Delivered</div>
+              </div>
+            </div>
+          ))
+        }
+      </div>
      </div>
       
     </>

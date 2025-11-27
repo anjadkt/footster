@@ -110,7 +110,6 @@ module.exports = {
   blockUser : async (req,res)=>{
     try {
       const {id} = req.params ;
-      console.log(id)
       //const user = await User.updateOne({_id : id},{status : "Blocked"});
       const user = await User.findOne({_id : id});
       if(!user) return res.status(404).json({message : "User Not Found!",status :404});
