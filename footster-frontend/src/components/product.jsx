@@ -36,7 +36,6 @@ export default function Product ({data}){
   async function addToCart() {
     try{
       const {data : userObj} = await axios.get('http://localhost:3001/user/details',{withCredentials : true});
-
       if (!userObj[0].login) {
         navigate('/login');
         return;
@@ -52,6 +51,7 @@ export default function Product ({data}){
       toast.success("Added to Cart");
       Elem.current.select.value = 1;
     }catch(error){
+      if(error.status === 401)return navigate('/login')
       console.log(error.message);
     }
 
@@ -85,7 +85,7 @@ export default function Product ({data}){
       toast.success(wishlistUpdate.favorite ? "Added to Wishlist": "Removed from Wishlist")
 
     }catch(error){
-      console.log(error.message)
+      if(error.status === 401)return navigate('/login');
     }
     
     // const updatedUser = JSON.parse(localStorage.getItem('user'));
