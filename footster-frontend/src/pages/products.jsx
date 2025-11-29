@@ -5,6 +5,7 @@ import Product from "../components/product"
 import Title from '../components/title'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
+import Footer from '../components/footer'
 
 export default function Products(){
   const [products,setProducts] = useState([]);
@@ -47,6 +48,7 @@ export default function Products(){
         </div>
       </div>
      </main>
+     <Footer />
     </>
   )
 }

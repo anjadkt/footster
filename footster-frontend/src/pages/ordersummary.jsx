@@ -38,7 +38,7 @@ export default function OrderSummary (){
 
         const {data} = await axios.get("http://localhost:3001/address",{withCredentials : true});
 
-        if(data.address){
+        if(data.address.name){
           Elems.current.name.value = data.address.name ;
           Elems.current.number.value = data.address.number ;
           Elems.current.pincode.value = data.address.pincode ;
@@ -62,7 +62,7 @@ export default function OrderSummary (){
     let items = 0;
 
     cart.forEach(v => {
-      items += v.product.price;
+      items += v.product.price * v.quantity;
     });
 
     const tax = Math.round(items * 0.1);

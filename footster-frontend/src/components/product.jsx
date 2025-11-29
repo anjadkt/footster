@@ -20,7 +20,7 @@ export default function Product ({data}){
         const {data : favoriteData} = await axios.get('http://localhost:3001/wishlist/favorite',{withCredentials : true});
         setFav(favoriteData.favorite.includes(data._id));
       }catch(error){
-        console.log(error.message);
+        
       }
     }
     fetchFav();
@@ -112,7 +112,7 @@ export default function Product ({data}){
      <div className='product-div'>
       <div className='product-dis'>
         <div>
-          <h4>{data.name}</h4 >
+          <h4>{data.name.slice(0,14)+(data.name.length>14 ? "..." : "")}</h4 >
           <p>{data.category}</p>
         </div>
         <div onClick={()=>{setFav(!fav); setFavorite()}}>

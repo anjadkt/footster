@@ -1,3 +1,4 @@
+import Footer from '../components/footer';
 import Header from '../components/header';
 import '../styles/blog.css'
 
@@ -86,6 +87,7 @@ export default function Blogs() {
           ))}
         </div>
       </main>
+      <Footer />
     </>
   );
 }

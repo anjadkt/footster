@@ -1,0 +1,142 @@
+.ft-footer {
+  margin-top: 40px;
+  background: #0f172a;          /* dark navy */
+  color: #e5e7eb;               /* light gray */
+  padding: 32px 7vw 18px;
+  font-size: 14px;
+}
+
+.ft-footer-inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 26px;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.3);
+  padding-bottom: 18px;
+}
+
+/* Columns */
+.ft-col {
+  min-width: 160px;
+  max-width: 260px;
+}
+
+.ft-col h4 {
+  font-size: 15px;
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: #f9fafb;
+}
+
+.ft-col ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.ft-col ul li {
+  margin-bottom: 6px;
+  color: #cbd5f5;
+}
+
+.ft-col ul li a {
+  text-decoration: none;
+  color: #cbd5f5;
+  transition: color 0.2s ease;
+}
+
+.ft-col ul li a:hover {
+  color: #facc15;               /* yellow highlight */
+}
+
+/* Brand block */
+.ft-brand .ft-logo {
+  font-size: 24px;
+  margin-bottom: 6px;
+}
+
+.ft-tagline {
+  font-size: 13px;
+  color: #9ca3af;
+  max-width: 260px;
+}
+
+/* Social section */
+.ft-social {
+  margin-top: 10px;
+  font-size: 13px;
+}
+
+.ft-social span {
+  display: block;
+  margin-bottom: 6px;
+  color: #e5e7eb;
+}
+
+.ft-social-icons {
+  display: flex;
+  gap: 8px;
+}
+
+.ft-social-icons a {
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  text-decoration: none;
+  color: #e5e7eb;
+  transition: all 0.2s ease;
+}
+
+.ft-social-icons a:hover {
+  background: #facc15;
+  color: #111827;
+  border-color: #facc15;
+}
+
+/* Bottom bar */
+.ft-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 10px;
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.ft-bottom-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ft-bottom-links a {
+  color: #9ca3af;
+  text-decoration: none;
+}
+
+.ft-bottom-links a:hover {
+  color: #facc15;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .ft-footer {
+    padding: 24px 16px 16px;
+  }
+
+  .ft-footer-inner {
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .ft-bottom {
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-start;
+  }
+}

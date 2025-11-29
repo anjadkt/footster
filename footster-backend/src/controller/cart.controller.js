@@ -1,4 +1,5 @@
 const User = require('../model/users.model.js');
+const Product = require('../model/products.model.js');
 module.exports = {
   addToCart : async (req,res)=>{
     try{
@@ -82,8 +83,6 @@ module.exports = {
        } });
       }
 
-      console.log(product);
-
       if(!product){
         res.status(404).json({
           message : "Product not found!",
@@ -91,8 +90,13 @@ module.exports = {
         })
         return ;
       }
+
+      const {cart} = await User.findOne({_id : req.user.id });
+      const productObj = cart.find(v => v.product.toString() === id);
+
       res.status(200).json({
         message : "quanitity updated!",
+        quantity : productObj.quantity,
         status : 200
       })
     } catch (error) {

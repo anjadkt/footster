@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import '../styles/login.css'
-import {Link,useNavigate} from 'react-router-dom'
+import {data, Link,useNavigate} from 'react-router-dom'
 import { useError, useFetch } from '../customHooks/customHooks'
 import axios from 'axios';
 import{toast,ToastContainer} from 'react-toastify'
@@ -216,6 +216,10 @@ export default function Login (){
           obj.password = "Account Blocked!"
           toast.warning('Account Blocked!');
           break;
+        case 429 :
+          obj.email = "Too Many Requests!"
+          toast.warning('Too Many Requests!');
+          break ;
         default :
           break ;
       }

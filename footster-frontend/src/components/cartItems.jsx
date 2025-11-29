@@ -1,14 +1,18 @@
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify"
 import axios from "axios"
+import { useState } from "react";
 
 export default function CartItem({data}){
+  const [qnt,setQnt] = useState(data.quantity);
   const navigate = useNavigate();
   async function incOrDec(action) {
     try{
-      await axios.post(`http://localhost:3001/cart/${action}`,{
+     const {data:productObj} = await axios.post(`http://localhost:3001/cart/${action}`,{
         "id" : data.product._id
       },{ withCredentials: true });
+      console.log(productObj)
+      setQnt(productObj.quantity);
 
     }catch(error){
       console.log(error.message);
@@ -37,7 +41,7 @@ export default function CartItem({data}){
           <div className="quantity-div">
             Quantity :
             <button onClick={()=>incOrDec("dec")}>-</button>
-            <span>{data.quantity}</span>
+            <span>{qnt}</span>
             <button onClick={()=>incOrDec("inc")} >+</button>
           </div>
           <div className="save-remove-div">

@@ -4,6 +4,7 @@ import Product from '../components/product';
 import Header from '../components/header';
 import Title from '../components/title';
 import { useEffect, useState } from 'react';
+import Footer from '../components/footer';
 
 export default function Home (){
   const [products] = useFetch('http://localhost:3001/products?_page=1&_limit=24');
@@ -42,6 +43,7 @@ export default function Home (){
       <hr />
 
      </main>
+     <Footer />
     </>
   )
 }
