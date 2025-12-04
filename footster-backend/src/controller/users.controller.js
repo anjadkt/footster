@@ -67,7 +67,12 @@ module.exports = {
       if(!isValidPass)return res.status(401).json({message : "Invalid Password!",status : 401});
 
       const TOKEN = jwt.sign({ email , name : user.name , id : user._id , role : user.role },SECRET_KEY , {expiresIn : "2h"});
-      res.cookie((user.role === "admin"? "Admin_token" : "token"),TOKEN,{maxAge : 1000 * 60 * 60 * 2});
+      res.cookie((user.role === "admin"? "Admin_token" : "token"),TOKEN,{
+        maxAge : 1000 * 60 * 60 * 2,
+        httpOnly: true,
+        secure: true,
+        sameSite: "none"
+      });
 
       user.login = true ;
       await user.save();
@@ -90,7 +95,12 @@ module.exports = {
       user.login = false ;
       await user.save();
 
-      res.clearCookie((user.role === "admin" ? "Admin_token" : 'token'));
+      res.clearCookie((user.role === "admin" ? "Admin_token" : 'token'),{
+        httpOnly: true,
+        secure: true,
+        sameSite: "none"
+      });
+      
       res.status(200).json({
         message : "Logout Successfull",
         status : 200
