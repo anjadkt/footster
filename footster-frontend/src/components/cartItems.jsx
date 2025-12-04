@@ -3,7 +3,7 @@ import { toast, ToastContainer } from "react-toastify"
 import axios from "axios"
 import { useState } from "react";
 
-export default function CartItem({data}){
+export default function CartItem({data,setCart}){
   const [qnt,setQnt] = useState(data.quantity);
   const navigate = useNavigate();
   async function incOrDec(action) {
@@ -11,8 +11,8 @@ export default function CartItem({data}){
      const {data:productObj} = await axios.post(`http://localhost:3001/cart/${action}`,{
         "id" : data.product._id
       },{ withCredentials: true });
-      console.log(productObj)
       setQnt(productObj.quantity);
+      setCart();
 
     }catch(error){
       console.log(error.message);
@@ -22,6 +22,7 @@ export default function CartItem({data}){
   async function removeProduct() {
     try{
       const {data:delteProduct} = await axios.put('http://localhost:3001/cart',{"id" : data.product._id},{withCredentials : true});
+      setCart();
     }catch(error){
       console.log(error.message);
     }

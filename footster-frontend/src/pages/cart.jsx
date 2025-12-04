@@ -29,8 +29,7 @@ export default function Cart(){
     return priceObj ;
   }
 
-  useEffect(()=>{
-    async function fetchCart() {
+  async function fetchCart() {
       try{
         const {data} = await axios.get('http://localhost:3001/cart',{withCredentials : true});
         setCart(data.cart);
@@ -38,7 +37,9 @@ export default function Cart(){
       }catch(error){
         console.log(error.message);
       }
-    }
+  }
+
+  useEffect(()=>{
     fetchCart();
   },[]);
 
@@ -128,7 +129,7 @@ export default function Cart(){
               <h2 className='empty-cart'>(Cart is empty)</h2>
             ):(
               cart.map((v,i)=>(
-                <CartItem key={i} data={v}/>
+                <CartItem key={i} setCart = {fetchCart} data={v}/>
               ))
             )
           }
