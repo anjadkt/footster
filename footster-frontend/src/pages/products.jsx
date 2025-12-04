@@ -12,11 +12,11 @@ export default function Products(){
   const [cat,setCat] = useState("All");
   async function setCategory(cate){
     if(cate == 'All'){
-      const {data} = await axios('http://localhost:3001/products');
+      const {data} = await axios('https://footster-api.onrender.com/products');
       setProducts(data);
       return ;
     }
-    const {data} = await axios(`http://localhost:3001/products?category=${cat}`);
+    const {data} = await axios(`https://footster-api.onrender.com/products?category=${cat}`);
     setProducts(data)
   }
   useEffect(()=>{

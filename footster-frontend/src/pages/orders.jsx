@@ -9,7 +9,7 @@ export default function Orders (){
   useEffect(()=>{
     async function fetchOrders() {
       try {
-        const {data : orderObj} = await axios.get('http://localhost:3001/user/orders/all',{withCredentials : true});
+        const {data : orderObj} = await axios.get('https://footster-api.onrender.com/user/orders/all',{withCredentials : true});
          setOrders(orderObj.orders);
       } catch (error) {
         console.log(error.message);

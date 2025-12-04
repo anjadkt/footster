@@ -33,10 +33,10 @@ export default function OrderSummary (){
   useEffect(()=>{
     async function fetchCart() {
       try{
-        const {data : cartObj} = await axios.get("http://localhost:3001/cart",{withCredentials : true});
+        const {data : cartObj} = await axios.get("https://footster-api.onrender.com/cart",{withCredentials : true});
         setCart(cartObj.cart);
 
-        const {data} = await axios.get("http://localhost:3001/address",{withCredentials : true});
+        const {data} = await axios.get("https://footster-api.onrender.com/address",{withCredentials : true});
 
         if(data.address.name){
           Elems.current.name.value = data.address.name ;
@@ -97,7 +97,7 @@ export default function OrderSummary (){
         state : Elems.current.state.value,
         country : Elems.current.country.value
       }
-      await axios.post('http://localhost:3001/address',addrObj,{withCredentials : true});
+      await axios.post('https://footster-api.onrender.com/address',addrObj,{withCredentials : true});
 
     }catch(error){
       console.log(error.message);
@@ -129,7 +129,7 @@ export default function OrderSummary (){
       }
     }
     try{
-     const {data} = await axios.post("http://localhost:3001/user/orders",orderObj,{withCredentials : true});
+     const {data} = await axios.post("https://footster-api.onrender.com/user/orders",orderObj,{withCredentials : true});
       navigate(`/confirm/${data.orderId}`);
 
     }catch(error){

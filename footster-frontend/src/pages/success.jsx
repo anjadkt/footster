@@ -12,9 +12,9 @@ export default function OrderSec(){
   useEffect(()=>{
     async function fetchOrder() {
       try{
-        const {data : orderDetails} = await axios.get(`http://localhost:3001/user/orders/${id}`,{withCredentials : true});
+        const {data : orderDetails} = await axios.get(`https://footster-api.onrender.com/user/orders/${id}`,{withCredentials : true});
         setOrderObj(orderDetails.order);
-        await axios.get('http://localhost:3001/cart/clear',{withCredentials : true});
+        await axios.get('https://footster-api.onrender.com/cart/clear',{withCredentials : true});
       }catch(error){
         console.log(error.message);
       }

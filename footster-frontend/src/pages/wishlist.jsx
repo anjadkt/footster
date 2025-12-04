@@ -11,7 +11,7 @@ export default function Wishlist (){
   useEffect(()=>{
     async function fetchFav() {
       try{
-        const {data} = await axios.get('http://localhost:3001/wishlist',{withCredentials : true});
+        const {data} = await axios.get('https://footster-api.onrender.com/wishlist',{withCredentials : true});
         setFavorite(data.favorite);
       }catch(error){
         console.log(error.message);

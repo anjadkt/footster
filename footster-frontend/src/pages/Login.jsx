@@ -23,7 +23,7 @@ export function Register(){
     let isError = true;
 
     try{
-      const {data} = await axios.get(`http://localhost:3001/user/all?email=${email}`);
+      const {data} = await axios.get(`https://footster-api.onrender.com/user/all?email=${email}`);
       if(data.length>0){
         setAlready("User already Exist");
         return ;
@@ -43,7 +43,7 @@ export function Register(){
     }
     if(isError){
       try{
-        const {data} = await axios.post('http://localhost:3001/user/register',{
+        const {data} = await axios.post('https://footster-api.onrender.com/user/register',{
           name,
           email,
           password
@@ -159,7 +159,7 @@ export default function Login (){
     //   }
     
     try{
-      // const res = await axios.get(`http://localhost:3001/user/all?email=${inputElem.current.email.value}`);
+      // const res = await axios.get(`https://footster-api.onrender.com/user/all?email=${inputElem.current.email.value}`);
       // const data = res.data[0] || [] ;
 
       // if(data.status == "blocked"){
@@ -172,7 +172,7 @@ export default function Login (){
       
       // setErr(obj);
 
-      const {data} = await axios.post("http://localhost:3001/user/login",{
+      const {data} = await axios.post("https://footster-api.onrender.com/user/login",{
         email : inputElem.current.email.value ,
         password : inputElem.current.password.value
       },{

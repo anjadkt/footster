@@ -31,7 +31,7 @@ export default function Cart(){
 
   async function fetchCart() {
       try{
-        const {data} = await axios.get('http://localhost:3001/cart',{withCredentials : true});
+        const {data} = await axios.get('https://footster-api.onrender.com/cart',{withCredentials : true});
         setCart(data.cart);
         setName(data.name);
       }catch(error){
