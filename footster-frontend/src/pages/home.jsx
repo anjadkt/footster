@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import Footer from '../components/footer';
 
 export default function Home (){
-  const [products] = useFetch('http://localhost:3001/products?_page=1&_limit=24');
+  const [products] = useFetch('https://footster-api.onrender.com/products?_page=1&_limit=24');
 
   useEffect(()=>{
     document.title = "Footster"
