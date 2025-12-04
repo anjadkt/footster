@@ -11,7 +11,7 @@ export default function PublicRoute ({children}){
     async function userFetch() {
       try {
         const { data: userDetails } = await axios.get(
-          "https://footster-api.onrender.com//user/details",
+          "https://footster-api.onrender.com/user/details",
           { withCredentials: true }
         );
         setUser(userDetails[0]);
