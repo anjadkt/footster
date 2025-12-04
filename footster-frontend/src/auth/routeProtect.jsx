@@ -11,7 +11,7 @@ export default function ProtectedRoute({ children, role }) {
     async function userFetch() {
       try {
         const { data: userDetails } = await axios.get(
-          "http://localhost:3001/user/details",
+          "https://footster-api.onrender.com//user/details",
           { withCredentials: true }
         );
         setUser(userDetails[0]);
