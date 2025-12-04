@@ -19,7 +19,7 @@ export default function Header (){
   useEffect(()=>{
     async function fetchUser() {
       try{
-        const {data : userDetails} = await axios.get('http://localhost:3001/user/details',{withCredentials : true});
+        const {data : userDetails} = await axios.get('https://footster-api.onrender.com/user/details',{withCredentials : true});
         setUserDetails(userDetails[0]);
       }catch(error){
         console.log(error.message);
@@ -31,7 +31,7 @@ export default function Header (){
 
  async function listProducts(txt){
     const text = txt.value.toLowerCase();
-    const {data} = await axios.get('http://localhost:3001/products');
+    const {data} = await axios.get('https://footster-api.onrender.com/products');
     setProducts(data.filter(v=>{
       const name = v.name.toLowerCase();
       return name.includes(text);

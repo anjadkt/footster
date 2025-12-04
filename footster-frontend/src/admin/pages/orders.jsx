@@ -10,7 +10,7 @@ export default function AdminOrders(){
 
   async function fetchData(){
     try{
-      const {data} = await axios.get('http://localhost:3001/admin/order/all',{withCredentials : true});
+      const {data} = await axios.get('https://footster-api.onrender.com/admin/order/all',{withCredentials : true});
       setAllOrders(data.orders);
     }catch(error){
       console.log(error.message);
@@ -23,7 +23,7 @@ export default function AdminOrders(){
   async function setOrder(orderStatus,id){
     
     try{
-      await axios.put('http://localhost:3001/admin/users/updateStatus',{
+      await axios.put('https://footster-api.onrender.com/admin/users/updateStatus',{
         id,
         status : orderStatus
       },{withCredentials : true});

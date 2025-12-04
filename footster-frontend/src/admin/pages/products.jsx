@@ -18,13 +18,13 @@ export default function AllProducts (){
   })
 
   async function setData(){
-    const {data} = await axios.get('http://localhost:3001/admin/products/all',{withCredentials : true});
+    const {data} = await axios.get('https://footster-api.onrender.com/admin/products/all',{withCredentials : true});
     setProducts(data);
   }
 
   function addProduct(e){
     if(inputElem.current.add.value == "Update Product"){
-      axios.put(`http://localhost:3001/admin/products/update`,{
+      axios.put(`https://footster-api.onrender.com/admin/products/update`,{
         ...product,
         name: e.target[1].value ,
         category: e.target[2].value,
@@ -34,7 +34,7 @@ export default function AllProducts (){
       return;
     }
     //const {lastId} = products.pop();
-    axios.post('http://localhost:3001/admin/products/add',{
+    axios.post('https://footster-api.onrender.com/admin/products/add',{
       // id: lastId+1,
       // isFav: false,
       // quantity: 1,
@@ -48,12 +48,12 @@ export default function AllProducts (){
   }
 
   function removeProduct(id){
-    axios.put('http://localhost:3001/admin/products/remove',{id},{withCredentials : true});
+    axios.put('https://footster-api.onrender.com/admin/products/remove',{id},{withCredentials : true});
     setData();
   }
 
   async function editProduct(id){
-    const {data} = await axios.get(`http://localhost:3001/admin/products/${id}`,{withCredentials : true});
+    const {data} = await axios.get(`https://footster-api.onrender.com/admin/products/${id}`,{withCredentials : true});
     console.log(data[0]);
     inputElem.current.name.value = data[0].name
     inputElem.current.category.value = data[0].category

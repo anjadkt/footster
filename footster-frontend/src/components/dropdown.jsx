@@ -31,7 +31,7 @@ export function UserDrop(){
 
   async function logoutUser() {
     try {
-      const {data}= await axios.get('http://localhost:3001/user/logout',{withCredentials : true});
+      const {data}= await axios.get('https://footster-api.onrender.com/user/logout',{withCredentials : true});
       if(data.status === 200)navigate('/')
     } catch (error) {
       console.log(error.message);

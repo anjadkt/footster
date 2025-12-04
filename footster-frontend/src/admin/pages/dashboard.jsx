@@ -10,7 +10,7 @@ export default function Dashboard(){
   const navigate = useNavigate();
 
   async function takeData() {
-    const {data : dashboardData} = await axios.get('http://localhost:3001/admin/dashboard',{withCredentials : true});
+    const {data : dashboardData} = await axios.get('https://footster-api.onrender.com/admin/dashboard',{withCredentials : true});
     setData(dashboardData)
   //   const calOrders = () =>{
   //     let orderCount = 0;

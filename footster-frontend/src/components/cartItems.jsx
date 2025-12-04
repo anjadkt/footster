@@ -8,7 +8,7 @@ export default function CartItem({data,setCart}){
   const navigate = useNavigate();
   async function incOrDec(action) {
     try{
-     const {data:productObj} = await axios.post(`http://localhost:3001/cart/${action}`,{
+     const {data:productObj} = await axios.post(`https://footster-api.onrender.com/cart/${action}`,{
         "id" : data.product._id
       },{ withCredentials: true });
       setQnt(productObj.quantity);
@@ -21,7 +21,7 @@ export default function CartItem({data,setCart}){
 
   async function removeProduct() {
     try{
-      const {data:delteProduct} = await axios.put('http://localhost:3001/cart',{"id" : data.product._id},{withCredentials : true});
+      const {data:delteProduct} = await axios.put('https://footster-api.onrender.com/cart',{"id" : data.product._id},{withCredentials : true});
       setCart();
     }catch(error){
       console.log(error.message);

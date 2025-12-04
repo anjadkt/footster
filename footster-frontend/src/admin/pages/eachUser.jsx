@@ -8,13 +8,13 @@ export default function EachUser(){
   const [user,setUser] = useState({});
   const {id} = useParams();
   async function fetchUser() {
-    const {data} = await axios.get(`http://localhost:3001/admin/users/${id}`,{withCredentials : true});
+    const {data} = await axios.get(`https://footster-api.onrender.com/admin/users/${id}`,{withCredentials : true});
     setUser(data.user[0]);
   }
 
   async function blockUser(){
    try{
-    await axios.get(`http://localhost:3001/admin/users/${id}/block`,{withCredentials : true});
+    await axios.get(`https://footster-api.onrender.com/admin/users/${id}/block`,{withCredentials : true});
     fetchUser();
    }catch(error){
     console.log(error.message);
@@ -32,7 +32,7 @@ export default function EachUser(){
     //   dis :`hello ${user.name}, your order ${user.orders[i].orderId} has been ${orderStatus} successfully`
     // });
     try{
-      await axios.put('http://localhost:3001/admin/users/updateStatus',{
+      await axios.put('https://footster-api.onrender.com/admin/users/updateStatus',{
         id,
         status : orderStatus
       },{withCredentials : true});

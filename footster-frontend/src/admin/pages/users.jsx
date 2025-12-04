@@ -10,7 +10,7 @@ export default function Users (){
   const navigate = useNavigate();
   async function  fetchData() {
     try{
-      const {data} = await axios.get('http://localhost:3001/admin/users/all',{withCredentials : true});
+      const {data} = await axios.get('https://footster-api.onrender.com/admin/users/all',{withCredentials : true});
       setUsers(data.users);
     }catch(error){
       console.log(error.message);

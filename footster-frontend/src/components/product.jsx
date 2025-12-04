@@ -17,7 +17,7 @@ export default function Product ({data}){
   useEffect(()=>{
     async function fetchFav() {
       try{
-        const {data : favoriteData} = await axios.get('http://localhost:3001/wishlist/favorite',{withCredentials : true});
+        const {data : favoriteData} = await axios.get('https://footster-api.onrender.com/wishlist/favorite',{withCredentials : true});
         setFav(favoriteData.favorite.includes(data._id));
       }catch(error){
         
@@ -35,7 +35,7 @@ export default function Product ({data}){
 
   async function addToCart() {
     try{
-      const {data : userObj} = await axios.get('http://localhost:3001/user/details',{withCredentials : true});
+      const {data : userObj} = await axios.get('https://footster-api.onrender.com/user/details',{withCredentials : true});
       if (!userObj[0].login) {
         navigate('/login');
         return;
@@ -43,7 +43,7 @@ export default function Product ({data}){
 
       const qnt = Number(Elem.current.select.value);
 
-      const {data : addCart} = await axios.post(`http://localhost:3001/cart`,{
+      const {data : addCart} = await axios.post(`https://footster-api.onrender.com/cart`,{
         id : data._id,
         quantity : qnt || 1
       },{withCredentials : true});
@@ -71,14 +71,14 @@ export default function Product ({data}){
 
   async function setFavorite(){
     try{
-      const {data : userObj} = await axios.get('http://localhost:3001/user/details',{withCredentials : true});
+      const {data : userObj} = await axios.get('https://footster-api.onrender.com/user/details',{withCredentials : true});
 
       if (!userObj[0].login) {
         navigate('/login');
         return;
       }
 
-      const {data : wishlistUpdate} = await axios.post('http://localhost:3001/wishlist',{
+      const {data : wishlistUpdate} = await axios.post('https://footster-api.onrender.com/wishlist',{
         id : data._id
       },{withCredentials : true});
 

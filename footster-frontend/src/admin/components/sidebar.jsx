@@ -7,7 +7,7 @@ export default function SideBar (){
 
   async function logoutAdmin() {
     try {
-      const {data}= await axios.get('http://localhost:3001/admin/logout',{withCredentials : true});
+      const {data}= await axios.get('https://footster-api.onrender.com/admin/logout',{withCredentials : true});
       if(data.status === 200)navigate('/login')
     } catch (error) {
       console.log(error.message);
