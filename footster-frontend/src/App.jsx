@@ -1,6 +1,5 @@
 import './styles/App.css'
 import axios from 'axios'
-import './styles/responsive.css';
 import Login,{Register} from './pages/Login'
 import { Route,Routes } from 'react-router-dom'
 import{ToastContainer} from 'react-toastify'
