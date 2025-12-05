@@ -1,0 +1,260 @@
+/* src/styles/responsive.css
+   Mobile-first responsive helpers for Footster
+   Paste this file and import it once in main.jsx (or append into your global CSS)
+*/
+
+/* 1) sensible base */
+:root{
+  --max-content-width: 1200px;
+  --content-padding: 16px;
+  --container-gap: 16px;
+  --card-gap: 12px;
+  --primary-font-size: 16px;
+  --radius: 10px;
+}
+
+*{ box-sizing: border-box; }
+html,body,#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-size: var(--primary-font-size);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* 2) container utility */
+.container{
+  width: 100%;
+  max-width: var(--max-content-width);
+  margin: 0 auto;
+  padding-left: var(--content-padding);
+  padding-right: var(--content-padding);
+}
+
+/* 3) fluid images & videos */
+img, picture, video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* 4) generic card fix so nothing overflows */
+.card, .product-card, .item-card {
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+/* 5) grid utilities - mobile-first */
+.grid {
+  display: grid;
+  gap: var(--card-gap);
+}
+
+/* default single column on very small */
+.grid.grid-cols-1 { grid-template-columns: 1fr; }
+
+/* product grid sensible default - override via classes if needed */
+.products-grid {
+  grid-template-columns: 1fr;
+}
+
+/* 6) navbar defaults and responsive behavior */
+.navbar, .header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px var(--content-padding);
+  position: relative;
+  z-index: 20;
+}
+
+/* Collapse long nav items */
+.navbar .nav-items {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* mobile menu hint */
+.navbar .menu-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* 7) forms and inputs scale */
+input, textarea, select, button {
+  font-size: 1rem;
+  padding: 10px 12px;
+  border-radius: 6px;
+  width: 100%;
+}
+
+/* 8) product card layout: image top, details below for mobile */
+.product-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.06);
+  padding: 12px;
+}
+
+/* product details in row on larger screens (see breakpoints) */
+.product-card .meta {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* 9) cart layout: stack on mobile */
+.cart-page {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+}
+
+/* ensure totals & sticky summaries don't overflow */
+.cart-summary {
+  width: 100%;
+}
+
+/* 10) footer spacing */
+.site-footer {
+  padding: 20px var(--content-padding);
+  text-align: center;
+}
+
+/* 11) small helper classes */
+.flex {
+  display: flex;
+}
+.flex-col { display: flex; flex-direction: column; }
+.center { display:flex; align-items:center; justify-content:center; }
+
+/* prevent horizontal overflow (common cause of mobile scroll) */
+html, body {
+  overflow-x: hidden;
+}
+
+/* 12) Responsive breakpoints (mobile-first) */
+
+/* >= 640px (sm) - small tablets / large phones */
+@media (min-width: 640px) {
+  :root { --content-padding: 20px; }
+
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .navbar .nav-items { gap: 14px; }
+}
+
+/* >= 768px (md) - tablets */
+@media (min-width: 768px) {
+  :root { --content-padding: 32px; }
+
+  .products-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .product-card {
+    flex-direction: column;
+  }
+}
+
+/* >= 1024px (lg) - small desktops */
+@media (min-width: 1024px) {
+  .products-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .product-card {
+    padding: 16px;
+  }
+
+  .cart-page {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 24px;
+  }
+
+  /* cart main vs summary split */
+  .cart-main { flex: 1 1 65%; }
+  .cart-side { flex: 0 0 35%; max-width: 420px; }
+}
+
+/* >= 1440px (xl) */
+@media (min-width: 1440px) {
+  :root { --max-content-width: 1400px; }
+}
+
+/* 13) Specific fixes for common problems you likely have */
+
+/* Ensure nav logo doesn't push content off */
+.navbar .logo {
+  max-width: 160px;
+  height: auto;
+}
+
+/* truncate long text in product name */
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* prevent huge images from blowing layout inside cards */
+.card img {
+  object-fit: cover;
+  width: 100%;
+  height: 220px; /* mobile-friendly default */
+}
+
+/* make sure larger screens have taller images */
+@media (min-width: 768px) {
+  .card img { height: 260px; }
+}
+@media (min-width: 1024px) {
+  .card img { height: 300px; }
+}
+
+/* 14) clickable areas better on mobile */
+.button, button, .btn {
+  min-height: 44px;
+  padding: 12px 16px;
+  cursor: pointer;
+  border: none;
+}
+
+/* 15) helper to center modals & fix body scroll when open */
+.modal-open {
+  overflow: hidden;
+}
+
+/* 16) accessibility: larger hit targets for mobile */
+.touchable {
+  padding: 8px;
+  border-radius: 8px;
+}
+
+/* 17) overflow protection for tables */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* 18) small utilities to avoid large font sizes on tiny screens */
+@media (max-width: 360px) {
+  :root { --primary-font-size: 15px; }
+  .card img { height: 190px; }
+}
+
+/* End of responsive.css */
