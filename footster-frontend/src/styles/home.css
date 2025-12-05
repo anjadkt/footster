@@ -414,3 +414,84 @@ nav>div,.buttons-container>div{
   color: white;
 }
 
+
+
+/* ============================
+   MOBILE RESPONSIVE FIXES
+   (Home Page Only — No JSX Changes)
+   ============================ */
+
+/* Mobile: screens below 768px */
+@media (max-width: 768px) {
+
+  /* Reduce big slogan size */
+  .main-slogan {
+    font-size: 36px;
+    line-height: 1.2;
+    padding: 0 10px;
+  }
+
+  /* Smaller image + remove negative top */
+  .main-image {
+    height: 240px;
+    top: 0;
+  }
+
+  /* Add spacing for hero section */
+  .home-overview-contianer {
+    margin-top: 70px;
+    padding: 0 10px;
+  }
+
+  /* Product container padding reduced */
+  .popular-product-container {
+    padding: 10px 15px;
+  }
+
+  /* Make product grid responsive (2 columns) */
+  .popular-product-div {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    justify-items: center;
+  }
+
+  /* Product cards auto-fit width */
+  .product-div {
+    width: 100%;
+    max-width: 180px;
+  }
+
+  /* Fix search output grid overflow */
+  .search-output-div {
+    grid-template-columns: repeat(2, 1fr);
+    left: 10px;
+    right: 10px;
+  }
+}
+
+/* Very small screens: below 480px */
+@media (max-width: 480px) {
+
+  .main-slogan {
+    font-size: 28px;
+  }
+
+  .main-image {
+    height: 180px;
+  }
+
+  /* Product grid becomes single column */
+  .popular-product-div {
+    grid-template-columns: 1fr;
+  }
+
+  .product-div {
+    max-width: 260px;
+    margin: 0 auto;
+  }
+
+  /* Search output grid fix */
+  .search-output-div {
+    grid-template-columns: 1fr;
+  }
+}

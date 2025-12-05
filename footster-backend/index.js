@@ -14,10 +14,12 @@ const verifyUser = require('./src/middleware/verifyUser.js');
 const isBlocked = require('./src/middleware/isBlockedUser.js');
 
 //middlewares
-app.use(cors({
-  origin : FRONT_URL,
-  credentials : true
-}));
+// app.use(cors({
+//   origin : FRONT_URL,
+//   credentials : true
+// }));
+
+app.use(cors());
 
 app.use(express.json());
 app.use(cookieParser());
