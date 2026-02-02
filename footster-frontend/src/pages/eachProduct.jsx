@@ -2,8 +2,8 @@ import { useNavigate, useParams } from "react-router-dom"
 import Header from "../components/header";
 import { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
-import axios from "axios";
 import '../styles/eachProduct.css'
+import api from "../services/axios";
 
 export default function EachProduct (){
   const {id} = useParams();
@@ -13,7 +13,7 @@ export default function EachProduct (){
   
   useEffect(()=>{
     async function takeProduct (){
-      const {data} = await axios.get(`https://footster-api.onrender.com/products/${id}`);
+      const {data} = await api.get(`/products/${id}`);
       setProduct(data);
 
       const user = JSON.parse(localStorage.getItem('user'));

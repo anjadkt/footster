@@ -3,7 +3,7 @@ import '../styles/home.css'
 import '../styles/cart.css'
 import CartItem from '../components/cartItems'
 import { useEffect, useReducer, useState } from 'react';
-import axios from 'axios'
+import api from '../services/axios';
 
 export default function Cart(){
   const [cart , setCart] = useState([]);
@@ -31,7 +31,7 @@ export default function Cart(){
 
   async function fetchCart() {
       try{
-        const {data} = await axios.get('https://footster-api.onrender.com/cart',{withCredentials : true});
+        const {data} = await api.get('/cart');
         setCart(data.cart);
         setName(data.name);
       }catch(error){
@@ -46,65 +46,6 @@ export default function Cart(){
   useEffect(()=>{
     setTotal(calcPrice);
   },[cart])
-
-  // const userObject = JSON.parse(localStorage.getItem('user'));
-  // const {cart,name} = userObject;
-
-  // const [userObj,dispatch] = useReducer(updateCart,userObject);
-
-  // function updateCart(userObj,action){
-  //   const newObj = {...userObj,cart : [...userObj.cart]}
-  //   switch (action.type){
-
-  //     case "add":
-  //       newObj.saved = newObj.saved.toSpliced(action.index,1);
-  //       newObj.cart.push(action.data);
-  //       return newObj ;
-
-  //     case "remove":
-  //       newObj.cart = newObj.cart.filter((_,i)=> action.index !== i);
-  //       return newObj;
-
-  //     case "sremove":
-  //       newObj.saved = newObj.saved.toSpliced(action.index,1);
-  //       return newObj;
-
-  //     case "inc" :
-  //       newObj.cart = newObj.cart.toSpliced(action.index,1,
-  //         {...action.data,quantity : action.data.quantity + 1});
-  //       return newObj;
-
-  //     case "dec" :
-  //       newObj.cart = newObj.cart.toSpliced(action.index,1,
-  //         {...action.data,quantity : Math.max(action.data.quantity-1,1)});
-  //       return newObj;
-
-  //     case "save":
-  //       let save = [...newObj.saved];
-  //       const existIndex = save.findIndex(product => product.id == action.data.id);
-
-  //       if (existIndex !== -1) {
-  //         // Replace with a new object instead of mutating
-  //         save[existIndex] = {
-  //           ...save[existIndex],
-  //           quantity: save[existIndex].quantity + action.data.quantity
-  //         };
-  //       } else {
-  //         save.push(action.data);
-  //       }
-
-  //       newObj.cart = newObj.cart.toSpliced(action.index, 1);
-  //       newObj.saved = save;
-  //      return newObj;
-
-  //     default :
-  //      return newObj ;
-  //   }
-  // }
-
-  // useEffect(()=>{
-  //   localStorage.setItem("user",JSON.stringify(userObj));
-  // },[userObj]);
 
   return (
     <>

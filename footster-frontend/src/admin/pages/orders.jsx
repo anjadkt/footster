@@ -1,8 +1,8 @@
-import axios from "axios";
 import SideBar from "../components/sidebar";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import '../styles/allorders.css'
+import api from '../../services/axios'
 
 export default function AdminOrders(){
   const [allorders,setAllOrders] = useState([]);
@@ -10,7 +10,7 @@ export default function AdminOrders(){
 
   async function fetchData(){
     try{
-      const {data} = await axios.get('https://footster-api.onrender.com/admin/order/all',{withCredentials : true});
+      const {data} = await api.get('/admin/order/all');
       setAllOrders(data.orders);
     }catch(error){
       console.log(error.message);
@@ -23,10 +23,10 @@ export default function AdminOrders(){
   async function setOrder(orderStatus,id){
     
     try{
-      await axios.put('https://footster-api.onrender.com/admin/users/updateStatus',{
+      await api.put('/admin/users/updateStatus',{
         id,
         status : orderStatus
-      },{withCredentials : true});
+      });
     }catch(error){
       console.log(error.message);
     }

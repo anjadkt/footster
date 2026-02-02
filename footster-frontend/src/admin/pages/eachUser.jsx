@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from '../../services/axios'
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom"
 import SideBar from "../components/sidebar";
@@ -8,13 +8,13 @@ export default function EachUser(){
   const [user,setUser] = useState({});
   const {id} = useParams();
   async function fetchUser() {
-    const {data} = await axios.get(`https://footster-api.onrender.com/admin/users/${id}`,{withCredentials : true});
+    const {data} = await api.get(`/admin/users/${id}`);
     setUser(data.user[0]);
   }
 
   async function blockUser(){
    try{
-    await axios.get(`https://footster-api.onrender.com/admin/users/${id}/block`,{withCredentials : true});
+    await api.get(`/admin/users/${id}/block`);
     fetchUser();
    }catch(error){
     console.log(error.message);
@@ -22,20 +22,11 @@ export default function EachUser(){
   }
 
   async function setOrder(orderStatus,id){
-    // const orders = user.orders.toSpliced(i,1,{
-    //   ...user.orders[i],
-    //   status : orderStatus
-    // });
-    // const noti = [...user.noti];
-    // noti.push({
-    //   title : `Order ${orderStatus}`,
-    //   dis :`hello ${user.name}, your order ${user.orders[i].orderId} has been ${orderStatus} successfully`
-    // });
     try{
-      await axios.put('https://footster-api.onrender.com/admin/users/updateStatus',{
+      await api.put('/admin/users/updateStatus',{
         id,
         status : orderStatus
-      },{withCredentials : true});
+      });
     }catch(error){
       console.log(error.message);
     }

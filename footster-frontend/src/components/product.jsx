@@ -2,22 +2,17 @@
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useReducer, useRef, useState } from 'react'
 import '../styles/home.css' 
-import axios from "axios"
 import{toast,ToastContainer} from 'react-toastify'
+import api from '../services/axios';
 
 export default function Product ({data}){
-  // const [fav,setFav] = useState(()=>{
-  //     const {favorite} = JSON.parse(localStorage.getItem('user')) || {favorite : []}
-  //     const product = favorite.filter(d => d.id === data.id);
-  //     return product[0]?.isFav || false
-  //   });
 
   const [fav,setFav] = useState();
 
   useEffect(()=>{
     async function fetchFav() {
       try{
-        const {data : favoriteData} = await axios.get('https://footster-api.onrender.com/wishlist/favorite',{withCredentials : true});
+        const {data : favoriteData} = await api.get('/wishlist/favorite');
         setFav(favoriteData.favorite.includes(data._id));
       }catch(error){
         
@@ -31,11 +26,10 @@ export default function Product ({data}){
   const Elem = useRef({
     select :null
   })
-  //const [userObj,setUserObj] = useState(JSON.parse(localStorage.getItem('user')) || {login : false});
 
   async function addToCart() {
     try{
-      const {data : userObj} = await axios.get('https://footster-api.onrender.com/user/details',{withCredentials : true});
+      const {data : userObj} = await api.get('/user/details');
       if (!userObj[0].login) {
         navigate('/login');
         return;
@@ -43,10 +37,10 @@ export default function Product ({data}){
 
       const qnt = Number(Elem.current.select.value);
 
-      const {data : addCart} = await axios.post(`https://footster-api.onrender.com/cart`,{
+      const {data : addCart} = await api.post(`/cart`,{
         id : data._id,
         quantity : qnt || 1
-      },{withCredentials : true});
+      });
 
       toast.success("Added to Cart");
       Elem.current.select.value = 1;
@@ -54,31 +48,18 @@ export default function Product ({data}){
       if(error.status === 401)return navigate('/login')
       console.log(error.message);
     }
-
-    //const updatedUser = JSON.parse(localStorage.getItem('user'));
-    //const exist = updatedUser.cart.find(product => product.id === data.id);
-
-    // if (exist) {
-    //   exist.quantity += qnt;
-    // } else {
-    //   const newProduct = { ...data, quantity: qnt };
-    //   updatedUser.cart.push(newProduct);
-    // }
-
-    
-    //localStorage.setItem('user', JSON.stringify(updatedUser));
   }
 
   async function setFavorite(){
     try{
-      const {data : userObj} = await axios.get('https://footster-api.onrender.com/user/details',{withCredentials : true});
+      const {data : userObj} = await api.get('/user/details');
 
       if (!userObj[0].login) {
         navigate('/login');
         return;
       }
 
-      const {data : wishlistUpdate} = await axios.post('https://footster-api.onrender.com/wishlist',{
+      const {data : wishlistUpdate} = await api.post('/wishlist',{
         id : data._id
       },{withCredentials : true});
 
@@ -87,19 +68,6 @@ export default function Product ({data}){
     }catch(error){
       if(error.status === 401)return navigate('/login');
     }
-    
-    // const updatedUser = JSON.parse(localStorage.getItem('user'));
-    // let {favorite} = updatedUser ;
-
-    // if(!fav){
-    //   favorite.push({...data , isFav : true});
-    // }else{
-    //   favorite = favorite.filter(d => d.id !== data.id);
-    // }
-    // localStorage.setItem('user',JSON.stringify(
-    //   {...updatedUser,favorite:[...favorite]}
-    // ))
-    // setFav(!fav)
 
   }
  

@@ -1,44 +1,19 @@
 import { useEffect, useState } from "react"
 import SideBar from "../components/sidebar"
 import '../styles/dashboard.css'
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import DoughnutChart from "../components/chart";
+import api from '../../services/axios'
 
 export default function Dashboard(){
   const [data,setData] = useState({});
   const navigate = useNavigate();
 
   async function takeData() {
-    const {data : dashboardData} = await axios.get('https://footster-api.onrender.com/admin/dashboard',{withCredentials : true});
+    const {data : dashboardData} = await api.get('/admin/dashboard');
     setData(dashboardData)
-  //   const calOrders = () =>{
-  //     let orderCount = 0;
-  //     users.data.forEach((v)=>{
-  //       orderCount += v.orders.length
-  //     });
-  //     return orderCount;
-  //   }
-
-  //   const calRevenue = ()=>{
-  //     let revenue = 0;
-  //     users.data.forEach((v)=>{
-  //       v.orders.forEach((o)=>{
-  //         console.log(o);
-  //         revenue += o.total
-  //       })
-  //     });
-  //     return revenue;
-  //   }
-
-  //   setData({ 
-  //     products : products.data.length,
-  //     userCount : users?.data.length - 1,
-  //     orders : calOrders(),
-  //     revenue : calRevenue()
-  //   });
-
   }
+
   useEffect(()=>{
     takeData();
     document.title = "Admin panel"

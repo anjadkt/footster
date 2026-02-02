@@ -1,9 +1,8 @@
 import {Link,useNavigate} from 'react-router-dom'
 import Dropdown,{UserDrop} from './dropdown';
 import {  useEffect, useState } from 'react';
-import { useFetch } from '../customHooks/customHooks';
-import axios from 'axios';
 import Product from './product';
+import api from '../services/axios';
 
 export default function Header (){
   const [drop,setDrop] = useState(false);
@@ -19,7 +18,7 @@ export default function Header (){
   useEffect(()=>{
     async function fetchUser() {
       try{
-        const {data : userDetails} = await axios.get('https://footster-api.onrender.com/user/details',{withCredentials : true});
+        const {data : userDetails} = await api.get('/user/details');
         setUserDetails(userDetails[0]);
       }catch(error){
         console.log(error.message);
@@ -31,7 +30,7 @@ export default function Header (){
 
  async function listProducts(txt){
     const text = txt.value.toLowerCase();
-    const {data} = await axios.get('https://footster-api.onrender.com/products');
+    const {data} = await api.get('/products');
     setProducts(data.filter(v=>{
       const name = v.name.toLowerCase();
       return name.includes(text);

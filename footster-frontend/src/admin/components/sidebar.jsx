@@ -1,13 +1,13 @@
 import '../styles/sidebar.css'
 import {useNavigate} from 'react-router-dom'
-import axios from "axios"
+import api from  '../../services/axios'
 
 export default function SideBar (){
   const navigate = useNavigate();
 
   async function logoutAdmin() {
     try {
-      const {data}= await axios.get('https://footster-api.onrender.com/admin/logout',{withCredentials : true});
+      const {data}= await api.get('/admin/logout');
       if(data.status === 200)navigate('/login')
     } catch (error) {
       console.log(error.message);

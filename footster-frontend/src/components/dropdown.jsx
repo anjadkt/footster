@@ -1,6 +1,6 @@
 
 import { useNavigate} from 'react-router-dom'
-import axios from 'axios';
+import api from '../services/axios'
 
 export default function Dropdown(){
 
@@ -19,19 +19,10 @@ export default function Dropdown(){
 
 export function UserDrop(){
   const navigate = useNavigate();
-  // const user = JSON.parse(localStorage.getItem('user'));
-  // async function postJson(){
-  //   const userObj = JSON.parse(localStorage.getItem('user'));
-  //   const {data}  = await axios.get(` https://footster-app.onrender.com/users?id=${userObj.id}`);
-  //   const updateUser = {...userObj,email : data[0].email,password : data[0].password,login : false}
-  //   axios.put(`https://footster-app.onrender.com/users/${userObj.id}`,updateUser);
-  //   localStorage.clear();
-  //   navigate('/');
-  // }
 
   async function logoutUser() {
     try {
-      const {data}= await axios.get('https://footster-api.onrender.com/user/logout',{withCredentials : true});
+      const {data}= await api.get('/user/logout');
       if(data.status === 200)navigate('/')
     } catch (error) {
       console.log(error.message);

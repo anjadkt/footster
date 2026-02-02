@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import SideBar from "../components/sidebar";
 import '../styles/products.css'
-import axios from "axios";
+import api from '../../services/axios'
 
 export default function AllProducts (){
   
@@ -18,43 +18,39 @@ export default function AllProducts (){
   })
 
   async function setData(){
-    const {data} = await axios.get('https://footster-api.onrender.com/admin/products/all',{withCredentials : true});
+    const {data} = await api.get('/admin/products/all');
     setProducts(data);
   }
 
   function addProduct(e){
     if(inputElem.current.add.value == "Update Product"){
-      axios.put(`https://footster-api.onrender.com/admin/products/update`,{
+      api.put(`/admin/products/update`,{
         ...product,
         name: e.target[1].value ,
         category: e.target[2].value,
         price: e.target[3].value,
         id : product._id
-      },{withCredentials : true})
+      })
       return;
     }
-    //const {lastId} = products.pop();
-    axios.post('https://footster-api.onrender.com/admin/products/add',{
-      // id: lastId+1,
-      // isFav: false,
-      // quantity: 1,
-      // rating: 0,
+
+    api.post('/admin/products/add',{
       name: e.target[1].value ,
       category: e.target[2].value,
       price: e.target[3].value,
       img
-    },{withCredentials : true})
+    })
     setData();
   }
 
   function removeProduct(id){
-    axios.put('https://footster-api.onrender.com/admin/products/remove',{id},{withCredentials : true});
+    api.put('/admin/products/remove',{id});
     setData();
   }
 
   async function editProduct(id){
-    const {data} = await axios.get(`https://footster-api.onrender.com/admin/products/${id}`,{withCredentials : true});
-    console.log(data[0]);
+    const {data} = await api.get(`/admin/products/${id}`);
+
     inputElem.current.name.value = data[0].name
     inputElem.current.category.value = data[0].category
     inputElem.current.price.value = data[0].price
@@ -81,7 +77,7 @@ export default function AllProducts (){
     dataObj.append("upload_preset", "footster");
     dataObj.append("cloud_name", "dcsmtagf7");
 
-    const {data} = await axios.post("https://api.cloudinary.com/v1_1/dcsmtagf7/image/upload",dataObj);
+    const {data} = await api.post("https://api.cloudinary.com/v1_1/dcsmtagf7/image/upload",dataObj);
     setImg(data.secure_url);
   }
 

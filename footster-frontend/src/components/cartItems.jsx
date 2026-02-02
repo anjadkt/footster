@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify"
-import axios from "axios"
+import api from '../services/axios'
 import { useState } from "react";
 
 export default function CartItem({data,setCart}){
@@ -8,9 +8,9 @@ export default function CartItem({data,setCart}){
   const navigate = useNavigate();
   async function incOrDec(action) {
     try{
-     const {data:productObj} = await axios.post(`https://footster-api.onrender.com/cart/${action}`,{
+     const {data:productObj} = await api.post(`/cart/${action}`,{
         "id" : data.product._id
-      },{ withCredentials: true });
+      });
       setQnt(productObj.quantity);
       setCart();
 
@@ -21,7 +21,7 @@ export default function CartItem({data,setCart}){
 
   async function removeProduct() {
     try{
-      const {data:delteProduct} = await axios.put('https://footster-api.onrender.com/cart',{"id" : data.product._id},{withCredentials : true});
+      const {data:delteProduct} = await api.put('/cart',{"id" : data.product._id});
       setCart();
     }catch(error){
       console.log(error.message);

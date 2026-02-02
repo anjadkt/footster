@@ -4,19 +4,19 @@ import { useFetch} from "../customHooks/customHooks"
 import Product from "../components/product"
 import Title from '../components/title'
 import { useEffect, useState } from 'react'
-import axios from 'axios'
 import Footer from '../components/footer'
+import api from '../services/axios'
 
 export default function Products(){
   const [products,setProducts] = useState([]);
   const [cat,setCat] = useState("All");
   async function setCategory(cate){
     if(cate == 'All'){
-      const {data} = await axios('https://footster-api.onrender.com/products');
+      const {data} = await api.get('/products');
       setProducts(data);
       return ;
     }
-    const {data} = await axios(`https://footster-api.onrender.com/products?category=${cat}`);
+    const {data} = await api.get(`/products?category=${cat}`);
     setProducts(data)
   }
   useEffect(()=>{

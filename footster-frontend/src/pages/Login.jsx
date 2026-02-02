@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import '../styles/login.css'
 import {data, Link,useNavigate} from 'react-router-dom'
 import { useError, useFetch } from '../customHooks/customHooks'
-import axios from 'axios';
 import{toast,ToastContainer} from 'react-toastify'
+import api from '../services/axios'
 
 export function Register(){
   const [error,setError] = useError();
@@ -23,7 +23,7 @@ export function Register(){
     let isError = true;
 
     try{
-      const {data} = await axios.get(`https://footster-api.onrender.com/user/all?email=${email}`);
+      const {data} = await api.get(`/user/all?email=${email}`);
       if(data.length>0){
         setAlready("User already Exist");
         return ;
@@ -43,12 +43,10 @@ export function Register(){
     }
     if(isError){
       try{
-        const {data} = await axios.post('https://footster-api.onrender.com/user/register',{
+        const {data} = await api.post('/user/register',{
           name,
           email,
           password
-        },{
-          withCredentials : true 
         });
 
         if(data.status === 200){
@@ -147,36 +145,12 @@ export default function Login (){
   }, []);
 
   async function checkUser (e){
-    e.preventDefault();
-    // const admin = await axios.get('https://footster-app.onrender.com/admin');
-    // const adminData = admin.data[0];
-
-    //   if(adminData.email === inputElem.current.email.value && adminData.password === inputElem.current.password.value ){
-    //     localStorage.setItem('user',JSON.stringify({...adminData,login : true,password : null , email:null}));
-    //     toast.success('Welcome Admin');
-    //    setTimeout(()=>{navigate('/dashboard')},1000);
-    //     return;
-    //   }
-    
+    e.preventDefault();    
     try{
-      // const res = await axios.get(`https://footster-api.onrender.com/user/all?email=${inputElem.current.email.value}`);
-      // const data = res.data[0] || [] ;
 
-      // if(data.status == "blocked"){
-      //    toast.warning('Account Blocked!')
-      //   return;
-      // }
-      // if(data.length === 0){
-      //   obj.email = "User not found"
-      // }
-      
-      // setErr(obj);
-
-      const {data} = await axios.post("https://footster-api.onrender.com/user/login",{
+      const {data} = await api.post("/user/login",{
         email : inputElem.current.email.value ,
         password : inputElem.current.password.value
-      },{
-        withCredentials : true
       });
 
       if(data.role === "admin"){
@@ -191,12 +165,6 @@ export default function Login (){
         }
       }
 
-
-      // if(Object.keys(obj)?.length === 0){
-      //   localStorage.setItem('user',JSON.stringify({...data,login : true,password : null , email:null}));
-      //   toast.success(`Welcome ${data.name}`)
-      //   setTimeout(()=>{navigate('/')},1000);
-      // }
     }catch(error){
 
       const obj = {}
@@ -231,7 +199,7 @@ export default function Login (){
      const email = inputElem.current.email.value;
      async function checkEmail() {
         try{
-          const {data} = await axios.get(`https://footster-app.onrender.com/users?email=${email}`);
+          const {data} = await api.get(`/users?email=${email}`);
           if(data.length>0){
             sessionStorage.setItem('user',JSON.stringify(data[0]));
             navigate('/forgot');

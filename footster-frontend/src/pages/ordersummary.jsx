@@ -1,10 +1,10 @@
 import { useEffect, useState,useRef } from 'react'
 import '../styles/order.css'
 import { Link, useNavigate } from 'react-router-dom';
-import axios from "axios"
+import api from '../services/axios'
 
 export default function OrderSummary (){
-  //const [userObj,setUserObj] = useState(JSON.parse(localStorage.getItem('user')));
+
   const [cart,setCart] = useState([]);
   const [confirm,setConfirm] = useState(false);
   const [price,setPrice] = useState({
@@ -33,10 +33,10 @@ export default function OrderSummary (){
   useEffect(()=>{
     async function fetchCart() {
       try{
-        const {data : cartObj} = await axios.get("https://footster-api.onrender.com/cart",{withCredentials : true});
+        const {data : cartObj} = await api.get("/cart");
         setCart(cartObj.cart);
 
-        const {data} = await axios.get("https://footster-api.onrender.com/address",{withCredentials : true});
+        const {data} = await api.get("/address");
 
         if(data.address.name){
           Elems.current.name.value = data.address.name ;
@@ -97,7 +97,7 @@ export default function OrderSummary (){
         state : Elems.current.state.value,
         country : Elems.current.country.value
       }
-      await axios.post('https://footster-api.onrender.com/address',addrObj,{withCredentials : true});
+      await api.post('/address',addrObj);
 
     }catch(error){
       console.log(error.message);
@@ -129,24 +129,13 @@ export default function OrderSummary (){
       }
     }
     try{
-     const {data} = await axios.post("https://footster-api.onrender.com/user/orders",orderObj,{withCredentials : true});
+     const {data} = await api.post("/user/orders",orderObj);
       navigate(`/confirm/${data.orderId}`);
 
     }catch(error){
       console.log(error.message);
     }
-  //   setUserObj(pre =>{
-  //     const newUser = {...pre,cart:[],noti :[...pre.noti,{
-  //       title : "Order Placed",
-  //       dis : `Your order ${orderObj.orderId} is Placed successfully..`
-  //     }] ,orders :[...pre.orders,orderObj]}
-  //     return newUser
-  //   })
-   }
-
-  // useEffect(()=>{
-  //   localStorage.setItem("user",JSON.stringify(userObj));
-  // },[userObj])
+  }
 
 
   return (

@@ -2,19 +2,18 @@ import { useState } from "react"
 import "../styles/ordersec.css"
 import {useNavigate, useParams} from 'react-router-dom'
 import { useEffect } from "react";
-import axios from "axios"
+import api from "../services/axios";
 
 export default function OrderSec(){
-  // const [date,setDate] = useState(()=> (new Date).toLocaleString());
-  // const {address,cart} = JSON.parse(localStorage.getItem('user'));
+ 
   const [orderObj,setOrderObj] = useState({});
   const {id} = useParams();
   useEffect(()=>{
     async function fetchOrder() {
       try{
-        const {data : orderDetails} = await axios.get(`https://footster-api.onrender.com/user/orders/${id}`,{withCredentials : true});
+        const {data : orderDetails} = await api.get(`/user/orders/${id}`);
         setOrderObj(orderDetails.order);
-        await axios.get('https://footster-api.onrender.com/cart/clear',{withCredentials : true});
+        await api.get('/cart/clear');
       }catch(error){
         console.log(error.message);
       }

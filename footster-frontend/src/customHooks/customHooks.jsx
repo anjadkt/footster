@@ -1,5 +1,5 @@
 import { useEffect, useReducer, useState } from "react";
-import axios from 'axios'
+import api from '../services/axios'
 
 export function  useError (){
   const [error,setError] = useReducer(updateError,{})
@@ -63,7 +63,7 @@ export function  useError (){
 export function useFetch (url){
   const [data,setData] = useState();
   useEffect(()=>{
-    axios.get(url)
+    api.get(url)
     .then(dataList => setData(dataList.data) )
     .catch(err => console.log(err.message))
   },[url]);

@@ -1,8 +1,8 @@
-import axios from "axios";
 import SideBar from "../components/sidebar";
 import { useEffect, useState } from "react";
 import '../styles/users.css'
 import { useNavigate } from "react-router-dom";
+import api from '../../services/axios'
 
 
 export default function Users (){
@@ -10,7 +10,7 @@ export default function Users (){
   const navigate = useNavigate();
   async function  fetchData() {
     try{
-      const {data} = await axios.get('https://footster-api.onrender.com/admin/users/all',{withCredentials : true});
+      const {data} = await api.get('/admin/users/all');
       setUsers(data.users);
     }catch(error){
       console.log(error.message);

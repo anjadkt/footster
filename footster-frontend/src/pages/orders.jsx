@@ -2,14 +2,16 @@ import { useEffect } from "react";
 import Header from "../components/header"
 import OrderItems from "../components/orderItem";
 import { useState } from "react";
-import axios from "axios";
+import api from '../services/axios'
+
 export default function Orders (){
-  //const [userObj,setUserObj] = useState(JSON.parse(localStorage.getItem('user')));
+
   const [orders,setOrders] = useState([]);
+
   useEffect(()=>{
     async function fetchOrders() {
       try {
-        const {data : orderObj} = await axios.get('https://footster-api.onrender.com/user/orders/all',{withCredentials : true});
+        const {data : orderObj} = await api.get('user/orders/all');
          setOrders(orderObj.orders);
       } catch (error) {
         console.log(error.message);
