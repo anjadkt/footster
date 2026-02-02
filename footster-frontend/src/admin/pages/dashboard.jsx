@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react"
 import SideBar from "../components/sidebar"
-import '../styles/dashboard.css'
 import { useNavigate } from "react-router-dom";
 import DoughnutChart from "../components/chart";
 import api from '../../services/axios'
@@ -71,7 +70,7 @@ export default function Dashboard(){
         <div></div>
       </div>
      </div>
-     <div className="dashboard-all-chart-container">
+     <div className="flex items-center justify-center flex-col h-[450px] pl-[260px] py-[50px]">
       <h2>Dashboard Summary</h2>
      <DoughnutChart details={data} />
      </div>
