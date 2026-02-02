@@ -1,247 +1,161 @@
-import { useEffect, useState,useRef } from 'react'
-import '../styles/order.css'
+import { useEffect, useState, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../services/axios'
 
-export default function OrderSummary (){
-
-  const [cart,setCart] = useState([]);
-  const [confirm,setConfirm] = useState(false);
-  const [price,setPrice] = useState({
-    items : 0,
-    handle : 0,
-    tax :0,
-    platform : 0,
-    discount : 0,
-    total : 0
-  });
-  const [address , setAddress] = useState(null);
-
+export default function OrderSummary() {
+  const [cart, setCart] = useState([]);
+  const [confirm, setConfirm] = useState(false);
+  const [price, setPrice] = useState({ items: 0, handle: 0, tax: 0, platform: 0, discount: 0, total: 0 });
   const navigate = useNavigate();
 
   const Elems = useRef({
-    name : null,
-    number : null,
-    pincode : null,
-    city : null,
-    adres :  null,
-    state : null,
-    country : null,
-    method : null,
+    name: null, number: null, pincode: null, city: null,
+    adres: null, state: null, country: null, method: null,
   })
 
-  useEffect(()=>{
+  useEffect(() => {
     async function fetchCart() {
-      try{
-        const {data : cartObj} = await api.get("/cart");
+      try {
+        const { data: cartObj } = await api.get("/cart");
         setCart(cartObj.cart);
-
-        const {data} = await api.get("/address");
-
-        if(data.address.name){
-          Elems.current.name.value = data.address.name ;
-          Elems.current.number.value = data.address.number ;
-          Elems.current.pincode.value = data.address.pincode ;
-          Elems.current.city.value = data.address.city ;
-          Elems.current.adres.value = data.address.adres ;
-          Elems.current.state.value = data.address.state ;
-          Elems.current.country.value = data.address.country ;
+        const { data } = await api.get("/address");
+        if (data.address.name) {
+          Object.keys(data.address).forEach(key => {
+            if (Elems.current[key]) Elems.current[key].value = data.address[key];
+          });
         }
-        setAddress(data.address)
-
-      }catch(error){
-        console.log(error.message);
-      }
+      } catch (error) { console.log(error.message); }
     }
     fetchCart();
-
-  },[]);
+  }, []);
 
   useEffect(() => {
-  setPrice(() => {
     let items = 0;
-
-    cart.forEach(v => {
-      items += v.product.price * v.quantity;
-    });
-
-    const tax = Math.round(items * 0.1);
-    const handle = 27;
-    const platform = cart.length * 2;
-    
+    cart.forEach(v => { items += v.product.price * v.quantity; });
+    const tax = Math.round(items * 0.1), handle = 27, platform = cart.length * 2;
     const rawTotal = items + tax + handle + platform;
     const total = Math.round(rawTotal / 100) * 100;
     const discount = total - rawTotal;
+    setPrice({ items, tax, handle, platform, discount, total });
+  }, [cart]);
 
-    return {
-      items,
-      tax,
-      handle,
-      platform,
-      discount,
-      total
-    };
-  });
-}, [cart]);
-
-  async function setAdress (e){
+  const setAdress = async (e) => {
     e.preventDefault();
-
-    try{
-      const addrObj = {
-        name : Elems.current.name.value,
-        number : Number(Elems.current.number.value),
-        pincode : Number(Elems.current.pincode.value),
-        city : Elems.current.city.value,
-        adres : Elems.current.adres.value,
-        state : Elems.current.state.value,
-        country : Elems.current.country.value
-      }
-      await api.post('/address',addrObj);
-
-    }catch(error){
-      console.log(error.message);
-    }
-   }
-
-  async function setOrder(){
-    const newCart = []
-    for(let v of cart){
-      newCart.push({
-        ...v.product,
-        quantity : v.quantity
-      });
-    }
-    const orderObj= {
-      paymentDetails : {
-        paymentType : Elems.current.method.value ,
-        total : price.total
-      },
-      items :newCart,
-      to : {
-        name : Elems.current.name.value,
-        number : Number(Elems.current.number.value),
-        pincode : Number(Elems.current.pincode.value),
-        city : Elems.current.city.value,
-        adres : Elems.current.adres.value,
-        state : Elems.current.state.value,
-        country : Elems.current.country.value
-      }
-    }
-    try{
-     const {data} = await api.post("/user/orders",orderObj);
-      navigate(`/confirm/${data.orderId}`);
-
-    }catch(error){
-      console.log(error.message);
-    }
+    try {
+      const addrObj = Object.fromEntries(Object.entries(Elems.current).map(([k, v]) => [k, k === 'number' || k === 'pincode' ? Number(v.value) : v.value]));
+      await api.post('/address', addrObj);
+    } catch (error) { console.log(error.message); }
   }
 
+  const setOrder = async () => {
+    const orderObj = {
+      paymentDetails: { paymentType: Elems.current.method.value, total: price.total },
+      items: cart.map(v => ({ ...v.product, quantity: v.quantity })),
+      to: Object.fromEntries(Object.entries(Elems.current).map(([k, v]) => [k, k === 'number' || k === 'pincode' ? Number(v.value) : v.value]))
+    };
+    try {
+      const { data } = await api.post("/user/orders", orderObj);
+      navigate(`/confirm/${data.orderId}`);
+    } catch (error) { console.log(error.message); }
+  }
 
   return (
-    <>
-      <header className='header-div'>
-        <div className="logo-div">
-          <Link className='nav-links' to='/cart'><h1>FootSter.<span className='cart-h1'>cart</span></h1></Link>
-        </div>
-        <div className='cart-item'>
-          <h2>Order Summary</h2>
-        </div>
-        <div>
-          <input className='cart-search-bar' type="text" placeholder='Search for products..' />
-          <img className='cart-search-icon' src="./icons/search.png" alt="search for products.." />
+    <div className="min-h-screen bg-gray-50 pb-20">
+      {/* Header */}
+      <header className="bg-white border-b sticky top-0 z-40 px-4 md:px-12 py-4 flex items-center justify-between gap-4">
+        <Link className="text-2xl font-black" to='/cart'>FootSter.<span className="text-yellow-500">cart</span></Link>
+        <h2 className="text-xs font-bold text-gray-600 uppercase tracking-widest">Order Summary</h2>
+        <div className="relative hidden md:block w-full md:w-64">
+          <input className="w-full pl-4 pr-10 py-2 border rounded-full text-sm focus:outline-none focus:ring-1 focus:ring-black" type="text" placeholder="Search..." />
+          <img className="absolute right-3 top-2.5 h-4 opacity-40" src="./icons/search.png" alt="" />
         </div>
       </header>
-      <div className='order-summary-all-container'>
-        <div>
-          <div className='order-summary-product-div'>
-            {
-              cart.map((v,i)=>(
-                <div key={i} className='order-summary-product'>
-                  <div>
-                    <img className='order-summary-img' src={v.product.img} alt="order-details" />
-                  </div>
-                  <div className='details'>
-                    <div>Category : {v.product.category}</div>
-                    <div>Quantity : {v.quantity}</div>
-                    <div>Price : {v.product.price}</div>
+
+      <main className="max-w-7xl mx-auto px-4 md:px-12 mt-8 flex flex-col lg:flex-row gap-8">
+        
+        {/* Left Side: Products and Address */}
+        <div className="flex-1 space-y-8">
+          {/* Products List */}
+          <div className="bg-white p-4 md:p-6 rounded-2xl border shadow-sm space-y-4">
+            <h3 className="font-bold text-gray-400 uppercase text-xs tracking-widest mb-4">Items in your cart</h3>
+            {cart.map((v, i) => (
+              <div key={i} className="flex gap-4 border-b last:border-0 pb-4 last:pb-0">
+                <img className="h-20 w-20 object-contain bg-gray-50 rounded-lg" src={v.product.img} alt="" />
+                <div className="flex-1 text-sm space-y-1">
+                  <p className="font-bold text-gray-800">{v.product.name || 'Product Name'}</p>
+                  <p className="text-gray-500">Category: {v.product.category}</p>
+                  <div className="flex justify-between font-bold mt-2">
+                    <span>Qty: {v.quantity}</span>
+                    <span className="text-orange-600">₹{v.product.price}</span>
                   </div>
                 </div>
-              ))
-            }
+              </div>
+            ))}
           </div>
-          <div className='order-address-details'>
-            <h2>Delivery Address</h2>
-            <form onSubmit={(e)=>{setAdress(e); setConfirm(!confirm)}} className='address-form'>
-              <div>
-                <input ref={e=>Elems.current.name = e} required type="text" placeholder='Name' />
-                <input ref={e=>Elems.current.number = e} required type="number" placeholder='Number'/>
+
+          {/* Address Form */}
+          <div className="bg-white p-6 md:p-8 rounded-2xl border shadow-sm">
+            <h2 className="text-xl font-black mb-6">Delivery Address</h2>
+            <form onSubmit={(e) => { setAdress(e); setConfirm(true); }} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input ref={e => Elems.current.name = e} className="w-full p-3 border rounded-xl focus:ring-1 focus:ring-black outline-none" required type="text" placeholder="Full Name" />
+                <input ref={e => Elems.current.number = e} className="w-full p-3 border rounded-xl focus:ring-1 focus:ring-black outline-none" required type="number" placeholder="Phone Number" />
               </div>
-              <div>
-                <input ref={e=>Elems.current.pincode = e} required  type="number" placeholder='Pincode' />
-                <input ref={e=>Elems.current.city = e} required type="text" placeholder='City/District/Town' />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input ref={e => Elems.current.pincode = e} className="w-full p-3 border rounded-xl focus:ring-1 focus:ring-black outline-none" required type="number" placeholder="Pincode" />
+                <input ref={e => Elems.current.city = e} className="w-full p-3 border rounded-xl focus:ring-1 focus:ring-black outline-none" required type="text" placeholder="City/District" />
               </div>
-              <div>
-                <textarea ref={e=>Elems.current.adres = e} required placeholder='Address (area and street)'></textarea>
+              <textarea ref={e => Elems.current.adres = e} className="w-full p-3 border rounded-xl focus:ring-1 focus:ring-black outline-none h-24" required placeholder="Address (Area and Street)"></textarea>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input ref={e => Elems.current.state = e} className="w-full p-3 border rounded-xl focus:ring-1 focus:ring-black outline-none" required type="text" placeholder="State" />
+                <input ref={e => Elems.current.country = e} className="w-full p-3 border rounded-xl focus:ring-1 focus:ring-black outline-none" required type="text" placeholder="Country" />
               </div>
-              <div>
-                <input ref={e=>Elems.current.state = e} required type="text" placeholder='State'/>
-                <input ref={e=>Elems.current.country = e} required type="text" placeholder='Country'/>
-              </div>
-              <div>
-                <input type="text" placeholder='Land Mark (optional)' />
-                <select ref={e=>Elems.current.method = e}>
-                  <option>COD</option>
-                  <option>UPI</option>
-                  <option>CREDIT CARD</option>
-                  <option>DEBIT CARD</option>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input className="w-full p-3 border rounded-xl focus:ring-1 focus:ring-black outline-none" type="text" placeholder="Landmark (Optional)" />
+                <select ref={e => Elems.current.method = e} className="w-full p-3 border rounded-xl bg-gray-50 font-bold outline-none cursor-pointer">
+                  <option>COD</option><option>UPI</option><option>CREDIT CARD</option><option>DEBIT CARD</option>
                 </select>
               </div>
-              <input className='set-address' type="submit" value='SAVE & DELIVER HERE' />
+              <button type="submit" className="w-full bg-black text-white py-4 rounded-xl font-black hover:bg-gray-800 transition-colors mt-4">
+                SAVE & DELIVER HERE
+              </button>
             </form>
           </div>
         </div>
-        <div className='cart-order-summary'>
-          <h3>TOTAL PRICE</h3>
-          <div>
-            <div>Items ({cart.length}) :</div>
-            <div>&#8377;{price.items}</div>
-          </div>
-           <div>
-            <div>Tax (10%) :</div>
-            <div>&#8377;{price.tax}</div>
-          </div>
-          <div>
-            <div>Handling :</div>
-            <div>&#8377;{price.handle}</div>
-          </div>
-          <div>
-            <div>Platform fee :</div>
-            <div>&#8377;{price.platform}</div>
-          </div>
-          <div>
-            <div>Discount :</div>
-            <div>&#8377;{price.discount}</div>
-          </div>
-          <hr />
-          <div>
-            <h4>Total Payable :</h4>
-            <h4>&#8377;{price.total}</h4>
+
+        {/* Right Side: Price Details (Sticky on Desktop) */}
+        <div className="lg:w-80 h-fit lg:sticky lg:top-32">
+          <div className="bg-white p-6 rounded-2xl border shadow-md space-y-4">
+            <h3 className="font-black text-gray-400 uppercase text-xs tracking-widest border-b pb-2">Price Details</h3>
+            <div className="space-y-3 text-sm font-medium text-gray-600">
+              <div className="flex justify-between"><span>Items ({cart.length})</span><span>₹{price.items}</span></div>
+              <div className="flex justify-between"><span>Tax (10%)</span><span>₹{price.tax}</span></div>
+              <div className="flex justify-between"><span>Handling</span><span>₹{price.handle}</span></div>
+              <div className="flex justify-between"><span>Platform fee</span><span>₹{price.platform}</span></div>
+              <div className="flex justify-between text-green-600 font-bold"><span>Discount</span><span>-₹{Math.abs(price.discount)}</span></div>
+            </div>
+            <div className="border-t pt-4 flex justify-between items-center text-lg font-black text-gray-900">
+              <h4>Total Payable</h4>
+              <h4 className="text-orange-600">₹{price.total}</h4>
+            </div>
           </div>
         </div>
-      </div>
-      <div style={{display : confirm ? "block" : "none"}} className='confirm-your-order'>
-        <div className='confirm-message-div'>
-          <h2>Confirm Your Order</h2>
-          <img className='confirm-message-img' src="./confirm-order.png" alt="confirm your order" />
-          <p>Please review your details<br />before confirming.</p>
-          <hr />
-          <div>
-            <button onClick={()=>setConfirm(!confirm)} className='cancel'>Cancel</button>
-            <button onClick={setOrder} className='confirm'>Confirm</button>
+      </main>
+
+      {/* Confirmation Modal */}
+      {confirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity">
+          <div className="bg-white w-full max-w-sm rounded-3xl p-8 text-center animate-in fade-in zoom-in duration-300">
+            <h2 className="text-2xl font-black mb-4">Confirm Order</h2>
+            <img className="h-40 mx-auto mb-6" src="./confirm-order.png" alt="" />
+            <p className="text-gray-500 font-medium mb-8">Please review your details <br/> before confirming.</p>
+            <div className="flex gap-4">
+              <button onClick={() => setConfirm(false)} className="flex-1 py-3 border border-gray-200 rounded-xl font-bold hover:bg-gray-50">Cancel</button>
+              <button onClick={setOrder} className="flex-1 py-3 bg-black text-white rounded-xl font-bold hover:bg-gray-800">Confirm</button>
+            </div>
           </div>
         </div>
-      </div>
-    </>
+      )}
+    </div>
   )
 }

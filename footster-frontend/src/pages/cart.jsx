@@ -1,161 +1,123 @@
-import {Link, useNavigate} from 'react-router-dom'
-import '../styles/home.css'
-import '../styles/cart.css'
+import { Link, useNavigate } from 'react-router-dom'
 import CartItem from '../components/cartItems'
-import { useEffect, useReducer, useState } from 'react';
+import { useEffect, useState } from 'react';
 import api from '../services/axios';
 
-export default function Cart(){
-  const [cart , setCart] = useState([]);
-  const [name,setName] = useState("");
-  const [price,setTotal] = useState(calcPrice);
+export default function Cart() {
+  const [cart, setCart] = useState([]);
+  const [name, setName] = useState("");
+  const [price, setTotal] = useState({ items: 0, shipping: 0, beforTax: 0, tax: 0, total: 0 });
   const navigate = useNavigate();
 
-  function calcPrice (){
-    const priceObj = {
-      items : 0,
-      shipping : 0,
-      beforTax : 0,
-      tax : 0,
-      total : 0 
-    }
-    cart.forEach(v =>{
-      priceObj.items += v.product.price * v.quantity ;
+  function calcPrice(cartData) {
+    const priceObj = { items: 0, shipping: 0, beforTax: 0, tax: 0, total: 0 }
+    cartData.forEach(v => {
+      priceObj.items += v.product.price * v.quantity;
     });
-
     priceObj.beforTax = priceObj.shipping + priceObj.items;
-    priceObj.tax = Math.round(priceObj.items * 0.1) ;
-    priceObj.total = priceObj.beforTax + priceObj.tax ;
-    return priceObj ;
+    priceObj.tax = Math.round(priceObj.items * 0.1);
+    priceObj.total = priceObj.beforTax + priceObj.tax;
+    return priceObj;
   }
 
   async function fetchCart() {
-      try{
-        const {data} = await api.get('/cart');
-        setCart(data.cart);
-        setName(data.name);
-      }catch(error){
-        console.log(error.message);
-      }
+    try {
+      const { data } = await api.get('/cart');
+      setCart(data.cart);
+      setName(data.name);
+      setTotal(calcPrice(data.cart));
+    } catch (error) {
+      console.log(error.message);
+    }
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchCart();
-  },[]);
-
-  useEffect(()=>{
-    setTotal(calcPrice);
-  },[cart])
+  }, []);
 
   return (
-    <>
-     <header className='header-div'>
-        <div className="logo-div">
-          <Link className='nav-links' to='/'><h1>FootSter.</h1></Link>
+    <div className="bg-gray-50 min-h-screen">
+      {/* Responsive Header */}
+      <header className="fixed top-0 left-0 right-0 h-auto min-h-[50px] bg-white border-b border-gray-200 z-50 flex items-center justify-between px-2 py-2 md:py-0 md:px-10 shadow-sm gap-4">
+        <Link to="/" className="text-2xl md:text-3xl font-black tracking-tighter text-gray-900">
+          FootSter.
+        </Link>
+        
+        <div className="text-gray-500 font-medium text-center md:text-left">
+          <h2 className="text-sm md:text-lg leading-tight">
+            {name}'s Cart (<span className="text-[#e1711d] font-semibold">{cart.length} Items</span>)
+          </h2>
         </div>
-        <div className='cart-item'>
-          <h2>{name}'s Cart (<span>{cart.length} Items</span>)</h2>
+
+        <div className="relative hidden md:block w-full md:w-auto max-w-sm">
+          <input 
+            className="w-full md:w-[250px] py-2 pl-4 pr-10 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-gray-100 focus:border-black transition-all" 
+            type="text" 
+            placeholder="Search products..." 
+          />
+          <img className="absolute right-3 top-2.5 h-5 opacity-40" src="./icons/search.png" alt="search" />
         </div>
-        <div>
-          <input className='cart-search-bar' type="text" placeholder='Search for products..' />
-          <img className='cart-search-icon' src="./icons/search.png" alt="search for products.." />
-        </div>
-     </header>
-     <h2 className='order-review'>Review your Order</h2>
-     <div className='all-cart-items'>
-        <div className="cart-items">
+      </header>
 
-          {
-            (cart.length === 0) ? (
-              <h2 className='empty-cart'>(Cart is empty)</h2>
-            ):(
-              cart.map((v,i)=>(
-                <CartItem key={i} setCart = {fetchCart} data={v}/>
-              ))
-            )
-          }
+      {/* Main Content Area */}
+      <main className="max-w-[1300px] mx-auto pt-20 md:pt-22 pb-20 px-4 md:px-10">
+        <h2 className="text-xl md:text-2xl font-bold mb-6 text-gray-800 text-center md:text-left">Review your Order</h2>
 
-          <hr />
+        <div className="flex flex-col lg:flex-row gap-8 items-start">
+          
+          {/* Cart Items List */}
+          <div className="w-full lg:flex-1">
+            {cart.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-20 bg-white rounded-2xl border border-dashed border-gray-300 gap-4">
+                <h2 className="text-xl md:text-3xl font-medium text-gray-300 italic">Your cart is empty</h2>
+                <button onClick={() => navigate('/')} className="text-[#e1711d] font-bold hover:underline">Continue Shopping</button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {cart.map((v, i) => (
+                  <CartItem key={v.product._id || i} setCart={fetchCart} data={v} />
+                ))}
+              </div>
+            )}
+          </div>
 
-          {/* <h2 className='order-saved'>Saved for Later </h2> */}
-          {/* <div className="cart-items">
-            {
-              userObj.saved.length == 0 ? (
-                <h2 className='empty-cart'>(Nothing Saved)</h2>
-              ) : (
-                userObj && userObj.saved.map((v,i)=>(
-            <div key={i} className="product-save-container">
-                <div onClick={()=>navigate(`/product/${v.id}`)} className="cart-img-div">
-                  <img className="cart-product-img" src={v.img} alt="product image" />
-                </div>
-                <div className="product-details-div">
-                  <p>{v.name}</p>
-                  <h4>&#8377;{v.price}</h4>
-                  <div className="quantity-div">
-                    Quantity :<span>{v.quantity}</span>
-                  </div>
-                  <div className="save-remove-div">
-                    <button onClick={()=>dispatch({type : "add",data : v,index : i})} className="save-later">Add to cart</button>
-                    <button onClick={()=>dispatch({type : "sremove",index : i})}>Remove</button>
-                  </div>
-                </div>
-                <div className="Product-delivery-div">
-                  <h4>Choose a delivery option :</h4>
-                  <div>
-                    <label htmlFor="delivery1">
-                      <input id="delivery1" type="radio" defaultChecked />
-                      <p>Tuesday, June 21<br /><span>FREE Shipping</span></p>
-                    </label>
-                  </div>
-                  <div>
-                    <label htmlFor="delivery2">
-                      <input id="delivery2" type="radio" />
-                      <p>Monday, June 17<br /><span>&#8377;189 - Shipping</span></p>
-                    </label>
-                  </div>
-                  <div>
-                    <label htmlFor="delivery3">
-                      <input id="delivery3" type="radio" />
-                      <p>Sunday, June 15<br /><span>&#8377;289 - Shipping</span></p>
-                    </label>
-                  </div>
-                </div>
+          {/* Order Summary Sidebar */}
+          <div className="w-full lg:w-[380px] lg:sticky lg:top-28 bg-white border border-gray-200 p-6 md:p-8 rounded-2xl shadow-sm">
+            <h3 className="text-lg font-bold mb-6 border-b pb-4">Order Summary</h3>
+            
+            <div className="space-y-4 text-sm font-medium text-gray-600">
+              <div className="flex justify-between">
+                <span>Items ({cart.length}):</span>
+                <span className="text-gray-900 font-bold">₹{price.items}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Shipping:</span>
+                <span className="text-gray-900 font-bold">₹{price.shipping}</span>
+              </div>
+              <div className="flex justify-between border-t pt-4">
+                <span>Total before tax:</span>
+                <span className="text-gray-900 font-bold">₹{price.beforTax}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Estimated tax (10%):</span>
+                <span className="text-gray-900 font-bold">₹{price.tax}</span>
+              </div>
             </div>
-                ))
 
-              )
-            }
-          </div> */}
-        </div>
+            <div className="flex justify-between items-center my-6 py-4 border-t border-b">
+              <h4 className="text-lg font-extrabold text-[#b12704]">Order total:</h4>
+              <h4 className="text-xl font-extrabold text-[#b12704]">₹{price.total}</h4>
+            </div>
 
-        <div className='cart-order-summary'>
-          <h3>Order Summary</h3>
-          <div>
-            <div>Items ({cart.length}):</div>
-            <div>&#8377;{price.items}</div>
-          </div>
-          <div>
-            <div>Shipping & handling:</div>
-            <div>&#8377;{price.shipping}</div>
-          </div>
-          <div>
-            <div>Total before tax:</div>
-            <div>&#8377;{price.beforTax}</div>
-          </div>
-          <div>
-            <div>Estimated tax (10%):</div>
-            <div>&#8377;{price.tax}</div>
-          </div>
-          <hr />
-          <div>
-            <h4>Order total:</h4>
-            <h4>&#8377;{price.total}</h4>
-          </div>
-          <div>
-            <button onClick={()=>cart.length === 0 ? navigate('/products') : navigate('/orderSummary')}>Place your Order</button>
+            <button 
+              onClick={() => cart.length === 0 ? navigate('/') : navigate('/orderSummary')}
+              className="w-full py-4 bg-[#efd700] hover:bg-[#f7e017] border border-black rounded-lg font-bold text-gray-900 shadow-sm active:scale-[0.98] transition-all"
+            >
+              Place your Order
+            </button>
           </div>
         </div>
-     </div>
-    </>
+      </main>
+    </div>
   )
 }

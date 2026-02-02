@@ -1,5 +1,3 @@
-import '../styles/login.css'
-
 import { useError } from "../customHooks/customHooks"
 import { useEffect, useRef, useState } from "react";
 import axios from 'axios';
