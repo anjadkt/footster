@@ -1,7 +1,7 @@
 import { Navigate } from "react-router-dom";
 import { useState , useEffect } from "react";
-import axios from "axios"
 import Spinner from "../components/spinner.jsx"
+import api from '../services/axios.js'
 
 export default function PublicRoute ({children}){
  const [user, setUser] = useState(null);
@@ -10,9 +10,8 @@ export default function PublicRoute ({children}){
    useEffect(() => {
     async function userFetch() {
       try {
-        const { data: userDetails } = await axios.get(
-          "https://footster-api.onrender.com/user/details",
-          { withCredentials: true }
+        const { data: userDetails } = await api.get(
+          "/user/details"
         );
         setUser(userDetails[0]);
       } catch (error) {

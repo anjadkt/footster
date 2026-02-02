@@ -1,126 +1,152 @@
-import axios from "axios";
+import api from '../../services/axios'
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom"
 import SideBar from "../components/sidebar";
-import '../styles/eachuser.css'
 
-export default function EachUser(){
-  const [user,setUser] = useState({});
-  const {id} = useParams();
+export default function EachUser() {
+  const [user, setUser] = useState({});
+  const { id } = useParams();
+
   async function fetchUser() {
-    const {data} = await axios.get(`https://footster-api.onrender.com/admin/users/${id}`,{withCredentials : true});
+    const { data } = await api.get(`/admin/users/${id}`);
     setUser(data.user[0]);
   }
 
-  async function blockUser(){
-   try{
-    await axios.get(`https://footster-api.onrender.com/admin/users/${id}/block`,{withCredentials : true});
-    fetchUser();
-   }catch(error){
-    console.log(error.message);
-   }
+  async function blockUser() {
+    try {
+      await api.get(`/admin/users/${id}/block`);
+      fetchUser();
+    } catch (error) {
+      console.log(error.message);
+    }
   }
 
-  async function setOrder(orderStatus,id){
-    // const orders = user.orders.toSpliced(i,1,{
-    //   ...user.orders[i],
-    //   status : orderStatus
-    // });
-    // const noti = [...user.noti];
-    // noti.push({
-    //   title : `Order ${orderStatus}`,
-    //   dis :`hello ${user.name}, your order ${user.orders[i].orderId} has been ${orderStatus} successfully`
-    // });
-    try{
-      await axios.put('https://footster-api.onrender.com/admin/users/updateStatus',{
+  async function setOrder(orderStatus, id) {
+    try {
+      await api.put('/admin/users/updateStatus', {
         id,
-        status : orderStatus
-      },{withCredentials : true});
-    }catch(error){
+        status: orderStatus
+      });
+    } catch (error) {
       console.log(error.message);
     }
     fetchUser();
   }
 
-  // function messageUser(e){
-  //   const noti = [...user.noti] 
-  //   noti.push({
-  //     title : e.target[0].value,
-  //     dis : e.target[1].value
-  //   });
-  //   try{
-  //     axios.put(`https://footster-app.onrender.com/users/${id}`,{
-  //     ...user,
-  //     noti
-  //   })
-  //   }catch(err){
-  //     console.log(err.message);
-  //   }
-
-  // }
-
-  useEffect(()=>{
+  useEffect(() => {
     fetchUser();
-  },[])
+  }, [])
+
   return (
-    <>
-     <SideBar/>
-     <div className="all-user-info-container-div">
-      <div className="user-info-container-div">
-        <div>
-          <h1>{user.name}</h1>
-          <p>ID : {user._id}</p>
-          <p> Email - {user.email}</p>
-          <p>status - <span className="user-status" style={{backgroundColor : user.status == "Active" ? "#78eda5ff":"red"}}>{user.status}</span></p>
-          <br />
-          <button onClick={blockUser} className="block-user">{user.status == "Active" ? "Block User": "Unblock User"}</button>
+    <div className="bg-gray-50 min-h-screen">
+      <SideBar />
+      
+      <main className="pl-[260px] p-8">
+
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-[10px] flex justify-between items-start max-w-4xl">
+          <div>
+            <div className="flex items-center gap-4 mb-2">
+              <h1 className="text-3xl font-extrabold text-gray-900">{user.name}</h1>
+              <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                user.status === "Active" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+              }`}>
+                {user.status}
+              </span>
+            </div>
+            <div className="space-y-1 text-gray-500">
+              <p className="flex items-center gap-2">
+                <span className="font-medium text-gray-700">ID:</span> {user._id}
+              </p>
+              <p className="flex items-center gap-2">
+                <span className="font-medium text-gray-700">Email:</span> {user.email}
+              </p>
+            </div>
+          </div>
+
+          <button 
+            onClick={blockUser} 
+            className={`px-6 py-2.5 cursor-pointer rounded-xl font-bold transition-all transform hover:scale-105 active:scale-95 shadow-md ${
+              user.status === "Active" 
+              ? "bg-red-600 hover:bg-red-700 text-white" 
+              : "bg-green-600 hover:bg-green-700 text-white"
+            }`}
+          >
+            {user.status === "Active" ? "Block User" : "Unblock User"}
+          </button>
         </div>
-        <div className="message-user">
-          <form onSubmit={(e)=>messageUser(e)}>
-            <label>Message user</label>
-            <input required type="text" placeholder="Title"/>
-            <textarea placeholder="discription" rows={5}></textarea>
-            <input className="msg-submit" type="submit" value={'message'} />
-          </form>
-        </div>
-      </div>
-      <div className="user-orders-container-div">
-        {
-          user && user?.orderDetails && user.orderDetails?.map((v,i)=>(
-            <div key={i} className="user-admin-orders">
-              <div className="user-admin-orders-details">
-                <div>order ID :<br/>{v._id}</div>
-                <div>Date : <br/>{v.date}</div>
-                <div>Total Price : <br/>{v.paymentDetails?.total}</div>
-                <div>Type : <br/>{v.paymentDetails?.paymentType}</div>
-                <div>Status : <br/>Order {v.status}</div>
+
+        <h2 className="text-xl font-bold text-gray-800 mb-6">Order History</h2>
+
+        {/* Orders List */}
+        <div className="flex flex-col gap-6 max-w-5xl">
+          {user?.orderDetails?.map((v, i) => (
+            <div key={i} className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
+              
+              {/* Order Header Info */}
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4 p-6 bg-gray-50 border-b border-gray-100 text-sm">
+                <div>
+                  <p className="text-gray-400 uppercase text-[10px] font-bold tracking-wider">Order ID</p>
+                  <p className="font-mono text-gray-700">{v._id?.slice(-10)}</p>
+                </div>
+                <div>
+                  <p className="text-gray-400 uppercase text-[10px] font-bold tracking-wider">Date</p>
+                  <p className="text-gray-700">{v.date}</p>
+                </div>
+                <div>
+                  <p className="text-gray-400 uppercase text-[10px] font-bold tracking-wider">Total Price</p>
+                  <p className="text-gray-900 font-bold">${v.paymentDetails?.total}</p>
+                </div>
+                <div>
+                  <p className="text-gray-400 uppercase text-[10px] font-bold tracking-wider">Payment</p>
+                  <p className="text-gray-700">{v.paymentDetails?.paymentType}</p>
+                </div>
+                <div>
+                  <p className="text-gray-400 uppercase text-[10px] font-bold tracking-wider">Current Status</p>
+                  <p className="text-blue-600 font-semibold">{v.status}</p>
+                </div>
               </div>
-              <div className="user-admin-orders">
-                {
-                  v.items.map((d,i)=>(
-                    <div key={i} className="product-admin-order-details">
-                      <div className="img-div"><img  src={d.img} alt="name" /></div>
-                      <div className="admin-products">
-                        <div>{d.name}</div>
-                        <div>Price : {d.price}</div>
-                        <div>Quantity :{d.quantity}</div>
-                        <div>Category : {d.category}</div>
-                      </div>
+
+              {/* Items List */}
+              <div className="p-6 space-y-4">
+                {v.items.map((d, index) => (
+                  <div key={index} className="flex items-center gap-4 p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                    <img className="w-30 h-30 object-contain px-4 rounded-md border border-gray-200" src={d.img} alt={d.name} />
+                    <div className="grid grid-cols-2 md:grid-cols-4 flex-1 gap-4 items-center">
+                      <div className="font-bold text-gray-800">{d.name}</div>
+                      <div className="text-gray-600 text-sm">Price: <span className="font-medium">${d.price}</span></div>
+                      <div className="text-gray-600 text-sm">Qty: <span className="font-medium">{d.quantity}</span></div>
+                      <div className="text-xs inline-block px-2 py-1 bg-gray-100 text-gray-500 rounded self-start w-fit uppercase">{d.category}</div>
                     </div>
-                  ))
-                }
+                  </div>
+                ))}
               </div>
-              <div className="user-admin-shpping-details">
-                <div onClick={()=>setOrder("Placed",v._id)} style={{backgroundColor : v.status == "Placed" ? "green":"none"}}>Placed</div>
-                <div style={{backgroundColor : v.status == "Shipped" ? "green":"none"}} onClick={()=>setOrder("Shipped",v._id)}>Shipped</div>
-                <div style={{backgroundColor : v.status == "Reached" ? "green":"none"}} onClick={()=>setOrder("Reached",v._id)}>Reached</div>
-                <div style={{backgroundColor : v.status == "Delivered" ? "green":"none"}} onClick={()=>setOrder("Delivered",v._id)}>Delivered</div>
+
+              {/* Status Management Bar */}
+              <div className="flex border-t border-gray-100 cursor-pointer">
+                {["Placed", "Shipped", "Reached", "Delivered"].map((status) => (
+                  <div
+                    key={status}
+                    onClick={() => setOrder(status, v._id)}
+                    className={`flex-1 py-4 text-center text-sm font-bold transition-all ${
+                      v.status === status 
+                      ? "bg-green-600 text-white" 
+                      : "text-gray-400 hover:bg-gray-50"
+                    }`}
+                  >
+                    {status}
+                  </div>
+                ))}
               </div>
             </div>
-          ))
-        }
-      </div>
-     </div>
-    </>
+          ))}
+
+          {!user?.orderDetails?.length && (
+            <div className="text-center py-20 bg-white rounded-2xl border-2 border-dashed border-gray-200">
+               <p className="text-gray-400">No orders found for this user.</p>
+            </div>
+          )}
+        </div>
+      </main>
+    </div>
   )
 }

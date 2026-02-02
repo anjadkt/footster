@@ -1,67 +1,86 @@
+import { useNavigate } from 'react-router-dom'
+import api from '../services/axios'
 
-import { useNavigate} from 'react-router-dom'
-import axios from 'axios';
 
-export default function Dropdown(){
+export default function Dropdown() {
+  const navigate = useNavigate();
+  const categories = ["Casuals", "Sports", "Heavy-duty", "Traditional", "Indoor"];
 
   return (
-    <>
-     <div className="drop-down-div">
-      <div>Casuals</div>
-      <div>Sports</div>
-      <div>Heavy-duty</div>
-      <div>Traditional</div>
-      <div>Indoor</div>
-     </div>
-    </>
+    <div className="absolute top-full left-0 mt-2 w-48 bg-white border border-gray-200 rounded-2xl shadow-xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+      <div className="py-2">
+        {categories.map((cat) => (
+          <div
+            key={cat}
+            onClick={() => navigate(`/products?category=${cat.toLowerCase()}`)}
+            className="px-5 py-3 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-black cursor-pointer transition-colors border-l-4 border-transparent hover:border-black"
+          >
+            {cat}
+          </div>
+        ))}
+      </div>
+    </div>
   )
 }
 
-export function UserDrop(){
+
+
+export function UserDrop() {
   const navigate = useNavigate();
-  // const user = JSON.parse(localStorage.getItem('user'));
-  // async function postJson(){
-  //   const userObj = JSON.parse(localStorage.getItem('user'));
-  //   const {data}  = await axios.get(` https://footster-app.onrender.com/users?id=${userObj.id}`);
-  //   const updateUser = {...userObj,email : data[0].email,password : data[0].password,login : false}
-  //   axios.put(`https://footster-app.onrender.com/users/${userObj.id}`,updateUser);
-  //   localStorage.clear();
-  //   navigate('/');
-  // }
 
   async function logoutUser() {
     try {
-      const {data}= await axios.get('https://footster-api.onrender.com/user/logout',{withCredentials : true});
-      if(data.status === 200)navigate('/')
+      const { data } = await api.get('/user/logout');
+      // Logic for clearing local state/cookies should go here
+      window.location.href = "/"; // Force refresh to clear state
     } catch (error) {
       console.log(error.message);
     }
   }
-  return(
-    <>
-     <div className="user-drop-div">
-       <div onClick={()=> navigate('/profile')}>
-        <img  src="/icons/profile.png" alt="profile" />
-        My Profile
+
+  const menuItems = [
+    { label: 'My Profile', icon: '/icons/profile.png', path: '/profile' },
+    { label: 'Orders', icon: '/icons/orders.png', path: '/orders' },
+    { label: 'Wishlist', icon: '/icons/favorite.png', path: '/wishlist' },
+    { label: 'Notifications', icon: '/icons/notification.png', path: '/notifications', count: 0 },
+  ];
+
+  return (
+    <div className="absolute top-full right-0 mt-2 w-64 bg-white border border-gray-100 rounded-3xl shadow-2xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="p-3 space-y-1">
+        {menuItems.map((item) => (
+          <div
+            key={item.label}
+            onClick={() => navigate(item.path)}
+            className="flex items-center justify-between p-3 rounded-2xl hover:bg-gray-50 cursor-pointer group transition-all"
+          >
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-gray-100 rounded-xl group-hover:bg-white transition-colors">
+                <img className="h-5 w-5 object-contain" src={item.icon} alt={item.label} />
+              </div>
+              <span className="font-bold text-gray-700 group-hover:text-black">{item.label}</span>
+            </div>
+            
+            {item.label === 'Notifications' && (
+              <span className="bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full">
+                {item.count}
+              </span>
+            )}
+          </div>
+        ))}
+
+        <div className="border-t border-gray-100 mt-2 pt-2">
+          <div
+            onClick={logoutUser}
+            className="flex items-center gap-3 p-3 rounded-2xl hover:bg-red-50 text-red-500 cursor-pointer transition-all"
+          >
+            <div className="p-2 bg-red-100 rounded-xl">
+              <img className="h-5 w-5 object-contain" src="/icons/login.png" alt="logout" />
+            </div>
+            <span className="font-black text-sm uppercase tracking-wider">Logout</span>
+          </div>
         </div>
-       <div onClick={()=>navigate('/orders')}>
-        <img  src="/icons/orders.png" alt="orders" />
-        Orders
-        </div>
-       <div onClick={()=>navigate('/wishlist')}>
-        <img  src="/icons/favorite.png" alt="" />
-        Wishlist
-        </div>
-       <div className='noti-cover-div' onClick={()=>navigate('/notifications')}>
-        <div className='noti-count'>{0}</div>
-        <img  src="/icons/notification.png" alt="" />
-        Notifications
-        </div>
-       <div onClick={logoutUser}>
-        <img src="/icons/login.png" alt="" />
-        Logout
-        </div>
-     </div>
-    </>
+      </div>
+    </div>
   )
 }

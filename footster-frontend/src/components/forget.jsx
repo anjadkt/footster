@@ -1,10 +1,9 @@
-import '../styles/login.css'
-
 import { useError } from "../customHooks/customHooks"
 import { useEffect, useRef, useState } from "react";
 import axios from 'axios';
 import{toast,ToastContainer} from 'react-toastify'
 import { useNavigate } from 'react-router-dom';
+import api from '../services/axios';
 
 export default function Forgot(){
   const [error,setError] = useError();
@@ -25,7 +24,7 @@ export default function Forgot(){
       }
     }
     if(isError){
-      axios.put(`https://footster-app.onrender.com/users/${userObj.id}`,{...userObj,password : inputElem.current.newPass.value});
+      api.put(`/users/${userObj.id}`,{...userObj,password : inputElem.current.newPass.value});
       sessionStorage.clear();
       toast.success("password changed")
       navigate('/login')
@@ -34,9 +33,6 @@ export default function Forgot(){
     }
   }
   
-  useEffect(()=>{
-    setUserObj(JSON.parse(sessionStorage.getItem('user')));
-  },[])
   return (
     <>
     <div className="main-main-container">
