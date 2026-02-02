@@ -71,7 +71,8 @@ module.exports = {
         maxAge : 1000 * 60 * 60 * 2,
         httpOnly: true,
         secure: true,
-        sameSite: "none"
+        sameSite: "none",
+        partitioned: true
       });
 
       user.login = true ;
@@ -98,7 +99,8 @@ module.exports = {
       res.clearCookie((user.role === "admin" ? "Admin_token" : 'token'),{
         httpOnly: true,
         secure: true,
-        sameSite: "none"
+        sameSite: "none",
+        partitioned: true
       });
       
       res.status(200).json({
