@@ -31,7 +31,6 @@ export default function CartItem({ data  }) {
 
   return (
     <div className="bg-white border border-gray-200 p-4 md:p-6 rounded-xl mb-4 shadow-sm">
-      {/* Delivery Status */}
       <h3 className="text-green-700 font-bold text-base md:text-lg mb-4">
         Delivery date: Tuesday, June 21
       </h3>
