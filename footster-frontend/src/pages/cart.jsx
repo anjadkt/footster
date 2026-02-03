@@ -2,43 +2,32 @@ import { Link, useNavigate } from 'react-router-dom'
 import CartItem from '../components/cartItems'
 import { useEffect, useState } from 'react';
 import api from '../services/axios';
+import { useSelector } from 'react-redux';
 
 export default function Cart() {
-  const [cart, setCart] = useState([]);
-  const [name, setName] = useState("");
-  const [price, setTotal] = useState({ items: 0, shipping: 0, beforTax: 0, tax: 0, total: 0 });
+  const {cart , name} = useSelector(state => state.user);
+  const [price, setTotal] = useState({ items: 0, shipping: 0, beforTax: 0 , tax: 0, total: 0 });
   const navigate = useNavigate();
 
-  function calcPrice(cartData) {
+  function calcPrice() {
     const priceObj = { items: 0, shipping: 0, beforTax: 0, tax: 0, total: 0 }
-    cartData.forEach(v => {
+    cart?.forEach(v => {
       priceObj.items += v.product.price * v.quantity;
     });
     priceObj.beforTax = priceObj.shipping + priceObj.items;
     priceObj.tax = Math.round(priceObj.items * 0.1);
     priceObj.total = priceObj.beforTax + priceObj.tax;
-    return priceObj;
+    setTotal(priceObj);
   }
 
-  async function fetchCart() {
-    try {
-      const { data } = await api.get('/cart');
-      setCart(data.cart);
-      setName(data.name);
-      setTotal(calcPrice(data.cart));
-    } catch (error) {
-      console.log(error.message);
-    }
-  }
-
-  useEffect(() => {
-    fetchCart();
-  }, []);
+  useEffect(()=>{
+    calcPrice();
+  },[cart])
 
   return (
     <div className="bg-gray-50 min-h-screen">
       {/* Responsive Header */}
-      <header className="fixed top-0 left-0 right-0 h-auto min-h-[50px] bg-white border-b border-gray-200 z-50 flex items-center justify-between px-2 py-2 md:py-0 md:px-10 shadow-sm gap-4">
+      <header className="fixed top-0 left-0 right-0 h-auto min-h-[50px] bg-white border-b border-gray-200 z-50 flex items-center justify-between px-2 py-2 md:py-4 md:px-10 shadow-sm gap-4">
         <Link to="/" className="text-2xl md:text-3xl font-black tracking-tighter text-gray-900">
           FootSter.
         </Link>
@@ -75,7 +64,7 @@ export default function Cart() {
             ) : (
               <div className="space-y-4">
                 {cart.map((v, i) => (
-                  <CartItem key={v.product._id || i} setCart={fetchCart} data={v} />
+                  <CartItem key={v.product._id || i} data={v} />
                 ))}
               </div>
             )}

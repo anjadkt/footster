@@ -1,12 +1,15 @@
 import { useEffect, useState, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../services/axios'
+import {useDispatch} from 'react-redux'
+import {setItemToCart} from '../app/features/user/userSlice.js'
 
 export default function OrderSummary() {
   const [cart, setCart] = useState([]);
   const [confirm, setConfirm] = useState(false);
   const [price, setPrice] = useState({ items: 0, handle: 0, tax: 0, platform: 0, discount: 0, total: 0 });
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const Elems = useRef({
     name: null, number: null, pincode: null, city: null,
@@ -55,6 +58,7 @@ export default function OrderSummary() {
     };
     try {
       const { data } = await api.post("/user/orders", orderObj);
+      dispatch(setItemToCart([]));
       navigate(`/confirm/${data.orderId}`);
     } catch (error) { console.log(error.message); }
   }

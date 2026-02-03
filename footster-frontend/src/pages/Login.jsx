@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useError } from '../customHooks/customHooks'
 import { toast, ToastContainer } from 'react-toastify'
 import api from '../services/axios'
+import {checkAuth} from '../app/features/user/userSlice.js'
+import { useDispatch } from 'react-redux'
 
 export function Register() {
   const [error, setError] = useError();
@@ -102,7 +104,8 @@ export default function Login() {
   const [err, setErr] = useState({});
   const [forgot, setForgot] = useState('');
   const navigate = useNavigate();
-  const inputElem = useRef({ email: null, password: null })
+  const inputElem = useRef({ email: null, password: null });
+  const dispatch = useDispatch();
 
   async function checkUser(e) {
     e.preventDefault();
@@ -114,6 +117,7 @@ export default function Login() {
 
       toast.success(`Welcome back, ${data.name}`);
       const path = data.role === "admin" ? '/dashboard' : '/';
+      dispatch(checkAuth());
       setTimeout(() => { navigate(path) }, 1000);
     } catch (error) {
       const obj = {};

@@ -1,5 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import api from '../services/axios'
+import { useDispatch } from 'react-redux';
+import { setUserLogout } from '../app/features/user/userSlice';
 
 
 export default function Dropdown() {
@@ -27,12 +29,13 @@ export default function Dropdown() {
 
 export function UserDrop() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   async function logoutUser() {
     try {
       const { data } = await api.get('/user/logout');
-      // Logic for clearing local state/cookies should go here
-      window.location.href = "/"; // Force refresh to clear state
+      dispatch(setUserLogout())
+      navigate('/');
     } catch (error) {
       console.log(error.message);
     }

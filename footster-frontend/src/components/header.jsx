@@ -1,30 +1,19 @@
 import { Link, useNavigate } from 'react-router-dom';
 import Dropdown, { UserDrop } from './dropdown';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Product from './product';
 import api from '../services/axios';
+import {useSelector} from 'react-redux'
 
 export default function Header() {
   const [drop, setDrop] = useState(false);
   const [userdrop, setUserdrop] = useState(false);
   const [search, setSearch] = useState(false);
   const [products, setProducts] = useState([]);
-  const [userDetails, setUserDetails] = useState({});
   
-  const { cartCount, login, name } = userDetails;
+  const {cart,name,login} = useSelector(state => state.user);
+  
   const navigate = useNavigate();
-
-  useEffect(() => {
-    async function fetchUser() {
-      try {
-        const { data } = await api.get('/user/details');
-        setUserDetails(data[0]);
-      } catch (error) {
-        console.log(error.message);
-      }
-    }
-    fetchUser();
-  }, []);
 
   async function listProducts(txt) {
     const text = txt.value.toLowerCase();
@@ -78,7 +67,7 @@ export default function Header() {
         <div className="relative cursor-pointer shrink-0" onClick={() => navigate(login ? '/cart' : '/login')}>
           <img className="h-9 p-1.5 bg-gray-100 rounded-full hover:bg-gray-200" src="/icons/cart.png" alt="cart" />
           <div className="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
-            {cartCount || 0}
+            {cart?.length || 0}
           </div>
         </div>
 

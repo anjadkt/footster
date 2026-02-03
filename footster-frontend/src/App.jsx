@@ -20,8 +20,18 @@ import AdminOrders from './admin/pages/orders'
 import Notification from './pages/notifications'
 import EachProduct from './pages/eachProduct'
 import Profile from './pages/profile'
+import {useDispatch} from 'react-redux'
+import {useEffect} from 'react'
+import {checkAuth} from './app/features/user/userSlice.js'
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
+
+  const dispatch = useDispatch();
+
+  useEffect(()=>{
+    dispatch(checkAuth());
+  },[])
 
   return (
     <>
@@ -46,7 +56,10 @@ function App() {
       <Route path={'/users/:id'} element ={<ProtectedRoute role="admin"><EachUser/></ProtectedRoute>} />
       <Route path={'/adminOrders'} element ={<ProtectedRoute role="admin"><AdminOrders/></ProtectedRoute>} />
     </Routes>
-    <ToastContainer position="top-right" autoClose={1500} />
+    <ToastContainer position="top-right"
+        autoClose={1500}
+        closeOnClick
+        pauseOnHover />
     
     </>
   )

@@ -2,10 +2,13 @@ import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import api from '../services/axios';
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import {removeFromCartThunk} from '../app/features/user/userSlice.js'
 
-export default function CartItem({ data, setCart }) {
+export default function CartItem({ data  }) {
   const [qnt, setQnt] = useState(data.quantity);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   async function incOrDec(action) {
     try {
@@ -13,7 +16,6 @@ export default function CartItem({ data, setCart }) {
         "id": data.product._id
       });
       setQnt(productObj.quantity);
-      setCart();
     } catch (error) {
       console.log(error.message);
     }
@@ -21,8 +23,7 @@ export default function CartItem({ data, setCart }) {
 
   async function removeProduct() {
     try {
-      await api.put('/cart', { "id": data.product._id });
-      setCart();
+      dispatch(removeFromCartThunk(data.product._id));
     } catch (error) {
       console.log(error.message);
     }
@@ -106,7 +107,6 @@ export default function CartItem({ data, setCart }) {
         </div>
       </div>
       
-      <ToastContainer autoClose={1000} position="bottom-right" hideProgressBar />
     </div>
   );
 }

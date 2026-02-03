@@ -1,8 +1,11 @@
 import {useNavigate , NavLink} from 'react-router-dom'
 import api from  '../../services/axios'
+import { useDispatch } from 'react-redux';
+import { setUserLogout } from '../../app/features/user/userSlice';
 
 export default function SideBar (){
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const navLinks = [
     {to:"/dashboard",name : "Dashboard" , img : "/icons/dashboard.png"},
@@ -14,7 +17,8 @@ export default function SideBar (){
   async function logoutAdmin() {
     try {
       const {data}= await api.get('/admin/logout');
-      if(data.status === 200)navigate('/login')
+      dispatch(setUserLogout());
+      navigate('/login');
     } catch (error) {
       console.log(error.message);
     }

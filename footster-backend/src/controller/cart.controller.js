@@ -56,10 +56,12 @@ module.exports = {
 
       if(!details.modifiedCount)return res.status(404).json({message : "Product Not Found!",status :404});
 
+      const user = await User.findOne({_id : req.user.id}).populate("cart.product");
+
       res.status(200).json({
         message : "Product Removed !",
         status : 200,
-        details
+        cart : user.cart
       });
 
     } catch (error) {

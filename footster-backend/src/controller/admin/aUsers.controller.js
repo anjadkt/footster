@@ -29,25 +29,16 @@ module.exports = {
     try {
       const email = req.query.email || req.user.email ;
       if(email){
-        const user = await User.aggregate([
-          {
-            $match : {
-              "email" : email
-            }
-          },
-          {
-            $project :{
-              email : 1,
-              status : 1,
-              name : 1,
-              login : 1,
-              role : 1,
-              cartCount : {$size : "$cart"}
-            }
-          }
-        ]);
+        const user = await User.findOne({email}).populate("favorite").populate("cart.product");
 
-        res.status(200).json(user || []);
+        res.status(200).json({
+          name : user.name,
+          status : user.status,
+          cart : user.cart,
+          favorite : user.favorite,
+          role : user.role,
+          address : user.address
+        });
         return ;
       }
 

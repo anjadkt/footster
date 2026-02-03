@@ -1,29 +1,25 @@
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react'
-import { toast, ToastContainer } from 'react-toastify'
+import { toast } from 'react-toastify'
 import api from '../services/axios';
+import {useDispatch, useSelector} from 'react-redux'
+import {addToCartThunk} from '../app/features/user/userSlice.js'
 
 export default function Product({ data }) {
-  const [fav, setFav] = useState(false);
+  const {favorite} = useSelector(state => state.user);
+  const isFav = favorite.some(v => v._id === data._id);
+  const [fav, setFav] = useState(isFav);
   const navigate = useNavigate();
   const selectRef = useRef();
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    async function fetchFav() {
-      try {
-        const { data: favoriteData } = await api.get('/wishlist/favorite');
-        setFav(favoriteData.favorite.includes(data._id));
-      } catch (error) {}
-    }
-    if (data) fetchFav();
-  }, [data]);
+    setFav(isFav);
+  }, [favorite, data._id]);
 
   async function addToCart() {
     try {
-      const { data: userObj } = await api.get('/user/details');
-      if (!userObj[0].login) return navigate('/login');
-
-      await api.post(`/cart`, { id: data._id, quantity: Number(selectRef.current.value) || 1 });
+      dispatch(addToCartThunk(data._id,Number(selectRef.current.value)));
       toast.success("Added to Cart");
     } catch (error) {
       if (error.response?.status === 401) navigate('/login');
@@ -32,13 +28,11 @@ export default function Product({ data }) {
 
   async function toggleFavorite() {
     try {
-      const { data: userObj } = await api.get('/user/details');
-      if (!userObj[0].login) return navigate('/login');
-
       const { data: res } = await api.post('/wishlist', { id: data._id });
       setFav(!fav);
       toast.info(res.favorite ? "Added to Wishlist" : "Removed from Wishlist");
     } catch (error) {
+      setFav(false);
       if (error.response?.status === 401) navigate('/login');
     }
   }
@@ -89,7 +83,6 @@ export default function Product({ data }) {
           <span className="text-xl">₹</span>{data.price}
         </p>
       </div>
-      <ToastContainer autoClose={1000} position="bottom-right" />
     </div>
   );
 }
