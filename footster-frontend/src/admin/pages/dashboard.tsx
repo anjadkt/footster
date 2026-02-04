@@ -10,6 +10,7 @@ export default function Dashboard(){
 
   async function takeData() {
     const {data : dashboardData} = await api.get('/admin/dashboard');
+    console.log(dashboardData);
     setData(dashboardData)
   }
 

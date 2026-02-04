@@ -1,5 +1,5 @@
 import { Navigate } from "react-router-dom";
-import Spinner from "../components/spinner.jsx"
+import Spinner from "../components/spinner.js"
 import {useSelector} from 'react-redux'
 
 export default function PublicRoute ({children}){

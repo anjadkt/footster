@@ -6,7 +6,7 @@ import {useDispatch, useSelector} from 'react-redux'
 import {addToCartThunk} from '../app/features/user/userSlice.js'
 
 export default function Product({ data }) {
-  const {favorite} = useSelector(state => state.user);
+  const {favorite,login} = useSelector(state => state.user);
   const isFav = favorite.some(v => v._id === data._id);
   const [fav, setFav] = useState(isFav);
   const navigate = useNavigate();
@@ -18,6 +18,7 @@ export default function Product({ data }) {
   }, [favorite, data._id]);
 
   async function addToCart() {
+    if(!login)return navigate('/login');
     try {
       dispatch(addToCartThunk(data._id,Number(selectRef.current.value)));
       toast.success("Added to Cart");
@@ -27,6 +28,7 @@ export default function Product({ data }) {
   }
 
   async function toggleFavorite() {
+    if(!login)return navigate('/login');
     try {
       const { data: res } = await api.post('/wishlist', { id: data._id });
       setFav(!fav);

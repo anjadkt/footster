@@ -22,7 +22,7 @@ import EachProduct from './pages/eachProduct'
 import Profile from './pages/profile'
 import {useDispatch} from 'react-redux'
 import {useEffect} from 'react'
-import {checkAuth} from './app/features/user/userSlice.js'
+import {checkAuth} from './app/features/user/userSlice'
 import "react-toastify/dist/ReactToastify.css";
 
 function App() {

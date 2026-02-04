@@ -3,6 +3,10 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend, Title } from "chart.js";
 
 ChartJS.register(ArcElement, Tooltip, Legend, Title);
 
+type Details = {
+
+}
+
 export default function DoughnutChart({details}) {
   const data = {
     labels: ["Customer", "Orders", "Products"],
