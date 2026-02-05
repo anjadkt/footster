@@ -2,40 +2,85 @@ import api from '../../services/axios'
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom"
 import SideBar from "../components/sidebar";
+import type { Product } from '../../app/features/user/userSlice';
+import errorFunction from '../../utils/errorFunction';
+import Spinner from '../../components/spinner';
+
+type Address = {
+  adres:string;
+  city :string;
+  country : string;
+  name : string;
+  number : number;
+  pincode : number;
+  state : string;
+  userId : string;
+  _id : string;
+}
+
+type OrderProduct = Product & {quantity : number} ;
+export type Order ={
+  _id : string;
+  date : string;
+  items : OrderProduct[];
+  paymentDetails:{
+    paymentType : string;
+    total : number;
+  },
+  status : string;
+  to : Address
+}
+
+type User = {
+  address?:Address;
+  email : string;
+  login ?: boolean;
+  name : string;
+  role : string;
+  status : string;
+  _id : string;
+  orderDetails : Order[];
+}
 
 export default function EachUser() {
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState<User | null>(null);
   const { id } = useParams();
 
-  async function fetchUser() {
-    const { data } = await api.get(`/admin/users/${id}`);
-    setUser(data.user[0]);
+  async function fetchUser():Promise<void> {
+    try{
+      const { data } = await api.get<{user:User}>(`/admin/users/${id}`);
+      setUser(data.user ?? null);
+    }catch(error){
+      console.log(errorFunction(error));
+    }
   }
 
-  async function blockUser() {
+  async function blockUser():Promise<void> {
     try {
       await api.get(`/admin/users/${id}/block`);
       fetchUser();
     } catch (error) {
-      console.log(error.message);
+      console.log(errorFunction(error));
     }
   }
 
-  async function setOrder(orderStatus, id) {
+  async function setOrder(orderStatus:string, id:string):Promise<void> {
     try {
       await api.put('/admin/users/updateStatus', {
         id,
         status: orderStatus
       });
     } catch (error) {
-      console.log(error.message);
+      console.log(errorFunction(error));
     }
     fetchUser();
   }
 
   useEffect(() => {
     fetchUser();
-  }, [])
+  }, [id]);
+
+  if(!user)return <Spinner />
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -77,12 +122,10 @@ export default function EachUser() {
 
         <h2 className="text-xl font-bold text-gray-800 mb-6">Order History</h2>
 
-        {/* Orders List */}
         <div className="flex flex-col gap-6 max-w-5xl">
-          {user?.orderDetails?.map((v, i) => (
+          {user.orderDetails.map((v, i) => (
             <div key={i} className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
               
-              {/* Order Header Info */}
               <div className="grid grid-cols-2 md:grid-cols-5 gap-4 p-6 bg-gray-50 border-b border-gray-100 text-sm">
                 <div>
                   <p className="text-gray-400 uppercase text-[10px] font-bold tracking-wider">Order ID</p>
@@ -140,7 +183,7 @@ export default function EachUser() {
             </div>
           ))}
 
-          {!user?.orderDetails?.length && (
+          {!user.orderDetails.length && (
             <div className="text-center py-20 bg-white rounded-2xl border-2 border-dashed border-gray-200">
                <p className="text-gray-400">No orders found for this user.</p>
             </div>

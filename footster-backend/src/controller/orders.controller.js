@@ -7,13 +7,6 @@ module.exports = {
     try {
       const {id} = req.user ;
       const {paymentDetails,items,to} = req.body ;
-      // const newItems = []
-
-      // for(let id of items){
-      //   const product = await Product.findOne({_id : id});
-      //   if(!product) throw new Error(`Product not found: ${id}`);
-      //   newItems.push(product);
-      // }
 
       const order = Orders({
         userId : id,

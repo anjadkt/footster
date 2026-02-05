@@ -3,14 +3,21 @@ import SideBar from "../components/sidebar"
 import { useNavigate } from "react-router-dom";
 import DoughnutChart from "../components/chart";
 import api from '../../services/axios'
+import Spinner from "../../components/spinner";
+
+export interface ChartData {
+  totalOrders : number;
+  totalProducts : number;
+  totalRevenue : number;
+  totalUsers : number;
+}
 
 export default function Dashboard(){
-  const [data,setData] = useState({});
+  const [data,setData] = useState<ChartData | null>(null);
   const navigate = useNavigate();
 
-  async function takeData() {
-    const {data : dashboardData} = await api.get('/admin/dashboard');
-    console.log(dashboardData);
+  async function takeData():Promise<void> {
+    const {data : dashboardData} = await api.get<ChartData>('/admin/dashboard');
     setData(dashboardData)
   }
 
@@ -18,6 +25,8 @@ export default function Dashboard(){
     takeData();
     document.title = "Admin panel"
   },[]);
+
+  if(!data)return <Spinner/>
   
   return(
     <>

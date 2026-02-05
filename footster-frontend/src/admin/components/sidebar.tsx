@@ -2,6 +2,7 @@ import {useNavigate , NavLink} from 'react-router-dom'
 import api from  '../../services/axios'
 import { useDispatch } from 'react-redux';
 import { setUserLogout } from '../../app/features/user/userSlice';
+import errorFunction from '../../utils/errorFunction';
 
 export default function SideBar (){
   const navigate = useNavigate();
@@ -16,11 +17,11 @@ export default function SideBar (){
 
   async function logoutAdmin() {
     try {
-      const {data}= await api.get('/admin/logout');
+      await api.get('/admin/logout');
       dispatch(setUserLogout());
       navigate('/login');
     } catch (error) {
-      console.log(error.message);
+      console.log(errorFunction(error));
     }
   }
   return(

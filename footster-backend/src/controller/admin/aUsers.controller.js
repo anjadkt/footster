@@ -90,7 +90,7 @@ module.exports = {
 
       res.status(200).json({
         message : "user fetch success!",
-        user,
+        user:user[0],
         status : 200
       });
     }catch(error){

@@ -3,7 +3,7 @@ import api from '../../../services/axios'
 import errorFunction from "../../../utils/errorFunction";
 import type { AppDispatch } from "../../store/store";
 
-export interface Product{
+export type Product = {
   _id : string;
   isFav : boolean;
   img : string;

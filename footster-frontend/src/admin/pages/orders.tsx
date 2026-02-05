@@ -2,17 +2,22 @@ import SideBar from "../components/sidebar";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from '../../services/axios'
+import errorFunction from "../../utils/errorFunction";
+import type { Order } from "./eachUser";
+import Spinner from "../../components/spinner";
+
+type AllOrder = Order & {userId:string} ;
 
 export default function AdminOrders() {
-  const [allorders, setAllOrders] = useState([]);
+  const [allorders, setAllOrders] = useState<AllOrder[] | null>(null);
   const navigate = useNavigate();
 
-  async function fetchData() {
+  async function fetchData():Promise<void> {
     try {
-      const { data } = await api.get('/admin/order/all');
-      setAllOrders(data.orders);
+      const { data } = await api.get<{orders : AllOrder[]}>('/admin/order/all');
+      setAllOrders(data.orders ?? null);
     } catch (error) {
-      console.log(error.message);
+      console.log(errorFunction(error));
     }
   }
 
@@ -20,7 +25,7 @@ export default function AdminOrders() {
     fetchData();
   }, [])
 
-  async function setOrder(orderStatus, id) {
+  async function setOrder(orderStatus:string, id:string):Promise<void> {
     try {
       await api.put('/admin/users/updateStatus', {
         id,
@@ -28,11 +33,14 @@ export default function AdminOrders() {
       });
       fetchData();
     } catch (error) {
-      console.log(error.message);
+      console.log(errorFunction(error));
     }
   }
 
   const filters = ["All", "Placed", "Shipped", "Reached", "Delivered"];
+
+
+  if(!allorders)return <Spinner/>
 
   return (
     <>
@@ -40,7 +48,6 @@ export default function AdminOrders() {
       <div className="ml-[280px] p-8 min-h-screen bg-gray-50 text-gray-900 font-sans">
         <h1 className="text-3xl font-bold mb-4">All Orders</h1>
 
-        {/* Sticky Filtering Bar */}
         <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-md py-4 px-6 flex items-center gap-4 border-b border-gray-200 mb-6 rounded-lg shadow-sm">
           {filters.map((f) => (
             <div 
@@ -58,7 +65,6 @@ export default function AdminOrders() {
           {allorders && allorders.map((v, i) => (
             <div key={i} className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
               
-              {/* Order Header Info */}
               <div className="grid grid-cols-5 gap-4 p-5 bg-gray-50 border-b border-gray-100 text-sm">
                 <div>
                   <span className="text-gray-500 uppercase text-[10px] font-bold block mb-1">Order ID</span>
@@ -82,7 +88,6 @@ export default function AdminOrders() {
                 </div>
               </div>
 
-              {/* User Link Section */}
               <div className="px-5 py-3 border-b border-gray-50">
                 <button 
                   onClick={() => navigate(`/users/${v.userId}`)}

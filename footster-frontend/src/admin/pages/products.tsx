@@ -6,7 +6,12 @@ export default function AllProducts() {
   const [products, setProducts] = useState([]);
   const [img, setImg] = useState(false);
   const [preview, setPreview] = useState(false);
-  let product = {}
+  const [form,setForm] = useState({
+    name : "",
+    category : "",
+    price : ""
+  });
+
   const inputElem = useRef({
     name: null,
     category: null,
@@ -19,7 +24,7 @@ export default function AllProducts() {
     setProducts(data);
   }
 
-  function addProduct(e) {
+  function addProduct(e : React.ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
     if (inputElem.current.add.value === "Update Product") {
       api.put(`/admin/products/update`, {

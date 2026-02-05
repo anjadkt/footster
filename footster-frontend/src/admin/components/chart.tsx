@@ -1,13 +1,13 @@
 import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, Title } from "chart.js";
-
+import type {ChartData} from '../pages/dashboard'
 ChartJS.register(ArcElement, Tooltip, Legend, Title);
 
-type Details = {
-
+type Prop = {
+  details : ChartData
 }
 
-export default function DoughnutChart({details}) {
+export default function DoughnutChart({details}:Prop) {
   const data = {
     labels: ["Customer", "Orders", "Products"],
     datasets: [
