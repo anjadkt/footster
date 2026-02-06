@@ -2,17 +2,18 @@ import { useState, useEffect } from "react"
 import { useNavigate, useParams } from 'react-router-dom'
 import api from "../services/axios";
 import errorFunction from "../utils/errorFunction";
+import type { Order } from "../admin/pages/eachUser";
+import Spinner from "../components/spinner";
 
 export default function OrderSec() {
-  const [orderObj, setOrderObj] = useState({});
+  const [orderObj, setOrderObj] = useState<Order | null>(null);
   const { id } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
-    async function fetchOrder() {
+    async function fetchOrder():Promise<void> {
       try {
-        const { data: orderDetails } = await api.get(`/user/orders/${id}`);
-        console.log(orderDetails);
+        const { data: orderDetails } = await api.get<{order:Order}>(`/user/orders/${id}`);
         setOrderObj(orderDetails.order);
       } catch (error) {
         console.log(errorFunction(error));
@@ -21,10 +22,11 @@ export default function OrderSec() {
     fetchOrder();
   }, [id]);
 
+  if(!orderObj)return <Spinner/>
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center py-10 px-4 md:py-20">
       
-      {/* Success Animation/Image Section */}
       <div className="text-center mb-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
         <div className="relative inline-block">
           <img 
@@ -32,7 +34,6 @@ export default function OrderSec() {
             src="/order-success.png" 
             alt="order success" 
           />
-          {/* Decorative pulse effect */}
           <div className="absolute inset-0 bg-green-400 rounded-full scale-110 opacity-10 animate-ping"></div>
         </div>
         <h2 className="text-3xl font-black text-gray-900 tracking-tight">Order Confirmed!</h2>
@@ -41,7 +42,6 @@ export default function OrderSec() {
 
       <div className="w-full max-w-2xl space-y-6">
         
-        {/* Order Details Card */}
         <div className="bg-white border border-gray-200 rounded-3xl p-6 md:p-8 shadow-sm">
           <h3 className="text-xs font-black uppercase tracking-widest text-gray-400 mb-6 border-b pb-2">Order Summary</h3>
           
@@ -65,7 +65,6 @@ export default function OrderSec() {
           </div>
         </div>
 
-        {/* Delivery Address Card */}
         <div className="bg-white border border-gray-200 rounded-3xl p-6 md:p-8 shadow-sm">
           <h3 className="text-xs font-black uppercase tracking-widest text-gray-400 mb-4 border-b pb-2">Delivery To</h3>
           <div className="space-y-1">
@@ -75,7 +74,6 @@ export default function OrderSec() {
           </div>
         </div>
 
-        {/* Items Card */}
         <div className="bg-white border border-gray-200 rounded-3xl p-6 md:p-8 shadow-sm">
           <h3 className="text-xs font-black uppercase tracking-widest text-gray-400 mb-4 border-b pb-2">Purchased Items</h3>
           <div className="divide-y divide-gray-100">
@@ -101,7 +99,6 @@ export default function OrderSec() {
           </div>
         </div>
 
-        {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 pt-6">
           <button 
             onClick={() => navigate('/')} 

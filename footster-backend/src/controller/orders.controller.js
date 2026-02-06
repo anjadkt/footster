@@ -8,7 +8,7 @@ module.exports = {
       const {id} = req.user ;
       const {paymentDetails,items,to} = req.body ;
 
-      const order = Orders.create({
+      const order = await Orders.create({
         userId : id,
         date : new Date().toLocaleString(),
         status : "Placed",

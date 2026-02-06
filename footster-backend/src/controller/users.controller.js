@@ -55,6 +55,8 @@ module.exports = {
       // }
 
       const { email , password } = req.body ; 
+
+      console.log(req.body);
       
       if(!email.trim() || !password.trim() )return res.status(406).json({message : "invalid format",status :406});
 

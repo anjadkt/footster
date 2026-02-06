@@ -2,68 +2,78 @@ import { useEffect, useState, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../services/axios'
 import {useDispatch} from 'react-redux'
-import {setItemToCart} from '../app/features/user/userSlice.js'
+import {type Cart, setItemToCart} from '../app/features/user/userSlice.js'
 import type { AppDispatch } from '../app/store/store';
+import errorFunction from '../utils/errorFunction';
+import type { Order } from '../admin/pages/eachUser';
+import Spinner from '../components/spinner';
 
 export default function OrderSummary() {
 
-  const [cart, setCart] = useState([]);
-  const [confirm, setConfirm] = useState<boolean>(false);
+  const [cart, setCart] = useState<Cart[] | null>(null);
+  const [confirm, setConfirm] = useState(false);
   const [price, setPrice] = useState({ items: 0, handle: 0, tax: 0, platform: 0, discount: 0, total: 0 });
   const navigate = useNavigate();
   const dispatch:AppDispatch = useDispatch();
+  const [form,setForm] = useState({name:"",number : "",pincode:"",city:"",adres:"",state:"",country:"",method:"COD"});
 
-  const Elems = useRef({
-    name: null, number: null, pincode: null, city: null,
-    adres: null, state: null, country: null, method: null,
-  })
+  const handleChange = (e:React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement> | React.ChangeEvent<HTMLSelectElement>)=>{
+    setForm(pre => ({...pre,[e.target.name]:e.target.value}));
+  }
 
   useEffect(() => {
-    async function fetchCart() {
+    async function fetchCart():Promise<void> {
       try {
-        const { data: cartObj } = await api.get("/cart");
+        const { data: cartObj } = await api.get<{cart:Cart[]}>("/cart");
         setCart(cartObj.cart);
         const { data } = await api.get("/address");
-        if (data.address.name) {
-          Object.keys(data.address).forEach(key => {
-            if (Elems.current[key]) Elems.current[key].value = data.address[key];
-          });
-        }
-      } catch (error) { console.log(error.message); }
+        setForm({name:data.address.name,number : data.address.number,pincode:data.address.pincode,city:data.address.city,adres:data.address.adres,state:data.address.state,country:data.address.country,method:"COD"});
+        
+      } catch (error){console.log(errorFunction(error))};
     }
     fetchCart();
   }, []);
 
   useEffect(() => {
+    if(!cart || cart.length === 0)return
     let items = 0;
-    cart.forEach(v => { items += v.product.price * v.quantity; });
-    const tax = Math.round(items * 0.1), handle = 27, platform = cart.length * 2;
+    cart?.forEach(v => { items += v.product.price * v.quantity; });
+    const tax = Math.round(items * 0.1), handle = 27, platform = cart?.length * 2 ;
     const rawTotal = items + tax + handle + platform;
     const total = Math.round(rawTotal / 100) * 100;
     const discount = total - rawTotal;
     setPrice({ items, tax, handle, platform, discount, total });
   }, [cart]);
 
-  const setAdress = async (e) => {
+  const setAdress = async (e:React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const addrObj = Object.fromEntries(Object.entries(Elems.current).map(([k, v]) => [k, k === 'number' || k === 'pincode' ? Number(v.value) : v.value]));
-      await api.post('/address', addrObj);
-    } catch (error) { console.log(error.message); }
+      await api.post('/address', form);
+    } catch (error) { console.log(errorFunction(error)); }
   }
 
   const setOrder = async () => {
     const orderObj = {
-      paymentDetails: { paymentType: Elems.current.method.value, total: price.total },
-      items: cart.map(v => ({ ...v.product, quantity: v.quantity })),
-      to: Object.fromEntries(Object.entries(Elems.current).map(([k, v]) => [k, k === 'number' || k === 'pincode' ? Number(v.value) : v.value]))
+      paymentDetails: { paymentType: form.method, total: price.total },
+      items: cart?.map(v => ({ ...v.product, quantity: v.quantity })),
+      to: {
+        adres : form.adres,
+        city : form.city,
+        country : form.country,
+        pincode :Number(form.pincode),
+        name : form.name,
+        number : Number(form.number),
+        state : form.state
+      }
     };
     try {
       const { data } = await api.post("/user/orders", orderObj);
       dispatch(setItemToCart([]));
       navigate(`/confirm/${data.orderId}`);
-    } catch (error) { console.log(error.message); }
+    } catch (error) { console.log(errorFunction(error)); }
   }
+
+  if(!cart)return <Spinner/>
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
@@ -79,12 +89,10 @@ export default function OrderSummary() {
 
       <main className="max-w-7xl mx-auto px-4 md:px-12 mt-8 flex flex-col lg:flex-row gap-8">
         
-        {/* Left Side: Products and Address */}
         <div className="flex-1 space-y-8">
-          {/* Products List */}
           <div className="bg-white p-4 md:p-6 rounded-2xl border shadow-sm space-y-4">
             <h3 className="font-bold text-gray-400 uppercase text-xs tracking-widest mb-4">Items in your cart</h3>
-            {cart.map((v, i) => (
+            {cart?.map((v, i) => (
               <div key={i} className="flex gap-4 border-b last:border-0 pb-4 last:pb-0">
                 <img className="h-20 w-20 object-contain bg-gray-50 rounded-lg" src={v.product.img} alt="" />
                 <div className="flex-1 text-sm space-y-1">
@@ -104,22 +112,25 @@ export default function OrderSummary() {
             <h2 className="text-xl font-black mb-6">Delivery Address</h2>
             <form onSubmit={(e) => { setAdress(e); setConfirm(true); }} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input ref={e => Elems.current.name = e} className="w-full p-3 border rounded-xl focus:ring-1 focus:ring-black outline-none" required type="text" placeholder="Full Name" />
-                <input ref={e => Elems.current.number = e} className="w-full p-3 border rounded-xl focus:ring-1 focus:ring-black outline-none" required type="number" placeholder="Phone Number" />
+                <input value={form.name} onChange={handleChange} name='name' className="w-full p-3 border rounded-xl focus:ring-1 focus:ring-black outline-none" required type="text" placeholder="Full Name" />
+                <input value={form.number} onChange={handleChange} name='number' className="w-full p-3 border rounded-xl focus:ring-1 focus:ring-black outline-none" required type="number" placeholder="Phone Number" />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input ref={e => Elems.current.pincode = e} className="w-full p-3 border rounded-xl focus:ring-1 focus:ring-black outline-none" required type="number" placeholder="Pincode" />
-                <input ref={e => Elems.current.city = e} className="w-full p-3 border rounded-xl focus:ring-1 focus:ring-black outline-none" required type="text" placeholder="City/District" />
+                <input value={form.pincode} onChange={handleChange} name='pincode' className="w-full p-3 border rounded-xl focus:ring-1 focus:ring-black outline-none" required type="number" placeholder="Pincode" />
+                <input value={form.city} onChange={handleChange} name='city' className="w-full p-3 border rounded-xl focus:ring-1 focus:ring-black outline-none" required type="text" placeholder="City/District" />
               </div>
-              <textarea ref={e => Elems.current.adres = e} className="w-full p-3 border rounded-xl focus:ring-1 focus:ring-black outline-none h-24" required placeholder="Address (Area and Street)"></textarea>
+              <textarea value={form.adres} onChange={handleChange} name='adres' className="w-full p-3 border rounded-xl focus:ring-1 focus:ring-black outline-none h-24" required placeholder="Address (Area and Street)"></textarea>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input ref={e => Elems.current.state = e} className="w-full p-3 border rounded-xl focus:ring-1 focus:ring-black outline-none" required type="text" placeholder="State" />
-                <input ref={e => Elems.current.country = e} className="w-full p-3 border rounded-xl focus:ring-1 focus:ring-black outline-none" required type="text" placeholder="Country" />
+                <input value={form.state} onChange={handleChange} name='state' className="w-full p-3 border rounded-xl focus:ring-1 focus:ring-black outline-none" required type="text" placeholder="State" />
+                <input value={form.country} onChange={handleChange} name='country' className="w-full p-3 border rounded-xl focus:ring-1 focus:ring-black outline-none" required type="text" placeholder="Country" />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <input className="w-full p-3 border rounded-xl focus:ring-1 focus:ring-black outline-none" type="text" placeholder="Landmark (Optional)" />
-                <select ref={e => Elems.current.method = e} className="w-full p-3 border rounded-xl bg-gray-50 font-bold outline-none cursor-pointer">
-                  <option>COD</option><option>UPI</option><option>CREDIT CARD</option><option>DEBIT CARD</option>
+                <select onChange={handleChange} defaultValue="COD" name='method' className="w-full p-3 border rounded-xl bg-gray-50 font-bold outline-none cursor-pointer">
+                  <option value="COD">COD</option>
+                  <option value="upi">UPI</option>
+                  <option value="credit card">CREDIT CARD</option>
+                  <option value="debit card">DEBIT CARD</option>
                 </select>
               </div>
               <button type="submit" className="w-full bg-black text-white py-4 rounded-xl font-black hover:bg-gray-800 transition-colors mt-4">

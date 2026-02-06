@@ -4,11 +4,11 @@ import api from '../services/axios'
 type Action = {
   type:string;
   value : string;
-  pass : string;
-  oldpass : string;
+  pass ?: string;
+  oldpass ?: string;
 }
 
-type Error = {
+type FormError = {
   name : string;
   password : string;
   conpass : string;
@@ -16,10 +16,10 @@ type Error = {
   email : string
 }
 
-export function  useError (){
+export function  useError ():[FormError, React.Dispatch<Action>]{
   const [error,setError] = useReducer(updateError,{name:"",password:"",conpass:"",current:"",email:""});
 
-  function updateError(error:Partial<Error>,action:Action){
+  function updateError(error:FormError,action:Action):FormError {
     const errorObj = {...error}
     switch(action.type){
       case "name":

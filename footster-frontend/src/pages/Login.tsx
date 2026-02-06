@@ -5,18 +5,23 @@ import { toast, ToastContainer } from 'react-toastify'
 import api from '../services/axios'
 import {checkAuth} from '../app/features/user/userSlice.js'
 import { useDispatch } from 'react-redux'
+import errorFunction from '../utils/errorFunction'
+import type { AppDispatch } from '../app/store/store'
+import axios from 'axios'
 
 export function Register() {
   const [error, setError] = useError();
   const [already, setAlready] = useState("")
   const navigate = useNavigate();
-  const inputElem = useRef({ name: null, email: null, password: null })
+  const [form,setForm] = useState({name:"",email : "",password : ""});
 
-  async function setData(e) {
+  const handleChange = (e:React.ChangeEvent<HTMLInputElement>) =>{
+    setForm(pre => ({...pre , [e.target.name]:e.target.value}));
+  }
+
+  async function setData(e:React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const name = inputElem.current.name.value;
-    const email = inputElem.current.email.value;
-    const password = inputElem.current.password.value;
+    const {name,email,password} = form ;
 
     try {
       const { data } = await api.get(`/user/all?email=${email}`);
@@ -25,16 +30,16 @@ export function Register() {
         return;
       }
       setAlready("");
-    } catch (err) { console.log(err.message); }
+    } catch (err) { console.log(errorFunction(error)); }
 
     if (!error.name && !error.email && !error.password && !error.conpass) {
       try {
         const { data } = await api.post('/user/register', { name, email, password });
         if (data.status === 200) {
           toast.success("Registered Successfully!");
-          setTimeout(() => { navigate('/login') }, 1000);
+          setTimeout(() => { navigate('/login') }, 500);
         }
-      } catch (error) { console.log(error.message); }
+      } catch (error) { console.log(errorFunction(error)); }
     }
   }
 
@@ -61,24 +66,33 @@ export function Register() {
           <form onSubmit={setData} className="space-y-4">
             <div>
               <label className="text-xs font-black uppercase text-gray-400 tracking-widest block mb-2">Name</label>
-              <input ref={e => inputElem.current.name = e} onChange={e => setError({ type: "name", value: e.target.value })} className="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-1 focus:ring-black outline-none transition-all" type="text" required placeholder="John Doe" />
+              <input name='name' onChange={e =>{
+                handleChange(e);
+                setError({ type: "name", value: e.target.value });
+              }} className="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-1 focus:ring-black outline-none transition-all" type="text" required placeholder="John Doe" />
               <p className="text-[10px] text-red-500 font-bold mt-1 h-3">{error.name}</p>
             </div>
 
             <div>
               <label className="text-xs font-black uppercase text-gray-400 tracking-widest block mb-2">Email</label>
-              <input ref={e => inputElem.current.email = e} onChange={e => setError({ type: "email", value: e.target.value })} className="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-1 focus:ring-black outline-none transition-all" type="email" required placeholder="name@company.com" />
+              <input name='email'  onChange={e =>{
+                handleChange(e);
+                setError({ type: "email", value: e.target.value })
+              }} className="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-1 focus:ring-black outline-none transition-all" type="email" required placeholder="name@company.com" />
               <p className="text-[10px] text-red-500 font-bold mt-1 h-3">{error.email || already}</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="text-xs font-black uppercase text-gray-400 tracking-widest block mb-2">Password</label>
-                <input ref={e => inputElem.current.password = e} onChange={e => setError({ type: "password", value: e.target.value })} className="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-1 focus:ring-black outline-none transition-all" type="password" required placeholder="••••••••" />
+                <input name="password" onChange={e => {
+                  handleChange(e);
+                  setError({ type: "password", value: e.target.value });
+                }} className="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-1 focus:ring-black outline-none transition-all" type="password" required placeholder="••••••••" />
               </div>
               <div>
                 <label className="text-xs font-black uppercase text-gray-400 tracking-widest block mb-2">Confirm</label>
-                <input onChange={e => setError({ type: "conpass", value: e.target.value, pass: inputElem.current.password.value })} className="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-1 focus:ring-black outline-none transition-all" type="password" required placeholder="••••••••" />
+                <input onChange={e => setError({ type: "conpass", value: e.target.value, pass: form.password })} className="w-full p-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-1 focus:ring-black outline-none transition-all" type="password" required placeholder="••••••••" />
               </div>
             </div>
             <p className="text-[10px] text-red-500 font-bold h-3">{error.password || error.conpass}</p>
@@ -99,32 +113,37 @@ export function Register() {
 }
 
 
+type FormError = {email ?:string , password ?:string }
+
+
 export default function Login() {
   const [error, setError] = useError();
-  const [err, setErr] = useState({});
-  const [forgot, setForgot] = useState('');
+  const [err, setErr] = useState<FormError|null>(null);
   const navigate = useNavigate();
-  const inputElem = useRef({ email: null, password: null });
-  const dispatch = useDispatch();
+  const dispatch:AppDispatch = useDispatch();
+  const [form,setForm] = useState({email:"",password : ""});
 
-  async function checkUser(e) {
+  const handleChange = (e:React.ChangeEvent<HTMLInputElement>)=>{
+    setForm(pre => ({...pre , [e.target.name]:e.target.value}));
+  }
+
+  async function checkUser(e:React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     try {
-      const { data } = await api.post("/user/login", {
-        email: inputElem.current.email.value,
-        password: inputElem.current.password.value
-      });
+      const { data } = await api.post("/user/login", form);
 
       toast.success(`Welcome back, ${data.name}`);
       const path = data.role === "admin" ? '/dashboard' : '/';
       dispatch(checkAuth());
       setTimeout(() => { navigate(path) }, 1000);
     } catch (error) {
-      const obj = {};
-      if (error.status === 404) obj.email = "User not found!";
-      else if (error.status === 401) obj.password = "Incorrect password!";
-      else toast.warning("Something went wrong");
-      setErr(obj);
+      if(axios.isAxiosError(error)){
+        const obj:FormError = {};
+        if (error.status === 404) obj.email = "User not found!";
+        else if (error.status === 401) obj.password = "Incorrect password!";
+        else toast.warning("Something went wrong");
+        setErr(obj);
+      }
     }
   }
 
@@ -151,8 +170,11 @@ export default function Login() {
           <form onSubmit={checkUser} className="space-y-6">
             <div>
               <label className="text-xs font-black uppercase text-gray-400 tracking-widest block mb-2">Email Address</label>
-              <input ref={e => inputElem.current.email = e} onChange={e => setError({ type: "email", value: e.target.value })} className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-1 focus:ring-black outline-none transition-all" type="email" required placeholder="name@company.com" />
-              <p className="text-[10px] text-red-500 font-bold mt-1 h-3">{err.email || error.email || forgot}</p>
+              <input name="email"  onChange={e => {
+                handleChange(e);
+                setError({ type: "email", value: e.target.value })
+              }} className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-1 focus:ring-black outline-none transition-all" type="email" required placeholder="name@company.com" />
+              <p className="text-[10px] text-red-500 font-bold mt-1 h-3">{err?.email || error.email}</p>
             </div>
 
             <div>
@@ -160,8 +182,11 @@ export default function Login() {
                 <label className="text-xs font-black uppercase text-gray-400 tracking-widest block">Password</label>
                 <button type="button" onClick={() => navigate('/forgot')} className="text-[10px] font-black uppercase text-gray-400 hover:text-black">Forgot?</button>
               </div>
-              <input ref={e => inputElem.current.password = e} onChange={e => setError({ type: "password", value: e.target.value })} className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-1 focus:ring-black outline-none transition-all" type="password" required placeholder="••••••••" />
-              <p className="text-[10px] text-red-500 font-bold mt-1 h-3">{err.password || error.password}</p>
+              <input name='password'  onChange={e => {
+                handleChange(e);
+                setError({ type: "password", value: e.target.value });
+            }} className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-1 focus:ring-black outline-none transition-all" type="password" required placeholder="••••••••" />
+              <p className="text-[10px] text-red-500 font-bold mt-1 h-3">{err?.password || error.password}</p>
             </div>
 
             <button type="submit" className="w-full bg-black text-white py-4 rounded-2xl font-black hover:bg-gray-800 transition-all active:scale-[0.98] shadow-lg">
