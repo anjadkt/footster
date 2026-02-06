@@ -31,7 +31,7 @@ export type Order ={
   to : Address
 }
 
-type User = {
+export type User = {
   address?:Address;
   email : string;
   login ?: boolean;

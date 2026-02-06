@@ -13,7 +13,7 @@ export type Product = {
   price : number;
 }
 
-export interface Cart{
+export type Cart = {
   product : Product,
   quantity : number,
   _id : string

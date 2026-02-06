@@ -2,6 +2,8 @@ import { useNavigate } from 'react-router-dom'
 import api from '../services/axios'
 import { useDispatch } from 'react-redux';
 import { setUserLogout } from '../app/features/user/userSlice';
+import errorFunction from '../utils/errorFunction';
+import type { AppDispatch } from '../app/store/store';
 
 
 export default function Dropdown() {
@@ -29,15 +31,15 @@ export default function Dropdown() {
 
 export function UserDrop() {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch:AppDispatch = useDispatch();
 
-  async function logoutUser() {
+  async function logoutUser():Promise<void> {
     try {
       const { data } = await api.get('/user/logout');
       dispatch(setUserLogout())
       navigate('/');
     } catch (error) {
-      console.log(error.message);
+      console.log(errorFunction(error));
     }
   }
 

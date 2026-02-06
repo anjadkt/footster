@@ -1,12 +1,13 @@
-import { useFetch } from '../customHooks/customHooks'
+import { useFetch } from '../hooks/customHooks'
 import Product from '../components/product';
 import Header from '../components/header';
 import Title from '../components/title';
 import { useEffect } from 'react';
 import Footer from '../components/footer';
+import type { Product as ProductType } from '../app/features/user/userSlice';
 
 export default function Home() {
-  const [products] = useFetch('/products?_page=1&_limit=24');
+  const [products] = useFetch<ProductType[]>('/products?_page=1&_limit=24');
 
   useEffect(() => {
     document.title = "Footster";
@@ -42,7 +43,7 @@ export default function Home() {
           <div className="pt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 justify-items-center">
             {products &&
               products.map((product) => (
-                <div key={product.id} className="w-full max-w-[290px]">
+                <div key={product._id} className="w-full max-w-[290px]">
                    <Product data={product} />
                 </div>
               ))

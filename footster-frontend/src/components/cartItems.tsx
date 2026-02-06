@@ -4,20 +4,23 @@ import api from '../services/axios';
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import {removeFromCartThunk} from '../app/features/user/userSlice.js'
+import type { Cart } from "../app/features/user/userSlice.js";
+import errorFunction from "../utils/errorFunction";
+import type {AppDispatch} from '../app/store/store'
 
-export default function CartItem({ data  }) {
-  const [qnt, setQnt] = useState(data.quantity);
+export default function CartItem({ data }:{data:Cart}) {
+  const [qnt, setQnt] = useState<number>(data.quantity);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch:AppDispatch = useDispatch();
 
-  async function incOrDec(action) {
+  async function incOrDec(action:string):Promise<void> {
     try {
       const { data: productObj } = await api.post(`/cart/${action}`, {
         "id": data.product._id
       });
       setQnt(productObj.quantity);
     } catch (error) {
-      console.log(error.message);
+      console.log(errorFunction(error));
     }
   }
 
@@ -25,7 +28,7 @@ export default function CartItem({ data  }) {
     try {
       dispatch(removeFromCartThunk(data.product._id));
     } catch (error) {
-      console.log(error.message);
+      console.log(errorFunction(error));
     }
   }
 

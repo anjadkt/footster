@@ -1,10 +1,16 @@
 import { Navigate } from "react-router-dom";
 import Spinner from "../components/spinner";
 import {useSelector} from 'react-redux'
+import type { RootState } from "../app/store/store";
 
-export default function ProtectedRoute({ children, role }) {
-  const userRole = useSelector(state => state.user.role);
-  const {loading , login } = useSelector(state => state.user);
+type Props = {
+  children : React.ReactNode;
+  role : string
+}
+
+export default function ProtectedRoute({ children, role }:Props) {
+  const userRole = useSelector((state:RootState) => state.user.role);
+  const {loading , login } = useSelector((state:RootState) => state.user);
 
   if (loading) return <Spinner />;
 

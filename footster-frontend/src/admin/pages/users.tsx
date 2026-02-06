@@ -2,38 +2,41 @@ import SideBar from "../components/sidebar";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from '../../services/axios'
+import errorFunction from "../../utils/errorFunction";
+import type {User} from '../pages/eachUser'
+import Spinner from "../../components/spinner";
 
 export default function Users() {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<User[] | null>(null);
   const navigate = useNavigate();
 
-  async function fetchData() {
+  async function fetchData():Promise<void> {
     try {
-      const { data } = await api.get('/admin/users/all');
+      const { data } = await api.get<{users : User[]}>('/admin/users/all');
       setUsers(data.users);
     } catch (error) {
-      console.log(error.message);
+      console.log(errorFunction(error));
     }
   }
 
-  function searchUser(s) {
+  function searchUser(s:string) {
     if (!s) return fetchData();
     const search = s.toLowerCase();
-    const searched = users.filter((v) => v.name.toLowerCase().includes(search));
+    const searched = users?.filter((v) => v.name.toLowerCase().includes(search)) ?? []
     setUsers(searched);
   }
 
   useEffect(() => {
     fetchData();
-  }, [])
+  }, []);
+
+  if(!users)return <Spinner/>
 
   return (
     <>
       <SideBar />
-      {/* Main Container: Space for sidebar, light gray background */}
       <div className="ml-[260px] p-8 min-h-screen bg-gray-50 font-sans text-gray-900">
         
-        {/* Header Section */}
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-3xl font-bold">Manage Users</h1>
           <input 

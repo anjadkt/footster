@@ -1,93 +1,119 @@
 import { useEffect, useRef, useState } from "react";
 import SideBar from "../components/sidebar";
 import api from '../../services/axios'
+import errorFunction from "../../utils/errorFunction";
+import axios from "axios";
+import type { Product } from "../../app/features/user/userSlice";
+import Spinner from "../../components/spinner";
+
+type Form = {
+  name : string;
+  category : string;
+  price : number;
+  button :string;
+  img : string ;
+  id : string;
+}
 
 export default function AllProducts() {
-  const [products, setProducts] = useState([]);
-  const [img, setImg] = useState(false);
-  const [preview, setPreview] = useState(false);
-  const [form,setForm] = useState({
+  const [products, setProducts] = useState<Product[] | null>(null);
+  const [loading,setLoading] = useState<boolean>(false);
+  const [form,setForm] = useState<Form>({
     name : "",
     category : "",
-    price : ""
+    price : 0,
+    button : "Add Product",
+    img : "",
+    id : ""
   });
 
-  const inputElem = useRef({
-    name: null,
-    category: null,
-    price: null,
-    add: null
-  })
-
-  async function setData() {
-    const { data } = await api.get('/admin/products/all');
-    setProducts(data);
-  }
-
-  function addProduct(e : React.ChangeEvent<HTMLInputElement>) {
-    e.preventDefault();
-    if (inputElem.current.add.value === "Update Product") {
-      api.put(`/admin/products/update`, {
-        ...product,
-        name: e.target[1].value,
-        category: e.target[2].value,
-        price: e.target[3].value,
-        id: product._id
-      })
-      return;
+  const handleChange = (e:React.ChangeEvent<HTMLInputElement>):void=>{
+    if(e.target.name === "price"){
+      return setForm(pre => ({...pre,price:Number(e.target.value)}));
     }
-
-    api.post('/admin/products/add', {
-      name: e.target[1].value,
-      category: e.target[2].value,
-      price: e.target[3].value,
-      img
-    }).then(() => setData());
+    setForm(pre => ({...pre , [e.target.name]:e.target.value}));
   }
 
-  function removeProduct(id) {
-    api.put('/admin/products/remove', { id }).then(() => setData());
+  async function setData():Promise<void> {
+    try{
+      const { data } = await api.get<Product[]>('/admin/products/all');
+      setProducts(data);
+    }catch(error){
+      console.log(errorFunction(error));
+    }
   }
 
-  async function editProduct(id) {
-    const { data } = await api.get(`/admin/products/${id}`);
-    inputElem.current.name.value = data[0].name
-    inputElem.current.category.value = data[0].category
-    inputElem.current.price.value = data[0].price
-    inputElem.current.add.value = "Update Product"
-    product = data[0];
+  async function addProduct(e : React.FormEvent<HTMLFormElement>):Promise<void> {
+    e.preventDefault();
+    try{
+      if (form.button === "Update Product" && form.id) {
+        await api.put(`/admin/products/update`,form);
+        return;
+      }
+      await api.post('/admin/products/add',form)
+      setData();
+    }catch(error){
+      console.log(errorFunction(error));
+    }finally{
+      setForm({name : "", category : "", price : 0, button : "Add Product",img:"",id:""});
+      setData();
+    }
   }
 
-  function searchProducts(s) {
+  async function removeProduct(id:string):Promise<void> {
+    await api.put('/admin/products/remove', { id })
+    setData();
+  }
+
+  function editProduct(product:Product) {
+    setForm({
+      name:product.name,
+      category : product.category,
+      button : "Update Product",
+      price : product.price,
+      img : product.img,
+      id : product._id
+    });
+  }
+
+  function searchProducts(s:string) {
     if (!s) return setData();
     const search = s.toLowerCase();
-    const searched = products.filter((v) => v.name.toLowerCase().includes(search));
+    const searched = products?.filter((v) => v.name.toLowerCase().includes(search)) ?? []
     setProducts(searched);
   }
 
-  async function setupImage(e) {
-    const file = e.target.files[0]
-    if (!file) return;
-    setPreview(URL.createObjectURL(file));
+  async function setupImage(e:React.ChangeEvent<HTMLInputElement>) {
+    const files = e.target.files
+    if (!files || files.length === 0 || !files[0]) return;
+    const file = files[0]
+    
     const dataObj = new FormData();
     dataObj.append("file", file);
     dataObj.append("upload_preset", "footster");
     dataObj.append("cloud_name", "dcsmtagf7");
 
-    const { data } = await api.post("https://api.cloudinary.com/v1_1/dcsmtagf7/image/upload", dataObj);
-    setImg(data.secure_url);
+    try{
+      setLoading(true);
+      const { data } = await axios.post("https://api.cloudinary.com/v1_1/dcsmtagf7/image/upload", dataObj);
+      setForm(pre => ({...pre , img : data.secure_url}));
+    }catch(error){
+      console.log(errorFunction(error));
+    }finally{
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
     setData();
   }, [])
 
+  if(!products)return <Spinner/>
   return (
     <>
       <SideBar />
       <div className="ml-[260px] p-8 min-h-screen bg-gray-50 font-sans text-gray-900">
         
-        {/* Header Section */}
         <div className="flex justify-between items-center pr-[100px] mb-2">
           <h1 className="text-3xl font-bold tracking-tight">Manage Products</h1>
           <input 
@@ -102,34 +128,32 @@ export default function AllProducts() {
 
         <div className="flex flex-col gap-8">
           
-          {/* Add Product Form */}
-          <form onSubmit={(e) => addProduct(e)} className="flex items-start justify-center gap-8 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          <form onSubmit={addProduct} className="flex items-start justify-center gap-8 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
             
             {/* Image Upload Area */}
             <label 
               htmlFor="imagefile" 
               className="flex flex-col items-center justify-center h-[190px] w-[200px] border-2 border-dashed border-gray-400 rounded-lg cursor-pointer overflow-hidden bg-gray-50 hover:bg-gray-100 transition-colors"
             >
-              <input onChange={e => setupImage(e)} id="imagefile" type="file" className="hidden" />
+              <input onChange={setupImage} id="imagefile" type="file" className="hidden" />
               {
-                preview 
-                ? (<img className="h-[160px] object-contain" src={preview} alt="Preview" />) 
+                loading ? "uploading..." :
+                form.img 
+                ? (<img className="h-[160px] object-contain" src={form.img} alt="Preview" />) 
                 : (<img className="h-[50px] opacity-40 grayscale" src="/icons/upload.png" alt="Upload" />)
               }
             </label>
 
-            {/* Inputs Group */}
             <div className="flex flex-col gap-3 w-full max-w-sm">
-              <input ref={e => inputElem.current.name = e} required type="text" placeholder="Products Name" 
+              <input onChange={handleChange} required type="text" placeholder="Products Name" name="name" value={form.name}
                 className="p-3 border border-gray-300 rounded-lg outline-none focus:border-black transition-colors" />
-              <input ref={e => inputElem.current.category = e} required type="text" placeholder="Category" 
+              <input onChange={handleChange} required type="text" placeholder="Category" name="category" value={form.category}
                 className="p-3 border border-gray-300 rounded-lg outline-none focus:border-black transition-colors" />
-              <input ref={e => inputElem.current.price = e} required type="number" placeholder="Price" 
+              <input onChange={handleChange} required type="number" placeholder="Price" name="price" value={form.price}
                 className="p-3 border border-gray-300 rounded-lg outline-none focus:border-black transition-colors" />
               <input 
-                ref={e => inputElem.current.add = e} 
                 type="submit" 
-                value='Add Product' 
+                value={form.button} 
                 className="bg-gray-900 text-white font-semibold p-3 rounded-lg cursor-pointer hover:bg-black transition-all active:scale-95"
               />
             </div>
@@ -165,7 +189,7 @@ export default function AllProducts() {
                           Remove
                         </button>
                         <button 
-                          onClick={() => editProduct(v._id)}
+                          onClick={() => editProduct(v)}
                           className="bg-gray-800 text-white px-3 py-2 rounded-md font-semibold text-sm hover:bg-black transition-all"
                         >
                           Edit

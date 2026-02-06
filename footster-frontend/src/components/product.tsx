@@ -2,40 +2,47 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
 import api from '../services/axios';
+import axios from 'axios'
 import {useDispatch, useSelector} from 'react-redux'
-import {addToCartThunk} from '../app/features/user/userSlice.js'
+import {addToCartThunk, type Product} from '../app/features/user/userSlice.js'
+import type { AppDispatch, RootState } from '../app/store/store';
 
-export default function Product({ data }) {
-  const {favorite,login} = useSelector(state => state.user);
+export default function Product({ data }:{data:Product}) {
+  const {favorite,login} = useSelector((state:RootState) => state.user);
   const isFav = favorite.some(v => v._id === data._id);
-  const [fav, setFav] = useState(isFav);
+
+  const [fav, setFav] = useState<boolean>(isFav);
   const navigate = useNavigate();
-  const selectRef = useRef();
-  const dispatch = useDispatch();
+  const selectRef = useRef<HTMLSelectElement>(null);
+  const dispatch:AppDispatch = useDispatch();
 
   useEffect(() => {
     setFav(isFav);
   }, [favorite, data._id]);
 
-  async function addToCart() {
+  async function addToCart():Promise<void> {
     if(!login)return navigate('/login');
     try {
-      dispatch(addToCartThunk(data._id,Number(selectRef.current.value)));
+      dispatch(addToCartThunk(data._id,Number(selectRef.current?.value)));
       toast.success("Added to Cart");
-    } catch (error) {
-      if (error.response?.status === 401) navigate('/login');
+    } catch (error:unknown) {
+      if (axios.isAxiosError(error)){
+        if(error.response?.status)navigate('/login');
+      }
     }
   }
 
-  async function toggleFavorite() {
+  async function toggleFavorite():Promise<void> {
     if(!login)return navigate('/login');
     try {
       const { data: res } = await api.post('/wishlist', { id: data._id });
       setFav(!fav);
       toast.info(res.favorite ? "Added to Wishlist" : "Removed from Wishlist");
-    } catch (error) {
+    } catch (error:unknown) {
       setFav(false);
-      if (error.response?.status === 401) navigate('/login');
+      if (axios.isAxiosError(error)){
+        if(error.response?.status)navigate('/login');
+      }
     }
   }
 

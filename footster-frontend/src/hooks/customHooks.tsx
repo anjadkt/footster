@@ -1,10 +1,25 @@
 import { useEffect, useReducer, useState } from "react";
 import api from '../services/axios'
 
-export function  useError (){
-  const [error,setError] = useReducer(updateError,{})
+type Action = {
+  type:string;
+  value : string;
+  pass : string;
+  oldpass : string;
+}
 
-  function updateError(error,action){
+type Error = {
+  name : string;
+  password : string;
+  conpass : string;
+  current : string;
+  email : string
+}
+
+export function  useError (){
+  const [error,setError] = useReducer(updateError,{name:"",password:"",conpass:"",current:"",email:""});
+
+  function updateError(error:Partial<Error>,action:Action){
     const errorObj = {...error}
     switch(action.type){
       case "name":
@@ -60,10 +75,10 @@ export function  useError (){
   return [error,setError]
 }
 
-export function useFetch (url){
-  const [data,setData] = useState();
+export function useFetch<T> (url:string){
+  const [data,setData] = useState<T|null>(null);
   useEffect(()=>{
-    api.get(url)
+    api.get<T>(url)
     .then(dataList => setData(dataList.data) )
     .catch(err => console.log(err.message))
   },[url]);
