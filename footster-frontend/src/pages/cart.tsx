@@ -3,6 +3,7 @@ import CartItem from '../components/cartItems'
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../app/store/store';
+import Spinner from '../components/spinner';
 
 type PriceCal = {
   items: number;
@@ -13,7 +14,7 @@ type PriceCal = {
 }
 
 export default function Cart() {
-  const {cart , name} = useSelector((state:RootState) => state.user);
+  const {cart , name , loading} = useSelector((state:RootState) => state.user);
   const [price, setTotal] = useState<PriceCal>({ items: 0, shipping: 0, beforTax: 0 , tax: 0, total: 0 });
   const navigate = useNavigate();
 
@@ -30,7 +31,9 @@ export default function Cart() {
 
   useEffect(()=>{
     calcPrice();
-  },[cart])
+  },[cart]);
+
+  if(loading)return <Spinner/>
 
   return (
     <div className="bg-gray-50 min-h-screen">

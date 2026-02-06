@@ -24,10 +24,11 @@ import {useDispatch} from 'react-redux'
 import {useEffect} from 'react'
 import {checkAuth} from './app/features/user/userSlice'
 import "react-toastify/dist/ReactToastify.css";
+import type { AppDispatch } from './app/store/store'
 
 function App() {
 
-  const dispatch = useDispatch();
+  const dispatch:AppDispatch = useDispatch();
 
   useEffect(()=>{
     dispatch(checkAuth());

@@ -4,34 +4,32 @@ import { useState } from 'react';
 import Product from './product';
 import api from '../services/axios';
 import {useSelector} from 'react-redux'
+import type { RootState } from '../app/store/store';
+import type { Product as TypeProduct } from '../app/features/user/userSlice';
 
 export default function Header() {
-  const [drop, setDrop] = useState(false);
-  const [userdrop, setUserdrop] = useState(false);
-  const [search, setSearch] = useState(false);
-  const [products, setProducts] = useState([]);
-  
-  const {cart,name,login} = useSelector(state => state.user);
+  const [drop, setDrop] = useState<boolean>(false);
+  const [userdrop, setUserdrop] = useState<boolean>(false);
+  const [search, setSearch] = useState<boolean>(false);
+  const [products, setProducts] = useState<TypeProduct[]>([]);
+  const {cart,name,login} = useSelector((state:RootState) => state.user);
   
   const navigate = useNavigate();
 
-  async function listProducts(txt) {
-    const text = txt.value.toLowerCase();
+  async function listProducts(txt:string):Promise<void> {
+    const text = txt.toLowerCase();
     if (!text) { setProducts([]); return; }
     const { data } = await api.get('/products');
-    setProducts(data.filter(v => v.name.toLowerCase().includes(text)));
+    setProducts(data.filter((v:TypeProduct) => v.name.toLowerCase().includes(text)));
   }
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-black shadow-md px-4 md:px-12 py-3 flex items-center justify-between gap-4">
       
-      {/* Logo */}
       <div className="flex items-center justify-between w-full md:w-auto">
         <Link className="text-2xl font-black tracking-tighter" to='/'>FootSter.</Link>
-        {/* Mobile Toggle Icons could go here */}
       </div>
 
-      {/* Navigation Links - Hidden on very small screens or scrollable */}
       <nav className="hidden md:flex md:items-center gap-4 md:gap-8 overflow-x-auto no-scrollbar w-full md:w-auto justify-center">
         <Link className="text-gray-600 font-medium hover:text-black whitespace-nowrap" to='/'>Home</Link>
         <Link className="text-gray-600 font-medium hover:text-black whitespace-nowrap" to='/products'>Products</Link>
@@ -54,7 +52,7 @@ export default function Header() {
 
         <div className="relative hidden md:block">
           <input 
-            onChange={e => { setSearch(true); listProducts(e.target); }} 
+            onChange={e => { setSearch(true); listProducts(e.target.value); }} 
             className="w-full md:w-48 pl-4 pr-10 py-1.5 border border-black rounded-md focus:outline-none focus:ring-1 focus:ring-black" 
             type="text" placeholder='Search...' 
           />

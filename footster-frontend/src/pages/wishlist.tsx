@@ -2,28 +2,32 @@ import { useState, useEffect } from "react";
 import Header from "../components/header";
 import Product from "../components/product";
 import api from "../services/axios";
+import errorFunction from "../utils/errorFunction";
+import type { Product as TypedProduct } from "../app/features/user/userSlice";
+import Spinner from "../components/spinner";
 
 export default function Wishlist() {
-  const [favorite, setFavorite] = useState([]);
+  const [favorite, setFavorite] = useState<TypedProduct[] | null>(null);
 
   useEffect(() => {
-    async function fetchFav() {
+    async function fetchFav():Promise<void> {
       try {
-        const { data } = await api.get('/wishlist');
+        const { data } = await api.get<{favorite : TypedProduct[]}>('/wishlist');
         setFavorite(data.favorite);
       } catch (error) {
-        console.log(error.message);
+        console.log(errorFunction(error));
       }
     }
     fetchFav();
   }, []);
+
+  if(!favorite)return <Spinner/>
 
   return (
     <div className="min-h-screen bg-white">
       <Header />
       
       <main className="max-w-7xl mx-auto pt-18 md:pt-24 pb-20 px-4 md:px-12">
-        {/* Header Section */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
             <h1 className="text-3xl md:text-4xl font-black tracking-tight text-gray-900">

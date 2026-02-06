@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { useNavigate, useParams } from 'react-router-dom'
 import api from "../services/axios";
+import errorFunction from "../utils/errorFunction";
 
 export default function OrderSec() {
   const [orderObj, setOrderObj] = useState({});
@@ -11,11 +12,10 @@ export default function OrderSec() {
     async function fetchOrder() {
       try {
         const { data: orderDetails } = await api.get(`/user/orders/${id}`);
+        console.log(orderDetails);
         setOrderObj(orderDetails.order);
-        // Clearing cart after successful order
-        await api.get('/cart/clear');
       } catch (error) {
-        console.log(error.message);
+        console.log(errorFunction(error));
       }
     }
     fetchOrder();

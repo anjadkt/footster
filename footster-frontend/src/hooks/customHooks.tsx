@@ -75,13 +75,16 @@ export function  useError (){
   return [error,setError]
 }
 
-export function useFetch<T> (url:string){
+export function useFetch<T> (url:string):[T|null,boolean]{
+  const [loading,setLoading] = useState(false);
   const [data,setData] = useState<T|null>(null);
   useEffect(()=>{
+    setLoading(true);
     api.get<T>(url)
     .then(dataList => setData(dataList.data) )
     .catch(err => console.log(err.message))
+    .finally(()=>setLoading(false));
   },[url]);
 
-  return [data]
+  return [data,loading]
 }

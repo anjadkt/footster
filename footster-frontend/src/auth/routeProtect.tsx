@@ -5,7 +5,7 @@ import type { RootState } from "../app/store/store";
 
 type Props = {
   children : React.ReactNode;
-  role : string
+  role ?: string
 }
 
 export default function ProtectedRoute({ children, role }:Props) {

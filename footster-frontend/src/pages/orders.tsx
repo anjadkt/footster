@@ -2,21 +2,26 @@ import { useEffect, useState } from "react";
 import Header from "../components/header"
 import OrderItems from "../components/orderItem";
 import api from '../services/axios'
+import type { Order } from "../admin/pages/eachUser";
+import errorFunction from "../utils/errorFunction";
+import Spinner from "../components/spinner";
 
 export default function Orders() {
-  const [orders, setOrders] = useState([]);
+  const [orders, setOrders] = useState<Order[] | null>(null);
 
   useEffect(() => {
-    async function fetchOrders() {
+    async function fetchOrders():Promise<void> {
       try {
-        const { data: orderObj } = await api.get('user/orders/all');
+        const { data: orderObj } = await api.get<{orders:Order[]}>('user/orders/all');
         setOrders(orderObj.orders);
       } catch (error) {
-        console.log(error.message);
+        console.log(errorFunction(error));
       }
     }
     fetchOrders();
-  }, [])
+  }, []);
+
+  if(!orders) return <Spinner/>
 
   return (
     <div className="min-h-screen bg-gray-50">

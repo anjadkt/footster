@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { useError } from '../customHooks/customHooks'
+import { useError } from '../hooks/customHooks'
 import { toast, ToastContainer } from 'react-toastify'
 import api from '../services/axios'
 import {checkAuth} from '../app/features/user/userSlice.js'

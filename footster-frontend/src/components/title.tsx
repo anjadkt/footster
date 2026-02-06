@@ -1,4 +1,4 @@
-export default function Title({ title }) {
+export default function Title({ title }:{title:string}) {
   return (
     <div className="flex items-center justify-between w-full mb-4">
       <h2 className="text-xl md:text-2xl font-bold text-gray-800 tracking-tight">{title}</h2>

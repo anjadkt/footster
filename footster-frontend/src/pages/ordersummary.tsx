@@ -3,13 +3,15 @@ import { Link, useNavigate } from 'react-router-dom';
 import api from '../services/axios'
 import {useDispatch} from 'react-redux'
 import {setItemToCart} from '../app/features/user/userSlice.js'
+import type { AppDispatch } from '../app/store/store';
 
 export default function OrderSummary() {
+
   const [cart, setCart] = useState([]);
-  const [confirm, setConfirm] = useState(false);
+  const [confirm, setConfirm] = useState<boolean>(false);
   const [price, setPrice] = useState({ items: 0, handle: 0, tax: 0, platform: 0, discount: 0, total: 0 });
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch:AppDispatch = useDispatch();
 
   const Elems = useRef({
     name: null, number: null, pincode: null, city: null,

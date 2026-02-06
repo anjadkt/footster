@@ -4,9 +4,10 @@ import Title from '../components/title'
 import { useEffect, useState } from 'react'
 import Footer from '../components/footer'
 import api from '../services/axios'
+import type { Product as TypeProduct } from "../app/features/user/userSlice"
 
 export default function Products() {
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState<TypeProduct[]>([]);
   const [cat, setCat] = useState("All");
 
   const categories = [
@@ -14,10 +15,10 @@ export default function Products() {
     "loafers", "boots", "sandels", "sneakers"
   ];
 
-  async function fetchByCategory(cate) {
+  async function fetchByCategory(cate:string) {
     try {
       const url = cate === 'All' ? '/products' : `/products?category=${cate}`;
-      const { data } = await api.get(url);
+      const { data } = await api.get<TypeProduct[]>(url);
       setProducts(data);
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -33,7 +34,6 @@ export default function Products() {
       <Header />
 
       <main className="pt-24 md:pt-32">
-        {/* Category Selectors - Sticky and Horizontal Scroll on Mobile */}
         <div className="sticky top-[58px] md:top-[60px] z-40 bg-white border-b border-gray-100 shadow-sm">
           <div className="max-w-7xl mx-auto flex items-center gap-3 overflow-x-auto no-scrollbar py-2 px-4 md:px-12">
             {categories.map((item) => (

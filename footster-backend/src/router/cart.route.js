@@ -7,6 +7,5 @@ router.post('/',cartRouter.addToCart);
 router.put('/',cartRouter.removeItem);
 router.post('/inc',cartRouter.incOrDec);
 router.post('/dec',cartRouter.incOrDec);
-router.get('/clear',cartRouter.clearCart);
 
 module.exports = router

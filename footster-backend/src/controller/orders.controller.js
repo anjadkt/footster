@@ -8,7 +8,7 @@ module.exports = {
       const {id} = req.user ;
       const {paymentDetails,items,to} = req.body ;
 
-      const order = Orders({
+      const order = Orders.create({
         userId : id,
         date : new Date().toLocaleString(),
         status : "Placed",
@@ -16,9 +16,8 @@ module.exports = {
         items,
         to
       });
-      await order.save();
 
-      await User.findOneAndUpdate({_id : id},{$push : {"orders" : order._id}});
+      await User.findOneAndUpdate({_id : id},{$push : {"orders" : order._id},cart:[]});
       
       res.status(200).json({
         message : "Order successfull!",

@@ -1,4 +1,7 @@
-export default function OrderItems({ orderDetails }) {
+import type { Order } from "../admin/pages/eachUser";
+
+export default function OrderItems({ orderDetails }:{orderDetails:Order}) {
+
   const today = new Date();
   const deliveryDate = new Date(today);
   deliveryDate.setDate(deliveryDate.getDate() + 7);
@@ -35,12 +38,10 @@ export default function OrderItems({ orderDetails }) {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 last:pb-0 border-b last:border-0" key={i}>
             
             <div className="flex gap-4 md:gap-6">
-              {/* Product Image */}
               <div className="h-24 w-24 md:h-32 md:w-32 shrink-0 bg-gray-100 rounded-xl p-2 flex items-center justify-center">
                 <img className="max-h-full object-contain" src={v.img} alt={v.name} />
               </div>
 
-              {/* Product Details */}
               <div className="flex flex-col justify-center">
                 <h4 className="font-bold text-gray-800 text-lg mb-1 leading-tight">{v.name}</h4>
                 <p className="text-sm text-gray-500 font-medium">Qty: {v.quantity}</p>
@@ -53,7 +54,6 @@ export default function OrderItems({ orderDetails }) {
               </div>
             </div>
 
-            {/* Action Button */}
             <div className="shrink-0">
               <button className="w-full md:w-auto px-6 py-2.5 border border-gray-300 rounded-xl font-bold text-sm hover:bg-gray-50 transition-colors shadow-sm">
                 Track package
