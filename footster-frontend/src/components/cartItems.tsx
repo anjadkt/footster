@@ -1,28 +1,15 @@
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
-import api from '../services/axios';
-import { useState } from "react";
 import { useDispatch } from "react-redux";
-import {removeFromCartThunk} from '../app/features/user/userSlice.js'
+import {removeFromCartThunk,updateQntThunk} from '../app/features/user/userSlice.js'
 import type { Cart } from "../app/features/user/userSlice.js";
 import errorFunction from "../utils/errorFunction";
 import type {AppDispatch} from '../app/store/store'
 
 export default function CartItem({ data }:{data:Cart}) {
-  const [qnt, setQnt] = useState<number>(data.quantity);
+  // const [qnt, setQnt] = useState<number>(data.quantity);
   const navigate = useNavigate();
   const dispatch:AppDispatch = useDispatch();
-
-  async function incOrDec(action:string):Promise<void> {
-    try {
-      const { data: productObj } = await api.post(`/cart/${action}`, {
-        "id": data.product._id
-      });
-      setQnt(productObj.quantity);
-    } catch (error) {
-      console.log(errorFunction(error));
-    }
-  }
 
   async function removeProduct() {
     try {
@@ -56,14 +43,14 @@ export default function CartItem({ data }:{data:Cart}) {
           <div className="flex flex-wrap items-center gap-4 mt-4">
             <div className="flex items-center border border-black rounded overflow-hidden h-8">
               <button 
-                onClick={() => incOrDec("dec")} 
+                onClick={() => dispatch(updateQntThunk(data.product._id,"dec"))} 
                 className="px-3 bg-white hover:bg-gray-100 border-r border-black font-bold active:bg-gray-200"
               >
                 -
               </button>
-              <span className="px-4 font-bold text-sm">{qnt}</span>
+              <span className="px-4 font-bold text-sm">{data.quantity}</span>
               <button 
-                onClick={() => incOrDec("inc")} 
+                onClick={() => dispatch(updateQntThunk(data.product._id,"inc"))} 
                 className="px-3 bg-white hover:bg-gray-100 border-l border-black font-bold active:bg-gray-200"
               >
                 +

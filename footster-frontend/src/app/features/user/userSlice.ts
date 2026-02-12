@@ -114,5 +114,14 @@ export const removeFromCartThunk = (id:string) => async (dispatch:AppDispatch) =
   }
 }
 
+export const updateQntThunk = (id:string,action:string) => async (dispatch:AppDispatch) => {
+  try {
+    const { data } = await api.post<{cart:Cart[]}>(`/cart/${action}`, {id});
+    dispatch(setItemToCart(data.cart));
+  } catch (error) {
+    console.log(errorFunction(error));
+  }
+}
+
 export const {fetchUserFail,fetchUserStart,fetchUserSuccess,setItemToCart,setUserLogout} = userSlice.actions ;
 export default userSlice.reducer ;

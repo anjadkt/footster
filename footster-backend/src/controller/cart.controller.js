@@ -72,13 +72,14 @@ module.exports = {
   incOrDec : async (req,res)=>{
     try { 
       const {id} = req.body
-      let product = {}
-      if(req.url === "/inc"){
+      const action = req.params.action ;
+      let product ;
+      if(action === "inc"){
        product = await User.findOneAndUpdate({_id : req.user.id , "cart.product": id},{$inc : {
         "cart.$.quantity" : 1
        } });
       }
-      if(req.url === "/dec"){
+      if(action === "dec"){
        product = await User
        .findOneAndUpdate({_id : req.user.id , "cart.product": id , "cart.quantity" : {$gt : 1}},{$inc :{
         "cart.$.quantity" : -1
@@ -93,12 +94,11 @@ module.exports = {
         return ;
       }
 
-      const {cart} = await User.findOne({_id : req.user.id });
-      const productObj = cart.find(v => v.product.toString() === id);
+      const {cart} = await User.findOne({_id : req.user.id }).populate("cart.product");
 
       res.status(200).json({
         message : "quanitity updated!",
-        quantity : productObj.quantity,
+        cart,
         status : 200
       })
     } catch (error) {
