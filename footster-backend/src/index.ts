@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser'
 import verifyToken from './middleware/verifyToken'
 import verifyUser from './middleware/verifyUser'
 import isBlocked from './middleware/isBlockedUser'
+import getEnv from './config/dot'
 
 const app = express();
 
@@ -52,7 +53,6 @@ import adminProductRouter from './router/admin/aProduct.route'
 app.use('/admin/products',verifyToken,verifyUser,adminProductRouter);
 
 import adminUserRouter from './router/admin/aUsers.route'
-import getEnv from './config/dot'
 app.use('/admin/users',verifyToken,verifyUser,adminUserRouter);
 
 app.use((req, res, next) => {

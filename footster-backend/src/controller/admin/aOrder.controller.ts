@@ -10,7 +10,7 @@ export default {
         message : "all order fetch success",
         status  : 200,
         orders
-      });
+      })
     }catch(error){
       res.status(500).json(errorFunction(error));
     }

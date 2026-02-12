@@ -1,6 +1,7 @@
-import User from '../model/users.model.js'
+import User from '../model/users.model'
 import { Request,Response } from 'express';
-import errorFunction from '../types/errorFunction.js';
+import errorFunction from '../types/errorFunction';
+import type {ProductType} from '../model/products.model'
 
 export default {
   showList : async (req:Request,res:Response)=>{
@@ -51,7 +52,8 @@ export default {
     try {
       const {id} = req.body ;
       const user = await User.findById(req.user?.id) ;
-      const newFav = user.favorite.filter(p => p.toString() !== id );
+      const newFav = user.favorite.filter((p:ProductType) => p.toString() !== id );
+
       if(newFav.length === user.favorite.length)return res.status(404).json({message : "no Product found",status : 404});
       user.favorite = newFav ;
       await user.save();

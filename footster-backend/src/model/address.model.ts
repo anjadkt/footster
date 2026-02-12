@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose, { InferSchemaType } from 'mongoose'
 
 const addresSchema = new mongoose.Schema({
     name :{
@@ -21,6 +21,7 @@ const addresSchema = new mongoose.Schema({
     country : String
 });
 
-const Address = mongoose.model("Address",addresSchema);
+export type AddressType = InferSchemaType<typeof addresSchema>;
 
+const Address = mongoose.model("Address",addresSchema);
 export default Address ;

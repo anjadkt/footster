@@ -2,13 +2,20 @@ import User from '../model/users.model'
 import { Request,Response } from 'express';
 import errorFunction from '../types/errorFunction';
 
+type CartType = {
+  product:string;
+  ququantity : number;
+  _id : string
+}
+
 export default {
   addToCart : async (req:Request,res:Response)=>{
     try{
 
-      const user = await User.findOne({_id : req.user?.id});
+      const user = await User.findOne({_id : req.user?.id}).lean();
+      if(!user)return res.status(404).json({message : "User not found!",status : 404});
       const {id : productId , quantity } = req.body;
-      const exist = user.cart.find( (p) => p.product.toString() === productId);
+      const exist = user?.cart.find( (p) => p.product.toString() === productId);
 
       if(exist){
         exist.quantity += Number(quantity) || 1 ;
@@ -93,7 +100,7 @@ export default {
       }
 
       const {cart} = await User.findOne({_id : req.user?.id });
-      const productObj = cart.find(v => v.product.toString() === id);
+      const productObj = cart.find((v:CartType) => v.product.toString() === id);
 
       res.status(200).json({
         message : "quanitity updated!",

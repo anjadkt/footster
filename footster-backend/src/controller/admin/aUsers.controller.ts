@@ -1,6 +1,5 @@
 import User from '../../model/users.model'
 import Order from '../../model/orders.model'
-import {Types} from 'mongoose'
 import { Request,Response } from 'express';
 import errorFunction from '../../types/errorFunction';
 
@@ -27,11 +26,13 @@ export default {
       res.status(500).json(errorFunction(error));
     }
   },
+
   getUserDetails : async (req:Request,res:Response)=>{
     try {
       const email = req.query.email || req.user?.email ;
       if(email){
-        const user = await User.findOne({email}).populate("favorite").populate("cart.product");
+        const user = await User.findOne({email}).populate("favorite").populate("cart.product").lean();
+        if(!user)return res.status(404).json({message : "User not found!",status : 404});
 
         res.status(200).json({
           name : user.name,

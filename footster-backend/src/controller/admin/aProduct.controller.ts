@@ -1,6 +1,7 @@
 import Product from '../../model/products.model'
 import { Request,Response } from 'express';
 import errorFunction from '../../types/errorFunction';
+import { ProductType } from '../../model/products.model';
 
 export default {
   addProduct : async (req:Request,res:Response)=>{
@@ -8,7 +9,7 @@ export default {
       const { img , category ,name , price } = req.body ;
       if(!category || !name || !price || !img)return res.status(400).json({message : "incomplete form!",status:400});
 
-      const product = await Product.create({
+      const product:ProductType = await Product.create({
         isFav : false ,
         reviews :[],
         img,
@@ -26,6 +27,7 @@ export default {
       res.status(500).json(errorFunction(error));
     }
   },
+
   removeProduct : async (req:Request,res:Response)=>{
     try {
       const {id} = req.body ;
@@ -65,6 +67,7 @@ export default {
       res.status(500).json(errorFunction(error));
     }
   },
+  
   getOneProduct : async (req:Request,res:Response)=>{
     try {
        const {id} = req.params ;

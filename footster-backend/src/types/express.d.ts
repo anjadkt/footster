@@ -1,4 +1,5 @@
-import type { UserJwt } from "./user.type";
+import { UserJwt } from "./user.type";
+export {};
 
 declare global {
   namespace Express {

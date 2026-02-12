@@ -10,10 +10,11 @@ export default {
       const totalUsers = await User.countDocuments({role : "user"});
       const totalOrders = await Order.countDocuments();
       const totalProducts = await Product.countDocuments();
-      const orders = await Order.find()
+      const orders = await Order.find();
       const totalRevenue = orders.reduce((acc,ord)=>{
         return acc + ord.paymentDetails.total
       },0);
+
       
       res.status(200).json({
         totalOrders,

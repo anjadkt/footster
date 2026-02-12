@@ -1,13 +1,13 @@
-import User from '../model/users.model.js'
+import User from '../model/users.model'
 import { Request,Response } from 'express';
-import errorFunction from '../types/errorFunction.js';
+import errorFunction from '../types/errorFunction';
 
 export default {
   addAddress : async (req:Request,res:Response)=>{
     try {
       const id = req.user?.id ;
       const {name , number , pincode , city , adres , state , country} = req.body ;
-      if(!name || !number || !pincode || !city || !adres || !state || !country){
+      if(!name || !number || !pincode || !city || !adres || !state || !country ||!id){
         return res.status(400).json({message : "invalid form!",status :400});
       }
 
@@ -34,8 +34,9 @@ export default {
   getAddress : async (req:Request,res:Response)=>{
     try {
       const id = req.user?.id ;
-      const user = await User.findOne({_id : id});
+      if(!id)return res.status(400).json({message : "Id required!",status :400});
 
+      const user = await User.findOne({_id : id});
       if (!user) {
         return res.status(404).json({ message: "User not found", status: 404 });
       }

@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose, { InferSchemaType } from 'mongoose'
 
 const productSchema = new mongoose.Schema({
   isFav : Boolean,
@@ -23,6 +23,8 @@ const productSchema = new mongoose.Schema({
 },{
   collection : "products"
 });
+
+export type ProductType = InferSchemaType<typeof productSchema>;
 
 const Product = mongoose.model("Product",productSchema);
 
