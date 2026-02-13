@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import { InferSchemaType } from 'mongoose';
 
 const userSchema = new mongoose.Schema({
   name : {
@@ -66,6 +67,6 @@ const userSchema = new mongoose.Schema({
   collection : "users"
 });
 
+export type UserType = InferSchemaType<typeof userSchema>;
 const User = mongoose.model("User",userSchema);
-
 export default User ;

@@ -1,4 +1,4 @@
-import User from '../model/users.model'
+import User, { UserType } from '../model/users.model'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import validator from 'validator'
@@ -47,7 +47,7 @@ export default {
       if(!email.trim() || !password.trim() )return res.status(406).json({message : "invalid format",status :406});
 
       const user = await User.findOne({email});
-      if(!user)return res.status(404).json({message : "User Not Found!",status : 404});
+      if(!user || !user.password)return res.status(404).json({message : "User Not Found!",status : 404});
 
       if(user.status === "Blocked")return res.status(403).json({message : "User is Blocked",status : 403});
 

@@ -7,9 +7,9 @@ export default {
   showList : async (req:Request,res:Response)=>{
 
     try{
-      const {favorite} = await User.findById(req.user?.id).populate("favorite");
+      const user = await User.findById(req.user?.id).populate("favorite");
       res.status(200).json({
-        favorite,
+        favorite:user?.favorite,
         message : "favorite list send!",
         status : 200
       });
@@ -52,7 +52,9 @@ export default {
     try {
       const {id} = req.body ;
       const user = await User.findById(req.user?.id) ;
-      const newFav = user.favorite.filter((p:ProductType) => p.toString() !== id );
+      if(!user)return res.status(404).json({message : "User not found!",status : 404});
+
+      const newFav = user.favorite.filter((p) => p.toString() !== id );
 
       if(newFav.length === user.favorite.length)return res.status(404).json({message : "no Product found",status : 404});
       user.favorite = newFav ;
@@ -70,6 +72,7 @@ export default {
     try{
       const id = req.user?.id;
       const user = await User.findOne({_id : id});
+      if(!user)return res.status(404).json({message : "User not found!",status : 404});
       res.status(200).json({
         favorite : user.favorite,
         message : "User Favorite List",
