@@ -8,7 +8,7 @@ const errorFunction_1 = __importDefault(require("../types/errorFunction"));
 exports.default = {
     showList: async (req, res) => {
         try {
-            const user = await users_model_1.default.findById(req.user.id).populate("favorite");
+            const user = await users_model_1.default.findById(req.user?.id).populate("favorite");
             res.status(200).json({
                 favorite: user?.favorite,
                 message: "favorite list send!",
@@ -22,9 +22,9 @@ exports.default = {
     addOrDltFav: async (req, res) => {
         try {
             const { id } = req.body;
-            const exist = await users_model_1.default.findOne({ _id: req.user.id, "favorite": id });
+            const exist = await users_model_1.default.findOne({ _id: req.user?.id, "favorite": id });
             if (exist) {
-                await users_model_1.default.updateOne({ _id: req.user.id }, { $pull: { favorite: id } });
+                await users_model_1.default.updateOne({ _id: req.user?.id }, { $pull: { favorite: id } });
                 res.status(200).json({
                     message: "Product removed from wishList",
                     status: 200,
@@ -32,7 +32,7 @@ exports.default = {
                 });
                 return;
             }
-            await users_model_1.default.findByIdAndUpdate(req.user.id, { $push: {
+            await users_model_1.default.findByIdAndUpdate(req.user?.id, { $push: {
                     favorite: id
                 } });
             res.status(200).json({
@@ -48,10 +48,10 @@ exports.default = {
     removeFav: async (req, res) => {
         try {
             const { id } = req.body;
-            const user = await users_model_1.default.findById(req.user.id);
+            const user = await users_model_1.default.findById(req.user?.id);
             if (!user)
-                return res.status(404).json({ message: "no user found!", status: 404 });
-            const newFav = user.favorite.filter(p => p.toString() !== id);
+                return res.status(404).json({ message: "User not found!", status: 404 });
+            const newFav = user.favorite.filter((p) => p.toString() !== id);
             if (newFav.length === user.favorite.length)
                 return res.status(404).json({ message: "no Product found", status: 404 });
             user.favorite = newFav;
@@ -67,10 +67,10 @@ exports.default = {
     },
     getFavProducts: async (req, res) => {
         try {
-            const id = req.user.id;
+            const id = req.user?.id;
             const user = await users_model_1.default.findOne({ _id: id });
             if (!user)
-                return res.status(404).json({ message: "no user found!", status: 404 });
+                return res.status(404).json({ message: "User not found!", status: 404 });
             res.status(200).json({
                 favorite: user.favorite,
                 message: "User Favorite List",

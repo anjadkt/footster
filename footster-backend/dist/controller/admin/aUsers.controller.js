@@ -5,8 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const users_model_1 = __importDefault(require("../../model/users.model"));
 const orders_model_1 = __importDefault(require("../../model/orders.model"));
-const mongoose_1 = require("mongoose");
 const errorFunction_1 = __importDefault(require("../../types/errorFunction"));
+const mongoose_1 = require("mongoose");
 exports.default = {
     getAllUsers: async (req, res) => {
         try {
@@ -32,7 +32,7 @@ exports.default = {
     },
     getUserDetails: async (req, res) => {
         try {
-            const email = req.query.email || req.user.email;
+            const email = req.query.email || req.user?.email;
             if (email) {
                 const user = await users_model_1.default.findOne({ email }).populate("favorite").populate("cart.product");
                 if (!user)
@@ -99,9 +99,9 @@ exports.default = {
             if (!user)
                 return res.status(404).json({ message: "User Not Found!", status: 404 });
             res.status(200).json({
-                message: "user fetch success!",
-                user: user[0],
-                status: 200
+                message: "User fetch success!",
+                user,
+                status: 200,
             });
         }
         catch (error) {
@@ -110,7 +110,7 @@ exports.default = {
     },
     blockUser: async (req, res) => {
         try {
-            const { id } = req.params;
+            const id = req.params.id;
             const user = await users_model_1.default.findOne({ _id: id });
             if (!user)
                 return res.status(404).json({ message: "User Not Found!", status: 404 });

@@ -7,11 +7,9 @@ const users_model_1 = __importDefault(require("../model/users.model"));
 const errorFunction_1 = __importDefault(require("../types/errorFunction"));
 exports.default = async (req, res, next) => {
     try {
-        const { id } = req.user;
-        const user = await users_model_1.default.findOne({ _id: id });
-        if (!user)
-            return res.status(404).json({ message: "no user found!", status: 404 });
-        if (user.status === "Blocked")
+        const id = req.user?.id;
+        const user = await users_model_1.default.findOne({ _id: id }).lean();
+        if (user?.status === "Blocked")
             return res.status(403).json({ message: "User is Blocked!", status: 403 });
         next();
     }

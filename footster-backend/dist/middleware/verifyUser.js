@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const errorFunction_1 = __importDefault(require("../types/errorFunction"));
 exports.default = (req, res, next) => {
     try {
-        const { role } = req.user;
+        const role = req.user?.role;
         if (role !== "admin")
             return res.status(401).json({ message: "Unauthorized Route!", status: 401 });
         next();

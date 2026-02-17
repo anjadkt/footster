@@ -9,7 +9,7 @@ const errorFunction_1 = __importDefault(require("../types/errorFunction"));
 exports.default = {
     addUserOrders: async (req, res) => {
         try {
-            const { id } = req.user;
+            const id = req.user?.id;
             const { paymentDetails, items, to } = req.body;
             const order = await orders_model_1.default.create({
                 userId: id,
@@ -48,7 +48,7 @@ exports.default = {
     },
     getUserOrders: async (req, res) => {
         try {
-            const id = req.user.id;
+            const id = req.user?.id;
             const user = await users_model_1.default.findOne({ _id: id }).populate("orders");
             if (!user)
                 return res.status(404).json({ message: "User Not Found!", status: 404 });

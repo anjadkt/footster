@@ -19,10 +19,10 @@ const aOrders_route_1 = __importDefault(require("./router/admin/aOrders.route"))
 const dashboard_route_1 = __importDefault(require("./router/admin/dashboard.route"));
 const aProduct_route_1 = __importDefault(require("./router/admin/aProduct.route"));
 const aUsers_route_1 = __importDefault(require("./router/admin/aUsers.route"));
-const errorhandle_1 = __importDefault(require("./middleware/errorhandle"));
-const express_1 = __importDefault(require("express"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const dotenv_1 = __importDefault(require("./config/dotenv"));
+const express_1 = __importDefault(require("express"));
+const errorhandle_1 = __importDefault(require("./middleware/errorhandle"));
 const app = (0, express_1.default)();
 //middlewares
 app.use((0, cors_1.default)({

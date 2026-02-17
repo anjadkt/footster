@@ -8,9 +8,9 @@ const errorFunction_1 = __importDefault(require("../types/errorFunction"));
 exports.default = {
     addAddress: async (req, res) => {
         try {
-            const id = req.user.id;
+            const id = req.user?.id;
             const { name, number, pincode, city, adres, state, country } = req.body;
-            if (!name || !number || !pincode || !city || !adres || !state || !country) {
+            if (!name || !number || !pincode || !city || !adres || !state || !country || !id) {
                 return res.status(400).json({ message: "invalid form!", status: 400 });
             }
             const user = await users_model_1.default.updateOne({ _id: id }, {
@@ -35,7 +35,9 @@ exports.default = {
     },
     getAddress: async (req, res) => {
         try {
-            const id = req.user.id;
+            const id = req.user?.id;
+            if (!id)
+                return res.status(400).json({ message: "Id required!", status: 400 });
             const user = await users_model_1.default.findOne({ _id: id });
             if (!user) {
                 return res.status(404).json({ message: "User not found", status: 404 });

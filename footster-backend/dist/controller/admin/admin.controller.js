@@ -18,8 +18,8 @@ exports.default = {
             const exist = await users_model_1.default.findOne({ email });
             if (exist)
                 return res.status(409).json({ message: "Admin already Exist!", status: 409 });
-            const hash = await bcrypt_1.default.hash(password, 10); //make more strong !
-            const admin = await users_model_1.default.create({
+            const hash = await bcrypt_1.default.hash(password, 10);
+            await users_model_1.default.create({
                 email,
                 name,
                 password: hash,

@@ -20,8 +20,8 @@ exports.default = {
             const exist = await users_model_1.default.findOne({ email });
             if (exist)
                 return res.status(409).json({ message: "User already Exist!", status: 409 });
-            const hash = await bcrypt_1.default.hash(password, 10); //make more strong !
-            const user = await users_model_1.default.create({
+            const hash = await bcrypt_1.default.hash(password, 10);
+            await users_model_1.default.create({
                 email,
                 name,
                 password: hash,
@@ -41,11 +41,10 @@ exports.default = {
     userLogin: async (req, res) => {
         try {
             const { email, password } = req.body;
-            console.log(req.body);
             if (!email.trim() || !password.trim())
                 return res.status(406).json({ message: "invalid format", status: 406 });
             const user = await users_model_1.default.findOne({ email });
-            if (!user)
+            if (!user || !user.password)
                 return res.status(404).json({ message: "User Not Found!", status: 404 });
             if (user.status === "Blocked")
                 return res.status(403).json({ message: "User is Blocked", status: 403 });
@@ -70,8 +69,7 @@ exports.default = {
     },
     userLogout: async (req, res) => {
         try {
-            res.status;
-            const id = req.user.id;
+            const id = req.user?.id;
             const user = await users_model_1.default.findOne({ _id: id });
             if (!user)
                 return res.status(404).json({ message: "User Not Found!", status: 404 });
