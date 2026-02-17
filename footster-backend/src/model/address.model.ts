@@ -1,27 +1,34 @@
-import mongoose, { InferSchemaType } from 'mongoose'
+import { Schema, model, Document } from "mongoose";
 
-const addresSchema = new mongoose.Schema({
-    name :{
-      type : String,
-      require : true
-    } ,
-    number : {
-      type : String,
-      maxlength : 10,
-      minlength : 10
-    },
-    pincode : {
-      type : String,
-      maxlength : 6,
-      minlength : 6
-    },
-    city : String,
-    adres : String,
-    state : String,
-    country : String
+export interface IAddress extends Document {
+  name: string;
+  number: string;
+  pincode: string;
+  city?: string;
+  address?: string;
+  state?: string;
+  country?: string;
+}
+
+const addressSchema = new Schema<IAddress>({
+  name: {
+    type: String,
+    required: true
+  },
+  number: {
+    type: String,
+    maxlength: 10,
+    minlength: 10
+  },
+  pincode: {
+    type: String,
+    maxlength: 6,
+    minlength: 6
+  },
+  city: String,
+  address: String,
+  state: String,
+  country: String
 });
 
-export type AddressType = InferSchemaType<typeof addresSchema>;
-
-const Address = mongoose.model("Address",addresSchema);
-export default Address ;
+export const Address = model<IAddress>("Address", addressSchema);

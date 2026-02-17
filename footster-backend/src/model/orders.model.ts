@@ -1,26 +1,29 @@
-import mongoose from 'mongoose'
-import { InferSchemaType } from "mongoose";
+import mongoose,{Document , Schema , model , Types } from 'mongoose'
+import { Product } from '../types/product';
+import { IAddress } from './address.model';
 
-const orderSchema = new mongoose.Schema({
+export interface IOrder extends Document {
+  userId:Types.ObjectId;
+  date : string;
+  status :string;
+  paymentDetails:{
+    paymentType : string;
+    total :number;
+  };
+  items: Product[];
+  to : IAddress
+}
+
+const orderSchema = new Schema<IOrder>({
   userId : {
     type : mongoose.Schema.Types.ObjectId,
-    ref : "User",
-    required : true
+    ref : "User"
   },
-  date : {type : String,required:true},
-  status : {type: String ,required:true},
+  date : String,
+  status : String,
   paymentDetails : {
-    type: new mongoose.Schema({
-    paymentType: {
-      type: String,
-      required: true
-    },
-    total: {
-      type: Number,
-      required: true
-    }
-    }, { _id: false }),
-    required: true
+    paymentType : String,
+    total : Number
   },
   items: [{
     type: Object,
@@ -29,6 +32,4 @@ const orderSchema = new mongoose.Schema({
   to : Object
 });
 
-export type OrderType = InferSchemaType<typeof orderSchema>;
-
-export default  mongoose.model("Order",orderSchema);
+export default model<IOrder>("Order",orderSchema);

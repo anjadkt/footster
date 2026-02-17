@@ -1,175 +1,129 @@
-import User from "../model/users.model";
-import { Request, Response } from "express";
-import { Types } from "mongoose";
-import errorFunction from "../types/errorFunction";
-import {AddToCartBody, RemoveItemBody } from "../types/cart.types";
+import User from '../model/users.model'
+import { Request,Response } from 'express';
+import errorFunction from '../types/errorFunction';
 
 export default {
+  addToCart : async (req:Request,res:Response)=>{
+    try{
 
-  // ================= ADD TO CART =================
-  addToCart: async (
-    req: Request<{}, {}, AddToCartBody>,
-    res: Response
-  ): Promise<Response> => {
-    try {
-      const userId = req.user?.id;
-      const { id: productId, quantity = 1 } = req.body;
+      const user = await User.findOne({_id : req.user?.id});
+      if(!user)return res.status(404).json({message:"user not found!",status :404});
+      const {id : productId , quantity } = req.body;
+      const exist = user.cart.find( (p) => p.product.toString() === productId);
 
-      if (!productId) {
-        return res.status(400).json({
-          message: "Product id is required!",
-          status: 400,
-        });
-      }
-
-      if (!Types.ObjectId.isValid(productId)) {
-        return res.status(400).json({
-          message: "Invalid product id!",
-          status: 400,
-        });
-      }
-
-      const user = await User.findById(userId);
-
-      if (!user) {
-        return res.status(404).json({
-          message: "User not found!",
-          status: 404,
-        });
-      }
-
-      const existingItem = user.cart.find(
-        item => item.product?.toString() === productId
-      );
-
-      if (existingItem) {
-        existingItem.quantity += Number(quantity);
-      } else {
+      if(exist){
+        exist.quantity += Number(quantity) || 1 ;
+      }else{
         user.cart.push({
-          product: new Types.ObjectId(productId),
-          quantity: Number(quantity) || 1,
+          product : productId,
+          quantity
         });
       }
 
       await user.save();
-      await user.populate("cart.product");
 
-      return res.status(200).json({
-        cart: user.cart,
-        message: "Item added successfully!",
-        status: 200,
-      });
+      const userDoc = await User.findOne({ _id: req.user?.id }).populate("cart.product");
 
-    } catch (error) {
-      return res.status(500).json(errorFunction(error));
+      if (!userDoc) {
+        return res.status(404).json({
+          message: "User not found",
+          status: 404
+        });
+      }
+      res.json({
+        cart : userDoc.cart,
+        message : "Item added succesfully!",
+        status : 200
+      })
+    }catch(error){
+      res.status(500).json(errorFunction(error));
     }
   },
 
-  // ================= GET CART =================
-  getCart: async (req: Request, res: Response): Promise<Response> => {
+  getCart : async (req:Request,res:Response)=>{
     try {
-      const user = await User.findById(req.user?.id)
-        .populate("cart.product")
-        .select("cart name");
-
+      const user = await User.findOne({_id : req.user?.id}).populate("cart.product");
       if (!user) {
         return res.status(404).json({
-          message: "User not found!",
-          status: 404,
+          message: "User not found",
+          status: 404
         });
       }
-
-      return res.status(200).json({
-        cart: user.cart,
-        name: user.name,
-        message: "Cart fetch success!",
-        status: 200,
-      });
-
+      res.json({
+        cart:user.cart,
+        name:user.name,
+        message : "cart fetch success!",
+        status : 200
+      })
     } catch (error) {
-      return res.status(500).json(errorFunction(error));
+      res.status(500).json(errorFunction(error));
     }
   },
 
-  // ================= REMOVE ITEM =================
-  removeItem: async (
-    req: Request<{}, {}, RemoveItemBody>,
-    res: Response
-  ): Promise<Response> => {
+  removeItem : async (req:Request,res:Response)=>{
     try {
-      const { id } = req.body;
+      const {id} = req.body ;
+      const details = await User.updateOne({_id : req.user?.id},{$pull : {cart : {product : id}}});
 
-      const details = await User.updateOne(
-        { _id: req.user?.id },
-        { $pull: { cart: { product: id } } }
-      );
+      if(!details.modifiedCount)return res.status(404).json({message : "Product Not Found!",status :404});
 
-      if (!details.modifiedCount) {
+      const user = await User.findOne({_id : req.user?.id}).populate("cart.product");
+      if (!user) {
         return res.status(404).json({
-          message: "Product Not Found!",
-          status: 404,
+          message: "User not found",
+          status: 404
         });
       }
-
-      const user = await User.findById(req.user?.id)
-        .populate("cart.product")
-        .select("cart");
-
-      return res.status(200).json({
-        message: "Product Removed!",
-        status: 200,
-        cart: user?.cart ?? [],
+      res.status(200).json({
+        message : "Product Removed !",
+        status : 200,
+        cart : user.cart
       });
 
     } catch (error) {
-      return res.status(500).json(errorFunction(error));
+      res.status(500).json(errorFunction(error));
     }
   },
 
-  // ================= INC / DEC =================
-  incOrDec: async (
-    req: Request<{}, {}, RemoveItemBody>,
-    res: Response
-  ): Promise<Response> => {
-    try {
-      const { id } = req.body;
-      const isIncrement = req.path === "/inc";
-
-      const query = {
-        _id: req.user?.id,
-        "cart.product": id,
-        ...(isIncrement ? {} : { "cart.quantity": { $gt: 1 } }),
-      };
-
-      const update = {
-        $inc: {
-          "cart.$.quantity": isIncrement ? 1 : -1,
-        },
-      };
-
-      const updatedUser = await User.findOneAndUpdate(query, update, {
-        new: true,
-      }).select("cart");
-
-      if (!updatedUser) {
-        return res.status(404).json({
-          message: "Product not found!",
-          status: 404,
-        });
+  incOrDec : async (req:Request,res:Response)=>{
+    try { 
+      const {id} = req.body
+      const action = req.params.action ;
+      let product ;
+      if(action === "inc"){
+       product = await User.findOneAndUpdate({_id : req.user?.id , "cart.product": id},{$inc : {
+        "cart.$.quantity" : 1
+       } });
+      }
+      if(action === "dec"){
+       product = await User
+       .findOneAndUpdate({_id : req.user?.id , "cart.product": id , "cart.quantity" : {$gt : 1}},{$inc :{
+        "cart.$.quantity" : -1
+       } });
       }
 
-      const productObj = updatedUser.cart.find(
-        item => item.product?.toString() === id
-      );
+      if(!product){
+        res.status(404).json({
+          message : "Product not found!",
+          status : 404
+        })
+        return ;
+      }
 
-      return res.status(200).json({
-        message: "Quantity updated!",
-        quantity: productObj?.quantity ?? 1,
-        status: 200,
-      });
-
+      const user = await User.findOne({_id : req.user?.id }).populate("cart.product");
+      if (!user) {
+        return res.status(404).json({
+          message: "User not found",
+          status: 404
+        });
+      }
+      res.status(200).json({
+        message : "quanitity updated!",
+        cart:user.cart,
+        status : 200
+      })
     } catch (error) {
-      return res.status(500).json(errorFunction(error));
+      res.status(500).json(errorFunction(error));
     }
-  },
-};
+  }
+}

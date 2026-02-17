@@ -8,3 +8,8 @@ export interface AddToCartBody {
 export interface RemoveItemBody {
   id: string;
 }
+
+export interface ICart {
+  product : Types.ObjectId;
+  quantity : number ;
+}

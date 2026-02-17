@@ -1,6 +1,9 @@
-import mongoose, { InferSchemaType } from 'mongoose'
+import {Document,Schema,model} from 'mongoose'
+import { Product } from '../types/product';
 
-const productSchema = new mongoose.Schema({
+export interface IProduct extends Product,Document {quantity : string|number}
+
+const productSchema = new Schema<IProduct>({
   isFav : Boolean,
   reviews : Array,
   img : {
@@ -24,9 +27,7 @@ const productSchema = new mongoose.Schema({
   collection : "products"
 });
 
-export type ProductType = InferSchemaType<typeof productSchema>;
-
-const Product = mongoose.model("Product",productSchema);
+const Product = model<IProduct>("Product",productSchema);
 
 export default Product ;
 

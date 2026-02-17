@@ -17,4 +17,4 @@ router.get('/details',verifyToken,allUserRoute.getUserDetails);
 
 router.get('/logout',verifyToken,userRoute.userLogout);
 
-export default router ;
+export default router

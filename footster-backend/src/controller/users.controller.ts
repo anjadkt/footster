@@ -1,10 +1,10 @@
-import User, { UserType } from '../model/users.model'
+import User from '../model/users.model'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import validator from 'validator'
-import getEnv from '../config/dot';
-import { Request,Response } from 'express';
+import getEnv from '../config/dotenv';
 import errorFunction from '../types/errorFunction';
+import { Request,Response } from 'express';
 
 export default {
   userRegister : async(req:Request,res:Response)=>{
@@ -33,7 +33,7 @@ export default {
         message : "User registered Successfully!",
         status : 200
       })
-    } catch (error:unknown) {
+    } catch (error) {
       res.status(500).json(errorFunction(error))
     }
   },
@@ -78,7 +78,6 @@ export default {
   },
   userLogout : async(req:Request,res:Response)=>{
     try{
-      
       const id = req.user?.id
       const user = await User.findOne({_id : id});
       if(!user)return res.status(404).json({message : "User Not Found!",status : 404});

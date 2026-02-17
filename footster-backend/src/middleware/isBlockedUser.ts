@@ -1,4 +1,4 @@
-import { NextFunction , Request , Response } from 'express';
+import { NextFunction,Request,Response } from 'express';
 import User from '../model/users.model'
 import errorFunction from '../types/errorFunction';
 

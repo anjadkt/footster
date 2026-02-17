@@ -2,6 +2,7 @@ import User from '../../model/users.model'
 import Order from '../../model/orders.model'
 import { Request,Response } from 'express';
 import errorFunction from '../../types/errorFunction';
+import {Types} from 'mongoose'
 
 export default {
   getAllUsers : async (req:Request,res:Response)=>{
@@ -31,9 +32,8 @@ export default {
     try {
       const email = req.query.email || req.user?.email ;
       if(email){
-        const user = await User.findOne({email}).populate("favorite").populate("cart.product").lean();
-        if(!user)return res.status(404).json({message : "User not found!",status : 404});
-
+        const user = await User.findOne({email}).populate("favorite").populate("cart.product");
+        if(!user)return res.status(404).json({message : "User Not found",status : 404});
         res.status(200).json({
           name : user.name,
           status : user.status,
@@ -64,20 +64,37 @@ export default {
     }
   },
 
-  getSingleUser : async (req: Request, res: Response) => {
-    try {
-      const id  = req.params?.id
-
-      const user = await User.findById(id)
-        .populate("orders")
-        .select("-password -cart -favorite"); 
-
-      if (!user) {
-        return res.status(404).json({
-          message: "User Not Found!",
-          status: 404,
-        });
+  getSingleUser : async (req:Request,res:Response)=>{
+    try{
+      const id = req.params.id;
+      if (typeof id !== "string") {
+        throw new Error("Invalid id");
       }
+      const objectId = new Types.ObjectId(id);
+      const user = await User.aggregate([
+        {
+          $match : {
+            _id : objectId
+          }
+        },
+        {
+          $lookup :{
+            from : "orders",
+            localField : "orders",
+            foreignField : "_id",
+            as : "orderDetails"
+          }
+        },
+        {
+          $project :{
+            password : 0,
+            cart : 0,
+            favorite :0,
+            orders :0
+          }
+        }
+      ])
+      if(!user)return res.status(404).json({message : "User Not Found!", status : 404});
 
       res.status(200).json({
         message: "User fetch success!",
@@ -85,11 +102,8 @@ export default {
         status: 200,
       });
 
-    } catch (error: any) {
-      res.status(500).json({
-        message: error.message,
-        status: 500,
-      });
+    }catch(error){
+      res.status(500).json(errorFunction(error));
     }
   },
 

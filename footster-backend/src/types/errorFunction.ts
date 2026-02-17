@@ -1,6 +1,6 @@
 export default function errorFunction(error:unknown){
   if(error instanceof Error){
-     return {message : error.message , status : 500}
+    return {message : error.message,status : 500}
   }
-  return console.log("Unknown Error!");
+  return {message : "Unknown error!",status : 500}
 }

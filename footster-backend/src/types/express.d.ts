@@ -1,5 +1,4 @@
 import { UserJwt } from "./user.type";
-export {};
 
 declare global {
   namespace Express {
@@ -8,3 +7,5 @@ declare global {
     }
   }
 }
+
+export {}

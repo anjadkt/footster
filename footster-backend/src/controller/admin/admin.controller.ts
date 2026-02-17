@@ -4,8 +4,6 @@ import bcrypt from 'bcrypt'
 import { Request,Response } from 'express';
 import errorFunction from '../../types/errorFunction';
 
-require('dotenv').config();
-
 export default {
   adminRegister : async (req:Request,res:Response) =>{
     try {

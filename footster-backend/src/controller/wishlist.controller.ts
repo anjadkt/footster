@@ -1,7 +1,6 @@
 import User from '../model/users.model'
 import { Request,Response } from 'express';
 import errorFunction from '../types/errorFunction';
-import type {ProductType} from '../model/products.model'
 
 export default {
   showList : async (req:Request,res:Response)=>{

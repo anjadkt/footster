@@ -13,6 +13,7 @@ export default {
         res.status(500).json(errorFunction(error));
       }
     }
+
     if(Object.keys(req.query).length > 0){
       const {_page , _limit} = req.query ;
       

@@ -1,6 +1,6 @@
 import express from 'express'
-const router = express.Router();
 import wishContoller from '../controller/wishlist.controller'
+const router = express.Router();
 
 router.get('/',wishContoller.showList);
 router.post('/',wishContoller.addOrDltFav);

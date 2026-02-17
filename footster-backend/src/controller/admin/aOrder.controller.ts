@@ -15,9 +15,11 @@ export default {
       res.status(500).json(errorFunction(error));
     }
   },
+
   changeStatus : async (req:Request,res:Response)=>{
     try{
       const {orderId , status} = req.body
+
       const order = await Order.updateOne({_id : orderId},{status});
       if(!order)return res.status(404).json({message : "Order not found!",status : 404});
       res.status(200).json({

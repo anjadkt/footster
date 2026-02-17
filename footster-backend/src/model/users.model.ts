@@ -1,7 +1,21 @@
-import mongoose from 'mongoose'
-import { InferSchemaType } from 'mongoose';
+import mongoose,{Document,Schema,model,Types} from "mongoose";
+import { IAddress } from "./address.model";
+import { ICart } from "../types/cart.types";
 
-const userSchema = new mongoose.Schema({
+export interface IUser extends Document {
+  name : string;
+  status : "Active" | "Blocked";
+  cart : ICart[];
+  favorite : Types.ObjectId[];
+  orders : Types.ObjectId[];
+  address : IAddress;
+  role : string ;
+  email : string ;
+  password : string;
+  login : boolean ;
+}
+
+const userSchema = new Schema<IUser>({
   name : {
     type : String,
     trim : true,
@@ -67,6 +81,6 @@ const userSchema = new mongoose.Schema({
   collection : "users"
 });
 
-export type UserType = InferSchemaType<typeof userSchema>;
-const User = mongoose.model("User",userSchema);
+const User = model<IUser>("User",userSchema);
+
 export default User ;
