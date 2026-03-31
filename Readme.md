@@ -161,11 +161,11 @@ cd footster-frontend & npm run dev
 ---
 
 ## 🖥 Screenshots
-![home page](image.png)
-![cart page](image-1.png)
-![orders page](image-2.png)
-![admin dashboard](image-3.png)
-![admin products](image-4.png)
+![home page](/screenshots/image.png)
+![cart page](/screenshots/image-1.png)
+![orders page](/screenshots/image-2.png)
+![admin dashboard](/screenshots/image-3.png)
+![admin products](/screenshots/image-4.png)
 
 ## 🌍 Deployment
 
