@@ -83,7 +83,7 @@ The platform focuses on performance, security, and scalability using a clean MER
 
 ### Clone the repository & install dependencies
 ```bash
-  git clone <your-repo-link>
+  git clone <https://github.com/anjadkt/footster.git>
   cd footster
   npm install
 ```
